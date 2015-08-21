@@ -8,9 +8,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 
 /**
  * @author 蒋天蓓
@@ -18,49 +18,50 @@ import org.bukkit.Bukkit;
  *         TODO
  */
 public class DownloadUtils {
-	public static boolean download(String url, String dir, String filename) {
-
+	public static boolean download(CommandSender sender, String pluginname) {
+		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
+		if (sender == null)
+			sender = Bukkit.getConsoleSender();
 		try {
-			URL fileUrl = new URL(url);
-			System.out.println("下载地址: " + url);
+			sender.sendMessage("开始下载: " + pluginname);
+			URL fileUrl = new URL(String.format(url, pluginname));
+			sender.sendMessage("下载地址: http://********/" + fileUrl.getFile());
 			int fileLength = fileUrl.openConnection().getContentLength();
-			System.out.println("文件长度: " + fileLength);
+			sender.sendMessage("文件长度: " + fileLength);
 			in = new BufferedInputStream(fileUrl.openStream());
-			File file = new File(dir, filename + ".jar");
+			File file = new File("/plugins/", fileUrl.getFile());
 			if (!file.exists()) {
 				file.createNewFile();
+				sender.sendMessage("创建新文件: " + fileUrl.getFile());
 			}
 			fout = new FileOutputStream(file);
-
 			byte[] data = new byte[1024];
-
-			// long downloaded = 0L;
+			long downloaded = 0L;
 			int count;
+			long time = System.currentTimeMillis();
 			while ((count = in.read(data)) != -1) {
-				// downloaded += count;
+				downloaded += count;
 				fout.write(data, 0, count);
-				// int percent = (int) (downloaded / fileLength);
+				double percent = downloaded / fileLength * 10000;
+				if (System.currentTimeMillis() - time > 1000) {
+					sender.sendMessage(String.format("已下载: ====================> %.2f%%", percent));
+					time = System.currentTimeMillis();
+				}
 			}
 			return true;
 		} catch (Exception ex) {
-			Bukkit.getLogger().log(Level.WARNING, "The auto-updater tried to download a new update, but was unsuccessful.", ex);
+			sender.sendMessage("插件下载失败!");
 			return false;
 		} finally {
 			try {
 				if (in != null) {
 					in.close();
-				}
-			} catch (IOException ex) {
-				Bukkit.getLogger().log(Level.SEVERE, null, ex);
-			}
-			try {
-				if (fout != null) {
 					fout.close();
 				}
 			} catch (IOException ex) {
-				Bukkit.getLogger().log(Level.SEVERE, null, ex);
+				sender.sendMessage("关闭数据流时发生错误!");
 			}
 		}
 	}
