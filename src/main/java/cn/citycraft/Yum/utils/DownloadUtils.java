@@ -10,12 +10,19 @@ import java.net.URL;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author 蒋天蓓 2015年8月21日下午6:08:09 TODO
  */
 public class DownloadUtils {
-	public static boolean download(CommandSender sender, String pluginname) {
+	Plugin plugin;
+
+	public DownloadUtils(Plugin main) {
+		this.plugin = main;
+	}
+
+	public boolean download(CommandSender sender, String pluginname) {
 		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
@@ -67,7 +74,7 @@ public class DownloadUtils {
 		}
 	}
 
-	private static String getPer(double per) {
+	private String getPer(double per) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 10; i++) {
 			if (per > i) {

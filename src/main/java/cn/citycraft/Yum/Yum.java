@@ -3,11 +3,17 @@
  */
 package cn.citycraft.Yum;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 
 import cn.citycraft.Yum.utils.DownloadUtils;
 import cn.citycraft.Yum.utils.PluginUtil;
@@ -18,6 +24,8 @@ import cn.citycraft.Yum.utils.PluginUtil;
  * @author 蒋天蓓 2015年8月21日下午5:14:39
  */
 public class Yum extends JavaPlugin {
+	DownloadUtils download;
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		switch (args.length) {
@@ -38,7 +46,7 @@ public class Yum extends JavaPlugin {
 			switch (args[0]) {
 			case "install":
 				if (plugin != null) {
-					if (DownloadUtils.download(sender, args[1])) {
+					if (download.download(sender, args[1])) {
 						sender.sendMessage(PluginUtil.load(args[1]));
 					}
 				} else {
@@ -55,7 +63,7 @@ public class Yum extends JavaPlugin {
 			case "update":
 				if (plugin != null) {
 					sender.sendMessage(PluginUtil.unload(plugin));
-					if (DownloadUtils.download(sender, args[1])) {
+					if (download.download(sender, args[1])) {
 						sender.sendMessage(PluginUtil.load(args[1]));
 					}
 				} else {
@@ -65,5 +73,31 @@ public class Yum extends JavaPlugin {
 			}
 		}
 		return true;
+	};
+
+	@Override
+	public void onEnable() {
+		download = new DownloadUtils(this);
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		final String[] COMMANDS = { "install", "remove", "list", "update" };
+		if (sender.isOp() || sender.hasPermission("yum.admin") || sender.hasPermission("yum." + args[0])) {
+			List<String> completions = new ArrayList<>();
+			if (args.length == 1) {
+				String partialCommand = args[0];
+				List<String> commands = new ArrayList<>(Arrays.asList(COMMANDS));
+				StringUtil.copyPartialMatches(partialCommand, commands, completions);
+			}
+			if (args.length == 2) {
+				String partialPlugin = args[1];
+				List<String> plugins = PluginUtil.getPluginNames(false);
+				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
+			}
+			Collections.sort(completions);
+			return completions;
+		}
+		return null;
 	}
 }
