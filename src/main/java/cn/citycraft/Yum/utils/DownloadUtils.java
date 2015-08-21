@@ -17,23 +17,24 @@ import org.bukkit.command.CommandSender;
  *         TODO
  */
 public class DownloadUtils {
-	public static boolean download(CommandSender sender, String pluginname) {
+	public static boolean download(CommandSender sender, String dir, String pluginname) {
 		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
 		if (sender == null)
 			sender = Bukkit.getConsoleSender();
 		try {
+			String filename = pluginname + ".jar";
 			sender.sendMessage("开始下载: " + pluginname);
 			URL fileUrl = new URL(String.format(url, pluginname));
-			sender.sendMessage("下载地址: http://********/" + fileUrl.getFile());
+			sender.sendMessage("下载地址: http://********/" + filename);
 			int fileLength = fileUrl.openConnection().getContentLength();
 			sender.sendMessage("文件长度: " + fileLength);
 			in = new BufferedInputStream(fileUrl.openStream());
-			File file = new File("/plugins/", fileUrl.getFile());
+			File file = new File(dir, filename);
 			if (!file.exists()) {
 				file.createNewFile();
-				sender.sendMessage("创建新文件: " + fileUrl.getFile());
+				sender.sendMessage("创建新文件: " + filename);
 			}
 			fout = new FileOutputStream(file);
 			byte[] data = new byte[1024];
@@ -52,6 +53,7 @@ public class DownloadUtils {
 			return true;
 		} catch (Exception ex) {
 			sender.sendMessage("插件下载失败!");
+			ex.printStackTrace();
 			return false;
 		} finally {
 			try {
@@ -60,7 +62,6 @@ public class DownloadUtils {
 					fout.close();
 				}
 			} catch (Exception ex) {
-				sender.sendMessage("关闭数据流时发生错误!");
 			}
 		}
 	}

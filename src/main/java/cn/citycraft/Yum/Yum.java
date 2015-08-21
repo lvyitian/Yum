@@ -38,7 +38,7 @@ public class Yum extends JavaPlugin {
 			Plugin plugin = this.getServer().getPluginManager().getPlugin(args[1]);
 			switch (args[0]) {
 			case "install":
-				if (DownloadUtils.download(sender, args[1]))
+				if (DownloadUtils.download(sender, getDataFolder().getParent(), args[1]))
 					sender.sendMessage(PluginUtil.load(args[1]));
 				break;
 			case "remove":
@@ -50,7 +50,7 @@ public class Yum extends JavaPlugin {
 				break;
 			case "update":
 				if (plugin != null) {
-					if (DownloadUtils.download(sender, args[1]))
+					if (DownloadUtils.download(sender, getDataFolder().getParent(), args[1]))
 						sender.sendMessage(PluginUtil.load(args[1]));
 				} else {
 					sender.sendMessage("插件不存在或已卸载!");
