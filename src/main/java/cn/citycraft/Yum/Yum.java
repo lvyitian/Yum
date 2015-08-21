@@ -54,6 +54,7 @@ public class Yum extends JavaPlugin {
 				break;
 			case "update":
 				if (plugin != null) {
+					sender.sendMessage(PluginUtil.unload(plugin));
 					if (DownloadUtils.download(sender, args[1])) {
 						sender.sendMessage(PluginUtil.load(args[1]));
 					}
