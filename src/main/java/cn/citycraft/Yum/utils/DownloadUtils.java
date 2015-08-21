@@ -24,11 +24,11 @@ public class DownloadUtils {
 		}
 		try {
 			String filename = pluginname + ".jar";
-			sender.sendMessage("§3开始下载: " + pluginname);
+			sender.sendMessage("§6开始下载: §3" + pluginname);
 			URL fileUrl = new URL(String.format(url, pluginname));
-			sender.sendMessage("§3下载地址: http://********/" + filename);
+			sender.sendMessage("§6下载地址: §3http://********/" + filename);
 			int fileLength = fileUrl.openConnection().getContentLength();
-			sender.sendMessage("§3文件长度: " + fileLength);
+			sender.sendMessage("§6文件长度: §3" + fileLength);
 			in = new BufferedInputStream(fileUrl.openStream());
 			File file = new File(new File("plugins"), filename);
 			if (!file.exists()) {
@@ -45,15 +45,15 @@ public class DownloadUtils {
 				fout.write(data, 0, count);
 				double percent = downloaded / fileLength * 10000;
 				if (System.currentTimeMillis() - time > 1000) {
-					sender.sendMessage(String.format("§a已下载: " + getPer(percent) + " %.2f%%", percent));
+					sender.sendMessage(String.format("§a已下载: §a" + getPer(percent) + " %.2f%%", percent));
 					time = System.currentTimeMillis();
 				}
 			}
-			sender.sendMessage("§a已下载: ====================> 100%");
-			sender.sendMessage("§a插件: " + pluginname + "下载完成!");
+			sender.sendMessage("§6已下载: §a====================> 100%");
+			sender.sendMessage("§a插件: " + pluginname + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
-			sender.sendMessage("§c插件下载失败!");
+			sender.sendMessage("§c插件" + pluginname + "下载失败!");
 			ex.printStackTrace();
 			return false;
 		} finally {

@@ -156,10 +156,10 @@ public class PluginUtil {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException e) {
 			e.printStackTrace();
-			return "§c插件 " + name + " 的plugin.yml文件存在错误!";
+			return "§c插件: " + name + " 的plugin.yml文件存在错误!";
 		} catch (InvalidPluginException e) {
 			e.printStackTrace();
-			return "§c文件 " + name + " 不是一个可载入的插件!";
+			return "§c文件: " + name + " 不是一个可载入的插件!";
 		}
 
 		target.onLoad();
