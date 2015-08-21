@@ -1,0 +1,8 @@
+name: Yum
+main: cn.citycraft.Yum.Yum
+website: http://ci.citycraft.cn:8800/jenkins/job/Yum/
+version: 1.0
+commands:
+  yum:
+    description: MC插件仓库
+    usage: §6使用§a/yum help§6查看帮助!
