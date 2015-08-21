@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cn.citycraft.Yum.utils;
 
@@ -32,25 +32,10 @@ import com.google.common.base.Joiner;
 
 /**
  * 插件管理类
- * 
- * @author 蒋天蓓
- *         2015年8月21日下午7:03:26
+ *
+ * @author 蒋天蓓 2015年8月21日下午7:03:26
  */
 public class PluginUtil {
-
-	public static void enable(Plugin plugin) {
-		if ((!plugin.isEnabled()) && (plugin != null)) {
-			Bukkit.getPluginManager().enablePlugin(plugin);
-		}
-	}
-
-	public static void enableAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (!isIgnored(plugin)) {
-				enable(plugin);
-			}
-		}
-	}
 
 	public static void disable(Plugin plugin) {
 		if ((plugin.isEnabled()) && (plugin != null)) {
@@ -66,6 +51,20 @@ public class PluginUtil {
 		}
 	}
 
+	public static void enable(Plugin plugin) {
+		if ((!plugin.isEnabled()) && (plugin != null)) {
+			Bukkit.getPluginManager().enablePlugin(plugin);
+		}
+	}
+
+	public static void enableAll() {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			if (!isIgnored(plugin)) {
+				enable(plugin);
+			}
+		}
+	}
+
 	public static String getFormattedName(Plugin plugin) {
 		return getFormattedName(plugin, false);
 	}
@@ -73,13 +72,10 @@ public class PluginUtil {
 	public static String getFormattedName(Plugin plugin, boolean includeVersions) {
 		ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
 		String pluginName = color + plugin.getName();
-		if (includeVersions)
+		if (includeVersions) {
 			pluginName = pluginName + " (" + plugin.getDescription().getVersion() + ")";
+		}
 		return pluginName;
-	}
-
-	public static Plugin getPluginByName(String[] args, int start) {
-		return getPluginByName(StringUtil.consolidateStrings(args, start));
 	}
 
 	public static Plugin getPluginByName(String name) {
@@ -90,10 +86,15 @@ public class PluginUtil {
 		return null;
 	}
 
+	public static Plugin getPluginByName(String[] args, int start) {
+		return getPluginByName(StringUtil.consolidateStrings(args, start));
+	}
+
 	public static List<String> getPluginNames(boolean fullName) {
 		List<String> plugins = new ArrayList<String>();
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
+		}
 		return plugins;
 	}
 
@@ -118,9 +119,8 @@ public class PluginUtil {
 				}
 			}
 		}
-		if (parsedCommands.isEmpty()) {
-			return "没有注册命令!";
-		}
+		if (parsedCommands.isEmpty())
+			return "§c没有注册命令!";
 		return Joiner.on(", ").join(parsedCommands);
 	}
 
@@ -150,23 +150,22 @@ public class PluginUtil {
 		}
 		File pluginFile = new File(pluginDir, name + ".jar");
 
-		if (!pluginFile.isFile()) {
-			return "插件不存在!";
-		}
+		if (!pluginFile.isFile())
+			return "§c在plugins目录未找到 " + name + " 插件 请确认文件是否存在!";
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException e) {
 			e.printStackTrace();
-			return "错误的插件信息!";
+			return "§c插件 " + name + " 的plugin.yml文件存在错误!";
 		} catch (InvalidPluginException e) {
 			e.printStackTrace();
-			return "错误的插件!";
+			return "§c文件 " + name + " 不是一个可载入的插件!";
 		}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
 
-		return "插件已载入!";
+		return "§a插件 " + name + " 已成功载入到服务器!";
 	}
 
 	public static void reload(Plugin plugin) {
@@ -226,41 +225,42 @@ public class PluginUtil {
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
-				return "插件卸载失败!";
+				return "§c插件 " + name + " 卸载失败!";
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
-				return "插件已失败!";
+				return "§c插件 " + name + " 卸载失败!";
 			}
 		}
 
 		pluginManager.disablePlugin(plugin);
 
-		if ((plugins != null) && (plugins.contains(plugin))) {
+		if (plugins != null && plugins.contains(plugin)) {
 			plugins.remove(plugin);
 		}
-		if ((names != null) && (names.containsKey(name))) {
+
+		if (names != null && names.containsKey(name)) {
 			names.remove(name);
 		}
-		Iterator<RegisteredListener> it;
-		if ((listeners != null) && (reloadlisteners)) {
+
+		if (listeners != null && reloadlisteners) {
 			for (SortedSet<RegisteredListener> set : listeners.values()) {
-				for (it = set.iterator(); it.hasNext();) {
+				for (Iterator<RegisteredListener> it = set.iterator(); it.hasNext();) {
 					RegisteredListener value = it.next();
-					if (value.getPlugin() == plugin)
+					if (value.getPlugin() == plugin) {
 						it.remove();
+					}
 				}
 			}
 		}
 
-		Iterator<Map.Entry<String, Command>> cmdit;
 		if (commandMap != null) {
-			for (cmdit = commands.entrySet().iterator(); cmdit.hasNext();) {
-				Map.Entry<String, Command> entry = cmdit.next();
-				if ((entry.getValue() instanceof PluginCommand)) {
+			for (Iterator<Map.Entry<String, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
+				Map.Entry<String, Command> entry = it.next();
+				if (entry.getValue() instanceof PluginCommand) {
 					PluginCommand c = (PluginCommand) entry.getValue();
 					if (c.getPlugin() == plugin) {
 						c.unregister(commandMap);
-						cmdit.remove();
+						it.remove();
 					}
 				}
 			}
@@ -277,6 +277,6 @@ public class PluginUtil {
 		}
 
 		System.gc();
-		return "插件已卸载!";
+		return "§a插件 " + name + " 已成功卸载!";
 	}
 }
