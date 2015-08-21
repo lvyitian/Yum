@@ -6,7 +6,6 @@ package cn.citycraft.Yum.utils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 
 import org.bukkit.Bukkit;
@@ -60,7 +59,7 @@ public class DownloadUtils {
 					in.close();
 					fout.close();
 				}
-			} catch (IOException ex) {
+			} catch (Exception ex) {
 				sender.sendMessage("关闭数据流时发生错误!");
 			}
 		}
