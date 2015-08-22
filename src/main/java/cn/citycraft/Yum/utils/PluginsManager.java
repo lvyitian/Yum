@@ -227,6 +227,7 @@ public class PluginsManager {
 				Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
 				lookupNamesField.setAccessible(true);
 				names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
+
 				try {
 					Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
 					listenersField.setAccessible(true);
@@ -283,6 +284,7 @@ public class PluginsManager {
 		if ((cl instanceof URLClassLoader)) {
 			try {
 				((URLClassLoader) cl).close();
+				cl = null;
 			} catch (IOException ex) {
 			}
 		}
