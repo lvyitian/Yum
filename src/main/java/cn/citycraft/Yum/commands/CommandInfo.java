@@ -44,13 +44,13 @@ public class CommandInfo extends BaseCommand {
 			PluginDescriptionFile desc = plugin.getDescription();
 			sender.sendMessage("§6插件名称: §3" + plugin.getName());
 			sender.sendMessage("§6插件版本: §3" + desc.getVersion());
-			sender.sendMessage("§6插件作者: §3" + desc.getAuthors().toArray().toString());
-			sender.sendMessage("§6插件描述: §3" + desc.getDescription());
-			sender.sendMessage("§6插件依赖: §3");
+			sender.sendMessage("§6插件作者: §3" + desc.getAuthors().toArray(new String[0]).toString());
+			sender.sendMessage("§6插件描述: §3" + desc.getDescription() == null ? "无" : desc.getDescription());
+			sender.sendMessage("§6插件依赖: §3" + (desc.getDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getDepend());
-			sender.sendMessage("§6插件软依赖: §3");
+			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
-			sender.sendMessage("§6插件载入前: §3");
+			sender.sendMessage("§6插件载入前: §3" + (desc.getLoadBefore().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getLoadBefore());
 			sender.sendMessage("§6插件物理路径: §3" + PluginsManager.getPluginFile(plugin).getAbsolutePath());
 		} else {
