@@ -105,7 +105,7 @@ public class PluginsManager {
 			@SuppressWarnings("resource")
 			URLClassLoader ucl = (URLClassLoader) cl;
 			URL url = ucl.getURLs()[0];
-			file = new File(url.getPath(), url.getFile());
+			file = new File(url.getFile());
 		}
 		return file;
 	}
