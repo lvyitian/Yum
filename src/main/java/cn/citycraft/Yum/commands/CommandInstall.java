@@ -33,13 +33,18 @@ public class CommandInstall extends BaseCommand {
 	};
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
+	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
+		final String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null) {
-			if (yum.download.run(sender, pluginname)) {
-				sender.sendMessage(PluginsManager.load(pluginname));
-			}
+		if (plugin == null) {
+			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
+				@Override
+				public void run() {
+					if (yum.download.run(sender, pluginname)) {
+						sender.sendMessage(PluginsManager.load(pluginname));
+					}
+				}
+			});
 		} else {
 			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
 		}

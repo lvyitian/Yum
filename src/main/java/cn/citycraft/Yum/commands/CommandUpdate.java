@@ -31,15 +31,21 @@ public class CommandUpdate extends BaseCommand {
 	};
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
+		final String pluginname = args[0];
+		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		sender.sendMessage("§a开始更新插件: " + pluginname);
 		if (plugin != null) {
-			sender.sendMessage(PluginsManager.unload(plugin));
-			if (yum.download.run(sender, pluginname)) {
-				sender.sendMessage(PluginsManager.load(pluginname));
-			}
+			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
+				@Override
+				public void run() {
+					sender.sendMessage(PluginsManager.unload(plugin));
+					PluginsManager.getPluginFile(plugin).delete();
+					if (yum.download.run(sender, pluginname)) {
+						sender.sendMessage(PluginsManager.load(pluginname));
+					}
+				}
+			});
 		} else {
 			sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
 		}
