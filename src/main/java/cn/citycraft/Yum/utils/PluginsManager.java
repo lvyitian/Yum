@@ -156,7 +156,7 @@ public class PluginsManager {
 		return false;
 	}
 
-	private static String load(Plugin plugin) {
+	public static String load(Plugin plugin) {
 		return load(plugin.getName());
 	}
 

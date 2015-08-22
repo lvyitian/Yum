@@ -3,6 +3,7 @@
  */
 package cn.citycraft.Yum.commands;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -44,8 +45,8 @@ public class CommandInfo extends BaseCommand {
 			PluginDescriptionFile desc = plugin.getDescription();
 			sender.sendMessage("§6插件名称: §3" + plugin.getName());
 			sender.sendMessage("§6插件版本: §3" + desc.getVersion());
-			sender.sendMessage("§6插件作者: §3" + desc.getAuthors().toArray(new String[0]).toString());
-			sender.sendMessage("§6插件描述: §3" + desc.getDescription() == null ? "无" : desc.getDescription());
+			sender.sendMessage("§6插件作者: §3" + StringUtils.join(desc.getAuthors(), " "));
+			sender.sendMessage("§6插件描述: §3" + (desc.getDescription() == null ? "无" : desc.getDescription()));
 			sender.sendMessage("§6插件依赖: §3" + (desc.getDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getDepend());
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));

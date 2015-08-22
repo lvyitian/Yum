@@ -23,9 +23,8 @@ public class DownloadManager {
 	}
 
 	public boolean run(CommandSender sender, String pluginname) {
-		// String url =
-		// "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
-		String url = "https://502647092.github.io/plugins/%1$s/%1$s.jar";
+		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
+		// String url = "https://502647092.github.io/plugins/%1$s/%1$s.jar";
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
 		if (sender == null) {
