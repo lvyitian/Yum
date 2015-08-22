@@ -32,7 +32,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	/**
 	 * 命令监听类列表
 	 */
-	private List<BaseCommand> commandlist;
+	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();;
 	/**
 	 * 插件主类
 	 */

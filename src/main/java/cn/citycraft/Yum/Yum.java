@@ -19,7 +19,8 @@ public class Yum extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		download = new DownloadManager(this);
-		this.getCommand("yum").setExecutor(new CommandHandler(this));
-		this.getCommand("yum").setTabCompleter(new CommandHandler(this));
+		CommandHandler cmdhandler = new CommandHandler(this);
+		this.getCommand("yum").setExecutor(cmdhandler);
+		this.getCommand("yum").setTabCompleter(cmdhandler);
 	}
 }
