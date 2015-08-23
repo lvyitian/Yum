@@ -63,7 +63,7 @@ public class DownloadManager {
 		}
 		try {
 			sender.sendMessage("§6开始下载: §3" + getFileName(url));
-			sender.sendMessage("§6下载地址: §3" + url.getPath());
+			sender.sendMessage("§6下载地址: §3" + url.toString());
 			int fileLength = url.openConnection().getContentLength();
 			sender.sendMessage("§6文件长度: §3" + fileLength);
 			in = new BufferedInputStream(url.openStream());
