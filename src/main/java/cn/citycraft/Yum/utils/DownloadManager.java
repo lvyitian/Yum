@@ -22,16 +22,17 @@ public class DownloadManager {
 		this.plugin = main;
 	}
 
-	private String getPer(double per) {
+	private String getPer(int per) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			if (per > i) {
-				sb.append("  ");
-			} else {
 				sb.append("==");
+			} else if (per == i) {
+				sb.append("> ");
+			} else {
+				sb.append("  ");
 			}
 		}
-		sb.append(">");
 		return sb.toString();
 	}
 
@@ -39,20 +40,22 @@ public class DownloadManager {
 		return run(sender, pluginname, null);
 	}
 
-	public boolean run(CommandSender sender, String pluginname, String filename) {
+	public boolean run(final CommandSender sender, final String pluginname, final String filename) {
 		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 		// String url = "https://502647092.github.io/plugins/%1$s/%1$s.jar";
+
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
+		CommandSender resultsender = sender;
 		if (sender == null) {
-			sender = Bukkit.getConsoleSender();
+			resultsender = Bukkit.getConsoleSender();
 		}
 		try {
-			sender.sendMessage("§6开始下载: §3" + pluginname);
+			resultsender.sendMessage("§6开始下载: §3" + pluginname);
 			URL fileUrl = new URL(String.format(url, pluginname));
-			sender.sendMessage("§6下载地址: §3" + fileUrl.getPath());
+			resultsender.sendMessage("§6下载地址: §3" + fileUrl.getPath());
 			int fileLength = fileUrl.openConnection().getContentLength();
-			sender.sendMessage("§6文件长度: §3" + fileLength);
+			resultsender.sendMessage("§6文件长度: §3" + fileLength);
 			in = new BufferedInputStream(fileUrl.openStream());
 			File file = null;
 			if (filename == null) {
@@ -62,12 +65,13 @@ public class DownloadManager {
 			}
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
-				sender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
+				resultsender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
 			}
-			if (!file.exists()) {
-				file.createNewFile();
-				sender.sendMessage("§d创建新文件: " + file.getName());
+			if (file.exists()) {
+				file.delete();
 			}
+			file.createNewFile();
+			resultsender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
 			fout = new FileOutputStream(file);
 			byte[] data = new byte[1024];
 			long downloaded = 0L;
@@ -75,14 +79,15 @@ public class DownloadManager {
 			while ((count = in.read(data)) != -1) {
 				downloaded += count;
 				fout.write(data, 0, count);
-				double percent = downloaded / fileLength * 10000;
-				sender.sendMessage(String.format("§a已下载: §a" + getPer(percent) + " %.2f%%", percent));
+				int percent = (int) (downloaded * 100L / fileLength);
+				if (percent % 10 == 0) {
+					resultsender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+				}
 			}
-			sender.sendMessage("§6已下载: §a====================> 100%");
-			sender.sendMessage("§a插件: " + pluginname + " 下载完成!");
+			resultsender.sendMessage("§a插件: " + pluginname + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
-			sender.sendMessage("§c插件" + pluginname + "下载失败!");
+			resultsender.sendMessage("§c插件" + pluginname + "下载失败!");
 			ex.printStackTrace();
 			return false;
 		} finally {

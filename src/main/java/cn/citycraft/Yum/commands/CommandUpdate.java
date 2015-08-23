@@ -36,7 +36,6 @@ public class CommandUpdate extends BaseCommand {
 				public void run() {
 					if (yum.download.update(sender, plugin)) {
 						sender.sendMessage(PluginsManager.unload(plugin));
-						// PluginsManager.getPluginFile(plugin).delete();
 						sender.sendMessage(PluginsManager.load(plugin));
 					}
 				}
