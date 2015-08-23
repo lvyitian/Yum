@@ -58,25 +58,24 @@ public class DownloadManager {
 	public boolean run(CommandSender sender, URL url, File file) {
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
-		CommandSender resultsender = sender;
 		if (sender == null) {
-			resultsender = Bukkit.getConsoleSender();
+			sender = Bukkit.getConsoleSender();
 		}
 		try {
-			resultsender.sendMessage("§6开始下载: §3" + getFileName(url));
-			resultsender.sendMessage("§6下载地址: §3" + url.getPath());
+			sender.sendMessage("§6开始下载: §3" + getFileName(url));
+			sender.sendMessage("§6下载地址: §3" + url.getPath());
 			int fileLength = url.openConnection().getContentLength();
-			resultsender.sendMessage("§6文件长度: §3" + fileLength);
+			sender.sendMessage("§6文件长度: §3" + fileLength);
 			in = new BufferedInputStream(url.openStream());
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
-				resultsender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
+				sender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
 			}
 			if (file.exists()) {
 				file.delete();
 			}
 			file.createNewFile();
-			resultsender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
+			sender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
 			fout = new FileOutputStream(file);
 			byte[] data = new byte[1024];
 			long downloaded = 0L;
@@ -86,13 +85,13 @@ public class DownloadManager {
 				fout.write(data, 0, count);
 				int percent = (int) (downloaded * 100L / fileLength);
 				if (percent % 10 == 0) {
-					resultsender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+					sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 				}
 			}
-			resultsender.sendMessage("§a文件: " + file.getName() + " 下载完成!");
+			sender.sendMessage("§a文件: " + file.getName() + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
-			resultsender.sendMessage("§c文件" + file.getName() + "下载失败!");
+			sender.sendMessage("§c文件" + file.getName() + "下载失败!");
 			ex.printStackTrace();
 			return false;
 		} finally {

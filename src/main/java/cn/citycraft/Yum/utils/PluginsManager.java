@@ -168,6 +168,9 @@ public class PluginsManager {
 	}
 
 	public static boolean installFromYum(CommandSender sender, String filename) {
+		if (sender == null) {
+			sender = Bukkit.getConsoleSender();
+		}
 		File file = new File("plugins/YumCenter", filename + ".jar");
 		if (!file.exists()) {
 			sender.sendMessage("§c仓库不存在该插件!");
@@ -198,6 +201,10 @@ public class PluginsManager {
 
 	public static boolean load(CommandSender sender, String name) {
 		Plugin target = null;
+
+		if (sender == null) {
+			sender = Bukkit.getConsoleSender();
+		}
 
 		if (!name.endsWith(".jar")) {
 			name = name + ".jar";
@@ -264,6 +271,9 @@ public class PluginsManager {
 	@SuppressWarnings("unchecked")
 	public static boolean unload(CommandSender sender, Plugin plugin) {
 		String name = plugin.getName();
+		if (sender == null) {
+			sender = Bukkit.getConsoleSender();
+		}
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		SimpleCommandMap commandMap = null;
 		List<Plugin> plugins = null;
