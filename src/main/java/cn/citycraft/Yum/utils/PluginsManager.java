@@ -242,7 +242,7 @@ public class PluginsManager {
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
-		sender.sendMessage("§6载入: 插件 " + name + " 已成功载入到服务器!");
+		sender.sendMessage("§6载入: §a插件 " + name + " 已成功载入到服务器!");
 		return true;
 	}
 
