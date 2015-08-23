@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cn.citycraft.Yum.commands;
 
@@ -20,27 +20,60 @@ import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
  * 子命令处理类
- * 
- * @author 蒋天蓓
- *         2015年8月22日上午8:29:44
+ *
+ * @author 蒋天蓓 2015年8月22日上午8:29:44
  */
 public class CommandHandler implements CommandExecutor, TabCompleter {
 	/**
+	 * 转移数组
+	 *
+	 * @param args
+	 *            - 原数组
+	 * @param start
+	 *            - 数组开始位置
+	 * @return 转移后的数组字符串
+	 */
+	public static String[] moveStrings(String[] args, int start) {
+		String[] ret = new String[args.length - start];
+		System.arraycopy(args, args.length - start, ret, 0, ret.length);
+		return ret;
+	}
+
+	/**
 	 * 已注册命令列表(包括别名)
 	 */
-	List<String> RegisterCommandList = new ArrayList<String>();
+	List<String> RegisterCommandList = new ArrayList<String>();;
 	/**
 	 * 命令监听类列表
 	 */
-	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();;
+	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();
+
 	/**
 	 * 插件主类
 	 */
 	Yum plugin;
 
 	/**
+	 * 注册子命令
+	 *
+	 * @param yum
+	 *            - 插件主类
+	 */
+	public CommandHandler(Yum yum) {
+		this.plugin = yum;
+		registerCommand(new CommandList(yum));
+		registerCommand(new CommandInstall(yum));
+		registerCommand(new CommandUpdate(yum));
+		registerCommand(new CommandRemove(yum));
+		registerCommand(new CommandInfo(yum));
+		registerCommand(new CommandReinstall(yum));
+
+		RegisterCommandList = getRegisterCommands();
+	}
+
+	/**
 	 * 获得已注册的命令列表
-	 * 
+	 *
 	 * @return - 返回已注册的命令List
 	 */
 	public List<String> getRegisterCommands() {
@@ -52,48 +85,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-		if (sender.isOp() || sender.hasPermission("yum.admin") || sender.hasPermission("yum." + args[0])) {
-			List<String> completions = new ArrayList<>();
-			if (args.length == 1) {
-				String partialCommand = args[0];
-				List<String> commands = RegisterCommandList;
-				StringUtil.copyPartialMatches(partialCommand, commands, completions);
-			}
-			if (args.length == 2) {
-				String partialPlugin = args[1];
-				List<String> plugins = PluginsManager.getPluginNames(false);
-				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
-			}
-			Collections.sort(completions);
-			return completions;
-		}
-		return null;
-	}
-
-	/**
-	 * 注册子命令
-	 * 
-	 * @param yum
-	 *            - 插件主类
-	 */
-	public CommandHandler(Yum yum) {
-		this.plugin = yum;
-		registerCommand(new CommandList(yum));
-		registerCommand(new CommandInstall(yum));
-		registerCommand(new CommandUpdate(yum));
-		registerCommand(new CommandRemove(yum));
-		registerCommand(new CommandInfo(yum));
-
-		RegisterCommandList = getRegisterCommands();
-	}
-
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 0) {
-
+		if (args.length == 0)
 			return true;
-		}
 		String subcmd = args[0];
 		String[] subargs = moveStrings(args, 1);
 		for (BaseCommand command : commandlist) {
@@ -121,6 +115,26 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		if (sender.isOp() || sender.hasPermission("yum.admin") || sender.hasPermission("yum." + args[0])) {
+			List<String> completions = new ArrayList<>();
+			if (args.length == 1) {
+				String partialCommand = args[0];
+				List<String> commands = RegisterCommandList;
+				StringUtil.copyPartialMatches(partialCommand, commands, completions);
+			}
+			if (args.length == 2) {
+				String partialPlugin = args[1];
+				List<String> plugins = PluginsManager.getPluginNames(false);
+				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
+			}
+			Collections.sort(completions);
+			return completions;
+		}
+		return null;
+	}
+
 	/**
 	 * 注册命令
 	 *
@@ -129,21 +143,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	 */
 	public void registerCommand(BaseCommand command) {
 		commandlist.add(command);
-	}
-
-	/**
-	 * 转移数组
-	 * 
-	 * @param args
-	 *            - 原数组
-	 * @param start
-	 *            - 数组开始位置
-	 * @return 转移后的数组字符串
-	 */
-	public static String[] moveStrings(String[] args, int start) {
-		String[] ret = new String[args.length - start];
-		System.arraycopy(args, args.length - start, ret, 0, ret.length);
-		return ret;
 	}
 
 }
