@@ -173,12 +173,14 @@ public class PluginsManager {
 		}
 		File file = new File("plugins/YumCenter", filename + ".jar");
 		if (!file.exists()) {
-			sender.sendMessage("§c仓库不存在该插件!");
+			sender.sendMessage("§4错误: §c仓库不存在 " + filename + " 插件!");
 			return false;
 		}
 		File pluginfile = new File("plugins", filename + ".jar");
 		copyFile(file, pluginfile);
-		load(sender, filename + ".jar");
+		if (load(sender, filename + ".jar")) {
+			sender.sendMessage("§6安装: §a从Yum仓库安装插件 " + filename + " 成功!");
+		}
 		return false;
 	}
 
@@ -234,15 +236,14 @@ public class PluginsManager {
 			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name + " 不是一个可载入的插件!");
 			return false;
 		} catch (UnknownDependencyException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖项目!");
 			return false;
 		}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
-
+		sender.sendMessage("§6载入: 插件 " + name + " 已成功载入到服务器!");
 		return true;
-		// "§a插件: " + name + " 已成功载入到服务器!";
 	}
 
 	public static boolean load(Plugin plugin) {
@@ -306,12 +307,9 @@ public class PluginsManager {
 				Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
 				knownCommandsField.setAccessible(true);
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
-			} catch (NoSuchFieldException e) {
+			} catch (Exception e) {
+				sender.sendMessage("§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!");
 				return false;
-				// "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
-			} catch (IllegalAccessException e) {
-				return false;
-				// "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
 			}
 		}
 		pluginManager.disablePlugin(plugin);
@@ -351,8 +349,8 @@ public class PluginsManager {
 			}
 		}
 		System.gc();
+		sender.sendMessage("§6卸载: §a插件: " + name + " 已成功卸载!");
 		return true;
-		// "§a插件: " + name + " 已成功卸载!";
 	}
 
 	public static boolean unload(Plugin plugin) {

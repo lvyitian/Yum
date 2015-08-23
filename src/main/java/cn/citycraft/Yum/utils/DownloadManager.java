@@ -69,7 +69,7 @@ public class DownloadManager {
 			in = new BufferedInputStream(url.openStream());
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
-				sender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
+				sender.sendMessage("§6创建新目录: §d" + file.getParentFile().getAbsolutePath());
 			}
 			if (file.exists()) {
 				file.delete();
@@ -88,10 +88,10 @@ public class DownloadManager {
 					sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 				}
 			}
-			sender.sendMessage("§a文件: " + file.getName() + " 下载完成!");
+			sender.sendMessage("§6文件: §a" + file.getName() + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
-			sender.sendMessage("§c文件" + file.getName() + "下载失败!");
+			sender.sendMessage("§6文件: §c" + file.getName() + "下载失败!");
 			ex.printStackTrace();
 			return false;
 		} finally {
