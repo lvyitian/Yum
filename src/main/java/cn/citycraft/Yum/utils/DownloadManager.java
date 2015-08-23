@@ -116,6 +116,6 @@ public class DownloadManager {
 	}
 
 	public boolean yum(CommandSender sender, String pluginname) {
-		return run(sender, getUrl(pluginname), new File("YumCenter", pluginname + ".jar"));
+		return run(sender, getUrl(pluginname), new File("plugins/YumCenter", pluginname + ".jar"));
 	}
 }
