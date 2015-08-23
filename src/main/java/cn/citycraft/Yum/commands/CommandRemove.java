@@ -12,7 +12,7 @@ import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
  * 插件删除命令类
- * 
+ *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandRemove extends BaseCommand {
@@ -27,20 +27,15 @@ public class CommandRemove extends BaseCommand {
 	}
 
 	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	};
-
-	@Override
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
 		Plugin plugin = yum.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			sender.sendMessage(PluginsManager.unload(plugin));
+			PluginsManager.unload(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}
-	}
+	};
 
 	@Override
 	public int getMinimumArguments() {
@@ -50,5 +45,10 @@ public class CommandRemove extends BaseCommand {
 	@Override
 	public String getPossibleArguments() {
 		return "<插件名称>";
+	}
+
+	@Override
+	public boolean isOnlyPlayerExecutable() {
+		return false;
 	}
 }

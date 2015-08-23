@@ -36,7 +36,7 @@ public class CommandInstall extends BaseCommand {
 				@Override
 				public void run() {
 					if (yum.download.install(sender, pluginname)) {
-						sender.sendMessage(PluginsManager.load(pluginname));
+						PluginsManager.load(sender, pluginname);
 					}
 				}
 			});

@@ -12,16 +12,18 @@ import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
+ * 插件安装命令类
+ *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
-public class CommandUpdate extends BaseCommand {
+public class CommandReinstall extends BaseCommand {
 	Yum yum;
 
 	/**
 	 * @param name
 	 */
-	public CommandUpdate(Yum main) {
-		super("update");
+	public CommandReinstall(Yum main) {
+		super("reinstall");
 		this.yum = main;
 	}
 
@@ -29,14 +31,14 @@ public class CommandUpdate extends BaseCommand {
 	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		sender.sendMessage("§a开始更新插件: " + pluginname);
+		sender.sendMessage("§a开始重装插件: " + pluginname);
 		if (plugin != null) {
 			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
 				@Override
 				public void run() {
-					if (yum.download.update(sender, plugin)) {
-						PluginsManager.unload(sender, plugin);
-						PluginsManager.load(sender, plugin);
+					if (yum.download.yum(sender, plugin.getName())) {
+						PluginsManager.deletePlugin(plugin);
+						PluginsManager.installFromYum(sender, plugin.getName());
 					}
 				}
 			});

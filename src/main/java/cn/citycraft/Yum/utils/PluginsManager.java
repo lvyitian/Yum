@@ -4,7 +4,10 @@
 package cn.citycraft.Yum.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,6 +21,7 @@ import java.util.SortedSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
@@ -37,12 +41,31 @@ import com.google.common.base.Joiner;
  */
 public class PluginsManager {
 
-	public static boolean deletePlugin(Plugin plugin) {
-		ClassLoader cl = plugin.getClass().getClassLoader();
-		if ((cl instanceof URLClassLoader)) {
-		} else {
+	public static boolean copyFile(File src, File des) {
+		InputStream inStream = null; // 读入原文件
+		FileOutputStream fs = null;
+		try {
+			int byteread = 0;
+			if (!src.exists())
+				return false;
+			inStream = new FileInputStream(src); // 读入原文件
+			fs = new FileOutputStream(des);
+			byte[] buffer = new byte[1024];
+			while ((byteread = inStream.read(buffer)) != -1) {
+				fs.write(buffer, 0, byteread);
+			}
+			inStream.close();
+			fs.close();
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
-		return false;
+	}
+
+	public static boolean deletePlugin(Plugin plugin) {
+		unload(plugin);
+		getPluginFile(plugin).delete();
+		return true;
 	}
 
 	public static void disable(Plugin plugin) {
@@ -140,8 +163,20 @@ public class PluginsManager {
 			}
 		}
 		if (parsedCommands.isEmpty())
-			return "§c没有注册命令!";
+			return null;
 		return Joiner.on(", ").join(parsedCommands);
+	}
+
+	public static boolean installFromYum(CommandSender sender, String filename) {
+		File file = new File("plugins/YumCenter", filename + ".jar");
+		if (!file.exists()) {
+			sender.sendMessage("§c仓库不存在该插件!");
+			return false;
+		}
+		File pluginfile = new File("plugins", filename + ".jar");
+		copyFile(file, pluginfile);
+		load(sender, filename + ".jar");
+		return false;
 	}
 
 	public static boolean isIgnored(Plugin plugin) {
@@ -156,12 +191,12 @@ public class PluginsManager {
 		return false;
 	}
 
-	public static String load(Plugin plugin) {
+	public static boolean load(CommandSender sender, Plugin plugin) {
 		String filename = getPluginFile(plugin).getName();
-		return load(filename);
+		return load(sender, filename);
 	}
 
-	public static String load(String name) {
+	public static boolean load(CommandSender sender, String name) {
 		Plugin target = null;
 
 		if (!name.endsWith(".jar")) {
@@ -171,31 +206,44 @@ public class PluginsManager {
 		File pluginDir = new File("plugins");
 		File updateDir = new File(pluginDir, "update");
 
-		if (!pluginDir.isDirectory())
-			return "§c插件目录不存在或IO错误!";
+		if (!pluginDir.isDirectory()) {
+			sender.sendMessage("§c插件目录不存在或IO错误!");
+			return false;
+		}
 
 		File pluginFile = new File(pluginDir, name);
 
-		if (!pluginFile.isFile() && !new File(updateDir, name).isFile())
-			return "§c在插件目录和更新目录未找到 " + name + " 插件 请确认文件是否存在!";
+		if (!pluginFile.isFile() && !new File(updateDir, name).isFile()) {
+			sender.sendMessage("§c在插件目录和更新目录未找到 " + name + " 插件 请确认文件是否存在!");
+			return false;
+		}
 
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException e) {
-			e.printStackTrace();
-			return "§c异常: " + e.getMessage() + " 插件: " + name + " 的plugin.yml文件存在错误!";
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 的plugin.yml文件存在错误!");
+			return false;
 		} catch (InvalidPluginException e) {
-			e.printStackTrace();
-			return "§c异常: " + e.getMessage() + " 文件: " + name + " 不是一个可载入的插件!";
+			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name + " 不是一个可载入的插件!");
+			return false;
 		} catch (UnknownDependencyException e) {
-			e.printStackTrace();
-			return "§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖!";
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖!");
+			return false;
 		}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
 
-		return "§a插件: " + name + " 已成功载入到服务器!";
+		return true;
+		// "§a插件: " + name + " 已成功载入到服务器!";
+	}
+
+	public static boolean load(Plugin plugin) {
+		return load(null, plugin);
+	}
+
+	public static boolean load(String name) {
+		return load(null, name);
 	}
 
 	public static void reload(Plugin plugin) {
@@ -214,7 +262,7 @@ public class PluginsManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String unload(Plugin plugin) {
+	public static boolean unload(CommandSender sender, Plugin plugin) {
 		String name = plugin.getName();
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		SimpleCommandMap commandMap = null;
@@ -249,11 +297,11 @@ public class PluginsManager {
 				knownCommandsField.setAccessible(true);
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-				return "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
+				return false;
+				// "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				return "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
+				return false;
+				// "§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!";
 			}
 		}
 		pluginManager.disablePlugin(plugin);
@@ -289,11 +337,15 @@ public class PluginsManager {
 		if ((cl instanceof URLClassLoader)) {
 			try {
 				((URLClassLoader) cl).close();
-				cl = null;
 			} catch (IOException ex) {
 			}
 		}
 		System.gc();
-		return "§a插件: " + name + " 已成功卸载!";
+		return true;
+		// "§a插件: " + name + " 已成功卸载!";
+	}
+
+	public static boolean unload(Plugin plugin) {
+		return unload(null, plugin);
 	}
 }

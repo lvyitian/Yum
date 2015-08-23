@@ -6,6 +6,7 @@ package cn.citycraft.Yum.utils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.bukkit.Bukkit;
@@ -16,10 +17,16 @@ import org.bukkit.plugin.Plugin;
  * @author 蒋天蓓 2015年8月21日下午6:08:09 TODO
  */
 public class DownloadManager {
+	String yumurl = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 	Plugin plugin;
 
 	public DownloadManager(Plugin main) {
 		this.plugin = main;
+	}
+
+	public String getFileName(URL url) {
+		int end = url.getFile().lastIndexOf('/');
+		return url.getFile().substring(end + 1);
 	}
 
 	private String getPer(int per) {
@@ -36,14 +43,19 @@ public class DownloadManager {
 		return sb.toString();
 	}
 
-	public boolean install(CommandSender sender, String pluginname) {
-		return run(sender, pluginname, null);
+	public URL getUrl(String pluginname) {
+		try {
+			return new URL(String.format(yumurl, pluginname));
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
-	public boolean run(final CommandSender sender, final String pluginname, final String filename) {
-		String url = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
-		// String url = "https://502647092.github.io/plugins/%1$s/%1$s.jar";
+	public boolean install(CommandSender sender, String pluginname) {
+		return run(sender, getUrl(pluginname), new File("plugins", pluginname + ".jar"));
+	}
 
+	public boolean run(CommandSender sender, URL url, File file) {
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
 		CommandSender resultsender = sender;
@@ -51,18 +63,11 @@ public class DownloadManager {
 			resultsender = Bukkit.getConsoleSender();
 		}
 		try {
-			resultsender.sendMessage("§6开始下载: §3" + pluginname);
-			URL fileUrl = new URL(String.format(url, pluginname));
-			resultsender.sendMessage("§6下载地址: §3" + fileUrl.getPath());
-			int fileLength = fileUrl.openConnection().getContentLength();
+			resultsender.sendMessage("§6开始下载: §3" + getFileName(url));
+			resultsender.sendMessage("§6下载地址: §3" + url.getPath());
+			int fileLength = url.openConnection().getContentLength();
 			resultsender.sendMessage("§6文件长度: §3" + fileLength);
-			in = new BufferedInputStream(fileUrl.openStream());
-			File file = null;
-			if (filename == null) {
-				file = new File(new File("plugins"), pluginname + ".jar");
-			} else {
-				file = new File(new File("plugins/update"), filename);
-			}
+			in = new BufferedInputStream(url.openStream());
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
 				resultsender.sendMessage("§d创建新目录: " + file.getParentFile().getAbsolutePath());
@@ -84,10 +89,10 @@ public class DownloadManager {
 					resultsender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 				}
 			}
-			resultsender.sendMessage("§a插件: " + pluginname + " 下载完成!");
+			resultsender.sendMessage("§a文件: " + file.getName() + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
-			resultsender.sendMessage("§c插件" + pluginname + "下载失败!");
+			resultsender.sendMessage("§c文件" + file.getName() + "下载失败!");
 			ex.printStackTrace();
 			return false;
 		} finally {
@@ -101,9 +106,17 @@ public class DownloadManager {
 		}
 	}
 
+	public boolean run(URL url, File file) {
+		return run(null, url, file);
+	}
+
 	public boolean update(CommandSender sender, Plugin plugin) {
 		String pluginname = plugin.getName();
 		String filename = PluginsManager.getPluginFile(plugin).getName();
-		return run(sender, pluginname, filename);
+		return run(sender, getUrl(pluginname), new File("plugins/update", filename));
+	}
+
+	public boolean yum(CommandSender sender, String pluginname) {
+		return run(sender, getUrl(pluginname), new File("YumCenter", pluginname + ".jar"));
 	}
 }
