@@ -116,6 +116,11 @@ public class DownloadManager {
 	}
 
 	public boolean yum(CommandSender sender, String pluginname) {
-		return run(sender, getUrl(pluginname), new File("plugins/YumCenter", pluginname + ".jar"));
+		File yumplugin = new File("plugins/YumCenter", pluginname + ".jar");
+		if (yumplugin.exists()) {
+			sender.sendMessage("§6更新: §e仓库已存在插件 " + pluginname + " 开始更新...");
+			yumplugin.delete();
+		}
+		return run(sender, getUrl(pluginname), yumplugin);
 	}
 }
