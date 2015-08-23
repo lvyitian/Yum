@@ -13,7 +13,7 @@ import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
  * 插件安装命令类
- * 
+ *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandInstall extends BaseCommand {
@@ -28,11 +28,6 @@ public class CommandInstall extends BaseCommand {
 	}
 
 	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	};
-
-	@Override
 	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
 		final String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -40,7 +35,7 @@ public class CommandInstall extends BaseCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
 				@Override
 				public void run() {
-					if (yum.download.run(sender, pluginname)) {
+					if (yum.download.install(sender, pluginname)) {
 						sender.sendMessage(PluginsManager.load(pluginname));
 					}
 				}
@@ -48,7 +43,7 @@ public class CommandInstall extends BaseCommand {
 		} else {
 			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
 		}
-	}
+	};
 
 	@Override
 	public int getMinimumArguments() {
@@ -58,5 +53,10 @@ public class CommandInstall extends BaseCommand {
 	@Override
 	public String getPossibleArguments() {
 		return "<插件名称>";
+	}
+
+	@Override
+	public boolean isOnlyPlayerExecutable() {
+		return false;
 	}
 }

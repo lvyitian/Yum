@@ -37,6 +37,14 @@ import com.google.common.base.Joiner;
  */
 public class PluginsManager {
 
+	public static boolean deletePlugin(Plugin plugin) {
+		ClassLoader cl = plugin.getClass().getClassLoader();
+		if ((cl instanceof URLClassLoader)) {
+		} else {
+		}
+		return false;
+	}
+
 	public static void disable(Plugin plugin) {
 		if ((plugin.isEnabled()) && (plugin != null)) {
 			Bukkit.getPluginManager().disablePlugin(plugin);
@@ -90,14 +98,6 @@ public class PluginsManager {
 		return getPluginByName(StringUtil.consolidateStrings(args, start));
 	}
 
-	public static List<String> getPluginNames(boolean fullName) {
-		List<String> plugins = new ArrayList<String>();
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
-		}
-		return plugins;
-	}
-
 	public static File getPluginFile(Plugin plugin) {
 		File file = null;
 		ClassLoader cl = plugin.getClass().getClassLoader();
@@ -110,12 +110,12 @@ public class PluginsManager {
 		return file;
 	}
 
-	public static boolean deletePlugin(Plugin plugin) {
-		ClassLoader cl = plugin.getClass().getClassLoader();
-		if ((cl instanceof URLClassLoader)) {
-		} else {
+	public static List<String> getPluginNames(boolean fullName) {
+		List<String> plugins = new ArrayList<String>();
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
 		}
-		return false;
+		return plugins;
 	}
 
 	public static String getPluginVersion(String name) {
@@ -157,22 +157,27 @@ public class PluginsManager {
 	}
 
 	public static String load(Plugin plugin) {
-		return load(plugin.getName());
+		String filename = getPluginFile(plugin).getName();
+		return load(filename);
 	}
 
 	public static String load(String name) {
 		Plugin target = null;
 
-		File pluginDir = new File("plugins");
-
-		if (!pluginDir.isDirectory()) {
-			return "§c插件目录不存在或IO错误!";
+		if (!name.endsWith(".jar")) {
+			name = name + ".jar";
 		}
 
-		File pluginFile = new File(pluginDir, name + ".jar");
+		File pluginDir = new File("plugins");
+		File updateDir = new File(pluginDir, "update");
 
-		if (!pluginFile.isFile())
-			return "§c在plugins目录未找到 " + name + " 插件 请确认文件是否存在!";
+		if (!pluginDir.isDirectory())
+			return "§c插件目录不存在或IO错误!";
+
+		File pluginFile = new File(pluginDir, name);
+
+		if (!pluginFile.isFile() && !new File(updateDir, name).isFile())
+			return "§c在插件目录和更新目录未找到 " + name + " 插件 请确认文件是否存在!";
 
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);

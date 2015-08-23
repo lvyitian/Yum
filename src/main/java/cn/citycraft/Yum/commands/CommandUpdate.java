@@ -26,11 +26,6 @@ public class CommandUpdate extends BaseCommand {
 	}
 
 	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	};
-
-	@Override
 	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -39,17 +34,17 @@ public class CommandUpdate extends BaseCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
 				@Override
 				public void run() {
-					sender.sendMessage(PluginsManager.unload(plugin));
-					PluginsManager.getPluginFile(plugin).delete();
-					if (yum.download.run(sender, pluginname)) {
-						sender.sendMessage(PluginsManager.load(pluginname));
+					if (yum.download.update(sender, plugin)) {
+						sender.sendMessage(PluginsManager.unload(plugin));
+						// PluginsManager.getPluginFile(plugin).delete();
+						sender.sendMessage(PluginsManager.load(plugin));
 					}
 				}
 			});
 		} else {
 			sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
 		}
-	}
+	};
 
 	@Override
 	public int getMinimumArguments() {
@@ -59,5 +54,10 @@ public class CommandUpdate extends BaseCommand {
 	@Override
 	public String getPossibleArguments() {
 		return "<插件名称>";
+	}
+
+	@Override
+	public boolean isOnlyPlayerExecutable() {
+		return false;
 	}
 }
