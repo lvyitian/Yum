@@ -112,7 +112,12 @@ public class DownloadManager {
 	public boolean update(CommandSender sender, Plugin plugin) {
 		String pluginname = plugin.getName();
 		String filename = PluginsManager.getPluginFile(plugin).getName();
-		return run(sender, getUrl(pluginname), new File("plugins/update", filename));
+		URL url = getUrl(pluginname);
+		if (url == null) {
+			sender.sendMessage("§4错误: §cURL地址解析失败!");
+			return false;
+		}
+		return run(sender, url, new File("plugins/update", filename));
 	}
 
 	public boolean yum(CommandSender sender, String pluginname) {

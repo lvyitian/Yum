@@ -1,7 +1,8 @@
-name: Yum
-main: cn.citycraft.Yum.Yum
-website: http://ci.citycraft.cn:8800/jenkins/job/Yum/
-version: 1.3
+name: ${project.artifactId}
+main: ${project.groupId}.${project.artifactId}.${project.artifactId}
+website: http://ci.citycraft.cn:8800/jenkins/job/${project.artifactId}/
+version: ${project.version}
+
 commands:
   yum:
     description: MC插件仓库
