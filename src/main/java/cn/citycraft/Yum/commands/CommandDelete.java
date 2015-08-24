@@ -15,14 +15,14 @@ import cn.citycraft.Yum.utils.PluginsManager;
  *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
-public class CommandRemove extends BaseCommand {
+public class CommandDelete extends BaseCommand {
 	Yum yum;
 
 	/**
 	 * @param name
 	 */
-	public CommandRemove(Yum main) {
-		super("remove");
+	public CommandDelete(Yum main) {
+		super("delete");
 		this.yum = main;
 	}
 
@@ -31,7 +31,7 @@ public class CommandRemove extends BaseCommand {
 		String pluginname = args[0];
 		Plugin plugin = yum.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			PluginsManager.unload(sender, plugin);
+			PluginsManager.deletePlugin(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}

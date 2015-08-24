@@ -29,6 +29,11 @@ public class DownloadManager {
 		return url.getFile().substring(end + 1);
 	}
 
+	public String getFileName(String url) {
+		int end = url.lastIndexOf('/');
+		return url.substring(end + 1);
+	}
+
 	private String getPer(int per) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 11; i++) {
@@ -118,6 +123,25 @@ public class DownloadManager {
 			return false;
 		}
 		return run(sender, url, new File("plugins/update", filename));
+	}
+
+	public boolean yumdl(CommandSender sender, String address, String pluginname) {
+		try {
+			URL url = new URL(address);
+			File yumplugin = new File("plugins/YumCenter", pluginname + ".jar");
+			if (yumplugin.exists()) {
+				sender.sendMessage("§6更新: §e仓库已存在插件 " + pluginname + " 开始更新...");
+				yumplugin.delete();
+			}
+			return run(sender, url, yumplugin);
+		} catch (MalformedURLException e) {
+			return false;
+		}
+	}
+
+	public boolean yumdl(CommandSender sender, String address) {
+		String pluginname = getFileName(address);
+		return yumdl(sender, pluginname, address);
 	}
 
 	public boolean yum(CommandSender sender, String pluginname) {

@@ -1,8 +1,8 @@
 name: ${project.artifactId}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
-website: http://ci.citycraft.cn:8800/jenkins/job/${project.artifactId}/
 version: ${project.version}
-
+auther: 喵♂呜
+website: http://ci.citycraft.cn:8800/jenkins/job/${project.artifactId}/
 commands:
   yum:
     description: MC插件仓库

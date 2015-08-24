@@ -16,34 +16,40 @@ import cn.citycraft.Yum.utils.PluginsManager;
  *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
-public class CommandInstall extends BaseCommand {
+public class CommandUrlInstall extends BaseCommand {
 	Yum yum;
 
 	/**
 	 * @param name
 	 */
-	public CommandInstall(Yum main) {
-		super("install");
+	public CommandUrlInstall(Yum main) {
+		super("urlinstall");
 		this.yum = main;
 	}
 
 	@Override
 	public void execute(final CommandSender sender, String label, final String[] args) throws CommandException {
-		final String pluginname = args[0];
+		final String url = args[0];
+		final String pluginname = args[1];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin == null) {
 			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
 				@Override
 				public void run() {
-					if (yum.download.install(sender, pluginname)) {
-						PluginsManager.load(sender, pluginname);
+					switch (args.length) {
+					case 1:
+						yum.download.yumdl(sender, url);
+						break;
+					case 2:
+						yum.download.yumdl(sender, url, pluginname);
+						break;
 					}
+					PluginsManager.installFromYum(sender, pluginname);
 				}
 			});
 		} else {
 			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
 		}
-
 	};
 
 	@Override

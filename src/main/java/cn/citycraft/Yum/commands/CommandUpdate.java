@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
  * @author 蒋天蓓 2015年8月12日下午2:04:05
@@ -35,8 +34,7 @@ public class CommandUpdate extends BaseCommand {
 				@Override
 				public void run() {
 					if (yum.download.update(sender, plugin)) {
-						PluginsManager.unload(sender, plugin);
-						PluginsManager.load(sender, plugin);
+						sender.sendMessage("§6更新: §a插件 " + pluginname + " 已下载到update文件夹 重启后生效!");
 					}
 				}
 			});

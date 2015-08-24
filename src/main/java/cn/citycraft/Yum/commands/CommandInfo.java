@@ -51,11 +51,9 @@ public class CommandInfo extends BaseCommand {
 			StringUtil.sendStringArray(sender, desc.getDepend());
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
-			sender.sendMessage("§6插件载入前: §3" + (desc.getLoadBefore().size() == 0 ? "无" : ""));
-			StringUtil.sendStringArray(sender, desc.getLoadBefore());
 			sender.sendMessage("§6插件物理路径: §3" + PluginsManager.getPluginFile(plugin).getAbsolutePath());
 		} else {
-			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 		}
 	}
 

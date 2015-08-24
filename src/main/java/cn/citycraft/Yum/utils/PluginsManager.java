@@ -63,9 +63,11 @@ public class PluginsManager {
 	}
 
 	public static boolean deletePlugin(Plugin plugin) {
-		unload(plugin);
-		getPluginFile(plugin).delete();
-		return true;
+		return deletePlugin(Bukkit.getConsoleSender(), plugin);
+	}
+
+	public static boolean deletePlugin(CommandSender sender, Plugin plugin) {
+		return unload(sender, plugin) && getPluginFile(plugin).delete();
 	}
 
 	public static void disable(Plugin plugin) {
@@ -110,11 +112,7 @@ public class PluginsManager {
 	}
 
 	public static Plugin getPluginByName(String name) {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (name.equalsIgnoreCase(plugin.getName()))
-				return plugin;
-		}
-		return null;
+		return Bukkit.getPluginManager().getPlugin(name);
 	}
 
 	public static Plugin getPluginByName(String[] args, int start) {
@@ -247,18 +245,22 @@ public class PluginsManager {
 	}
 
 	public static boolean load(Plugin plugin) {
-		return load(null, plugin);
+		return load(Bukkit.getConsoleSender(), plugin);
 	}
 
 	public static boolean load(String name) {
-		return load(null, name);
+		return load(Bukkit.getConsoleSender(), name);
 	}
 
-	public static void reload(Plugin plugin) {
+	public static boolean reload(Plugin plugin) {
+		return reload(Bukkit.getConsoleSender(), plugin);
+	}
+
+	public static boolean reload(CommandSender sender, Plugin plugin) {
 		if (plugin != null) {
-			unload(plugin);
-			load(plugin);
+			return unload(sender, plugin) && load(sender, plugin);
 		}
+		return false;
 	}
 
 	public static void reloadAll() {
@@ -354,6 +356,6 @@ public class PluginsManager {
 	}
 
 	public static boolean unload(Plugin plugin) {
-		return unload(null, plugin);
+		return unload(Bukkit.getConsoleSender(), plugin);
 	}
 }

@@ -37,7 +37,7 @@ public class CommandReinstall extends BaseCommand {
 				@Override
 				public void run() {
 					if (yum.download.yum(sender, plugin.getName())) {
-						PluginsManager.deletePlugin(plugin);
+						PluginsManager.deletePlugin(sender, plugin);
 						PluginsManager.installFromYum(sender, plugin.getName());
 					}
 				}

@@ -6,11 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
+import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -27,34 +29,106 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 /**
- * An implementation of {@link Configuration} which saves all files in Yaml. Note that this
+ * An implementation of {@link Configuration} which saves all files in Yaml.
+ * Note that this
  * implementation is not synchronized.
  */
 public class FileConfig extends YamlConfiguration {
-
-	public static FileConfig init(File file) {
-		return FileConfig.loadConfiguration(file);
-	}
-
-	public static FileConfig loadConfiguration(File file) {
-		Validate.notNull(file, "File cannot be null");
-		FileConfig config = new FileConfig();
-		try {
-			config.load(file);
-		} catch (FileNotFoundException ex) {
-		} catch (IOException ex) {
-			Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
-		} catch (InvalidConfigurationException ex) {
-			Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
-		}
-		return config;
-	}
+	protected File file;
+	protected Logger loger;
+	protected Plugin plugin;
 
 	protected final DumperOptions yamlOptions = new DumperOptions();
 
 	protected final Representer yamlRepresenter = new YamlRepresenter();
 
 	protected final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+
+	private FileConfig(File file) {
+		Validate.notNull(file, "File cannot be null");
+		this.file = file;
+		loger = Bukkit.getLogger();
+		init(file);
+	}
+
+	private FileConfig(InputStream stream) {
+		loger = Bukkit.getLogger();
+		init(stream);
+	}
+
+	public FileConfig(Plugin plugin, File file) {
+		Validate.notNull(file, "File cannot be null");
+		Validate.notNull(plugin, "Plugin cannot be null");
+		this.plugin = plugin;
+		this.file = file;
+		loger = plugin.getLogger();
+		check(file);
+		init(file);
+	}
+
+	public FileConfig(Plugin plugin, String filename) {
+		this(plugin, new File(plugin.getDataFolder(), filename));
+	}
+
+	private void check(File file) {
+		String filename = file.getName();
+		InputStream stream = plugin.getResource(filename);
+		try {
+			if (!file.exists()) {
+				if (stream == null) {
+					file.createNewFile();
+					loger.info("配置文件 " + filename + " 创建失败...");
+				} else {
+					plugin.saveResource(filename, true);
+				}
+			} else {
+				FileConfig newcfg = new FileConfig(stream);
+				FileConfig oldcfg = new FileConfig(file);
+				String newver = newcfg.getString("version");
+				String oldver = oldcfg.getString("version");
+				if (newver != null && oldver != null && newver != oldver) {
+					loger.warning("配置文件: " + filename + " 版本过低 正在升级...");
+					try {
+						oldcfg.save(new File(file.getParent(), filename + ".backup"));
+						loger.warning("配置文件: " + filename + " 已备份为 " + filename + ".backup !");
+					} catch (IOException e) {
+						loger.warning("配置文件: " + filename + "备份失败!");
+					}
+					plugin.saveResource(filename, true);
+					loger.info("配置文件: " + filename + "升级成功!");
+				}
+			}
+		} catch (IOException e) {
+			loger.info("配置文件 " + filename + " 创建失败...");
+		}
+	}
+
+	private void init(File file) {
+		Validate.notNull(file, "File cannot be null");
+		try {
+			this.load(file);
+		} catch (FileNotFoundException ex) {
+			loger.info("配置文件 " + file.getName() + " 不存在...");
+		} catch (IOException ex) {
+			loger.info("配置文件 " + file.getName() + " 读取错误...");
+		} catch (InvalidConfigurationException ex) {
+			loger.info("配置文件 " + file.getName() + " 格式错误...");
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void init(InputStream stream) {
+		Validate.notNull(file, "File cannot be null");
+		try {
+			this.load(stream);
+		} catch (FileNotFoundException ex) {
+			loger.info("配置文件 " + file.getName() + " 不存在...");
+		} catch (IOException ex) {
+			loger.info("配置文件 " + file.getName() + " 读取错误...");
+		} catch (InvalidConfigurationException ex) {
+			loger.info("配置文件 " + file.getName() + " 格式错误...");
+		}
+	}
 
 	@Override
 	public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
@@ -65,8 +139,7 @@ public class FileConfig extends YamlConfiguration {
 
 	@Override
 	public void load(Reader reader) throws IOException, InvalidConfigurationException {
-		BufferedReader input = (reader instanceof BufferedReader) ? (BufferedReader) reader
-				: new BufferedReader(reader);
+		BufferedReader input = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
 		StringBuilder builder = new StringBuilder();
 		try {
 			String line;
@@ -78,6 +151,18 @@ public class FileConfig extends YamlConfiguration {
 			input.close();
 		}
 		loadFromString(builder.toString());
+	}
+
+	public void save() {
+		if (file == null) {
+			loger.info("未定义配置文件路径 保存失败!");
+		}
+		try {
+			this.save(file);
+		} catch (IOException e) {
+			loger.info("配置文件 " + file.getName() + " 保存错误...");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
