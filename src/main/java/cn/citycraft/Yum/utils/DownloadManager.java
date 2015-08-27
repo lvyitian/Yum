@@ -17,21 +17,20 @@ import org.bukkit.plugin.Plugin;
  * @author 蒋天蓓 2015年8月21日下午6:08:09 TODO
  */
 public class DownloadManager {
-	String yumurl = "http://ci.citycraft.cn:8800/jenkins/job/%1$s/lastSuccessfulBuild/artifact/target/%1$s.jar";
 	Plugin plugin;
 
 	public DownloadManager(Plugin main) {
 		this.plugin = main;
 	}
 
-	public String getFileName(URL url) {
-		int end = url.getFile().lastIndexOf('/');
-		return url.getFile().substring(end + 1);
-	}
-
 	public String getFileName(String url) {
 		int end = url.lastIndexOf('/');
 		return url.substring(end + 1);
+	}
+
+	public String getFileName(URL url) {
+		int end = url.getFile().lastIndexOf('/');
+		return url.getFile().substring(end + 1);
 	}
 
 	private String getPer(int per) {
@@ -48,16 +47,15 @@ public class DownloadManager {
 		return sb.toString();
 	}
 
-	public URL getUrl(String pluginname) {
+	public boolean run(CommandSender sender, String urlstring, File file) {
+		URL url;
 		try {
-			return new URL(String.format(yumurl, pluginname));
+			url = new URL(urlstring);
+			return run(sender, url, file);
 		} catch (MalformedURLException e) {
-			return null;
+			sender.sendMessage("§4错误: §c无法识别的URL地址...");
+			return false;
 		}
-	}
-
-	public boolean install(CommandSender sender, String pluginname) {
-		return run(sender, getUrl(pluginname), new File("plugins", pluginname + ".jar"));
 	}
 
 	public boolean run(CommandSender sender, URL url, File file) {
@@ -110,46 +108,12 @@ public class DownloadManager {
 		}
 	}
 
+	public boolean run(String urlstring, File file) {
+		return run(null, urlstring, file);
+	}
+
 	public boolean run(URL url, File file) {
 		return run(null, url, file);
 	}
 
-	public boolean update(CommandSender sender, Plugin plugin) {
-		String pluginname = plugin.getName();
-		String filename = PluginsManager.getPluginFile(plugin).getName();
-		URL url = getUrl(pluginname);
-		if (url == null) {
-			sender.sendMessage("§4错误: §cURL地址解析失败!");
-			return false;
-		}
-		return run(sender, url, new File("plugins/update", filename));
-	}
-
-	public boolean yumdl(CommandSender sender, String address, String pluginname) {
-		try {
-			URL url = new URL(address);
-			File yumplugin = new File("plugins/YumCenter", pluginname + ".jar");
-			if (yumplugin.exists()) {
-				sender.sendMessage("§6更新: §e仓库已存在插件 " + pluginname + " 开始更新...");
-				yumplugin.delete();
-			}
-			return run(sender, url, yumplugin);
-		} catch (MalformedURLException e) {
-			return false;
-		}
-	}
-
-	public boolean yumdl(CommandSender sender, String address) {
-		String pluginname = getFileName(address);
-		return yumdl(sender, pluginname, address);
-	}
-
-	public boolean yum(CommandSender sender, String pluginname) {
-		File yumplugin = new File("plugins/YumCenter", pluginname + ".jar");
-		if (yumplugin.exists()) {
-			sender.sendMessage("§6更新: §e仓库已存在插件 " + pluginname + " 开始更新...");
-			yumplugin.delete();
-		}
-		return run(sender, getUrl(pluginname), yumplugin);
-	}
 }

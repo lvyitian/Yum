@@ -33,9 +33,7 @@ public class CommandUpdate extends BaseCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(yum, new Runnable() {
 				@Override
 				public void run() {
-					if (yum.download.update(sender, plugin)) {
-						sender.sendMessage("§6更新: §a插件 " + pluginname + " 已下载到update文件夹 重启后生效!");
-					}
+
 				}
 			});
 		} else {

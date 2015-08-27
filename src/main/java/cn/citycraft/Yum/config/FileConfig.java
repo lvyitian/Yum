@@ -29,8 +29,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 /**
- * An implementation of {@link Configuration} which saves all files in Yaml.
- * Note that this
+ * An implementation of {@link Configuration} which saves all files in Yaml. Note that this
  * implementation is not synchronized.
  */
 public class FileConfig extends YamlConfiguration {
@@ -80,14 +79,15 @@ public class FileConfig extends YamlConfiguration {
 					loger.info("配置文件 " + filename + " 创建失败...");
 				} else {
 					plugin.saveResource(filename, true);
+					loger.info("配置文件 " + filename + " 不存在 从插件释放...");
 				}
 			} else {
 				FileConfig newcfg = new FileConfig(stream);
 				FileConfig oldcfg = new FileConfig(file);
 				String newver = newcfg.getString("version");
 				String oldver = oldcfg.getString("version");
-				if (newver != null && oldver != null && newver != oldver) {
-					loger.warning("配置文件: " + filename + " 版本过低 正在升级...");
+				if (newver != null && newver != oldver) {
+					loger.warning("配置文件: " + filename + " 版本 " + oldver + " 过低 正在升级到 " + newver + " ...");
 					try {
 						oldcfg.save(new File(file.getParent(), filename + ".backup"));
 						loger.warning("配置文件: " + filename + " 已备份为 " + filename + ".backup !");
@@ -105,24 +105,19 @@ public class FileConfig extends YamlConfiguration {
 
 	private void init(File file) {
 		Validate.notNull(file, "File cannot be null");
+		FileInputStream stream;
 		try {
-			this.load(file);
-		} catch (FileNotFoundException ex) {
+			stream = new FileInputStream(file);
+			init(stream);
+		} catch (FileNotFoundException e) {
 			loger.info("配置文件 " + file.getName() + " 不存在...");
-		} catch (IOException ex) {
-			loger.info("配置文件 " + file.getName() + " 读取错误...");
-		} catch (InvalidConfigurationException ex) {
-			loger.info("配置文件 " + file.getName() + " 格式错误...");
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void init(InputStream stream) {
-		Validate.notNull(file, "File cannot be null");
+		Validate.notNull(stream, "Stream cannot be null");
 		try {
-			this.load(stream);
-		} catch (FileNotFoundException ex) {
-			loger.info("配置文件 " + file.getName() + " 不存在...");
+			this.load(new InputStreamReader(stream, Charsets.UTF_8));
 		} catch (IOException ex) {
 			loger.info("配置文件 " + file.getName() + " 读取错误...");
 		} catch (InvalidConfigurationException ex) {
@@ -151,6 +146,10 @@ public class FileConfig extends YamlConfiguration {
 			input.close();
 		}
 		loadFromString(builder.toString());
+	}
+
+	public void reload() {
+		init(file);
 	}
 
 	public void save() {
