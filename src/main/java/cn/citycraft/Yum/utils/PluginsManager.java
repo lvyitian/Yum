@@ -106,7 +106,8 @@ public class PluginsManager {
 		ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
 		String pluginName = color + plugin.getName();
 		if (includeVersions) {
-			pluginName = pluginName + " (" + plugin.getDescription().getVersion() + ")";
+			pluginName = pluginName + " ("
+					+ plugin.getDescription().getVersion() + ")";
 		}
 		return pluginName;
 	}
@@ -134,7 +135,8 @@ public class PluginsManager {
 	public static List<String> getPluginNames(boolean fullName) {
 		List<String> plugins = new ArrayList<String>();
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
+			plugins.add(fullName ? plugin.getDescription().getFullName()
+					: plugin.getName());
 		}
 		return plugins;
 	}
@@ -149,12 +151,15 @@ public class PluginsManager {
 	public static String getUsages(Plugin plugin) {
 		List<String> parsedCommands = new ArrayList<String>();
 
-		Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
+		Map<String, Map<String, Object>> commands = plugin.getDescription()
+				.getCommands();
 
 		if (commands != null) {
-			Iterator<Entry<String, Map<String, Object>>> commandsIt = commands.entrySet().iterator();
+			Iterator<Entry<String, Map<String, Object>>> commandsIt = commands
+					.entrySet().iterator();
 			while (commandsIt.hasNext()) {
-				Entry<String, Map<String, Object>> thisEntry = commandsIt.next();
+				Entry<String, Map<String, Object>> thisEntry = commandsIt
+						.next();
 				if (thisEntry != null) {
 					parsedCommands.add(thisEntry.getKey());
 				}
@@ -228,13 +233,16 @@ public class PluginsManager {
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 的plugin.yml文件存在错误!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name
+					+ " 的plugin.yml文件存在错误!");
 			return false;
 		} catch (InvalidPluginException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name + " 不是一个可载入的插件!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name
+					+ " 不是一个可载入的插件!");
 			return false;
 		} catch (UnknownDependencyException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖项目!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name
+					+ " 缺少部分依赖项目!");
 			return false;
 		}
 
@@ -280,64 +288,83 @@ public class PluginsManager {
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		SimpleCommandMap commandMap = null;
 		List<Plugin> plugins = null;
-		Map<String, Plugin> names = null;
-		Map<String, Command> commands = null;
+		Map<String, Plugin> lookupNames = null;
+		Map<String, Command> knownCommands = null;
 		Map<Event, SortedSet<RegisteredListener>> listeners = null;
 		boolean reloadlisteners = true;
 		if (pluginManager != null) {
 			try {
-				Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
+				Field pluginsField = Bukkit.getPluginManager().getClass()
+						.getDeclaredField("plugins");
 				pluginsField.setAccessible(true);
 				plugins = (List<Plugin>) pluginsField.get(pluginManager);
 
-				Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
+				Field lookupNamesField = Bukkit.getPluginManager().getClass()
+						.getDeclaredField("lookupNames");
 				lookupNamesField.setAccessible(true);
-				names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
+				lookupNames = (Map<String, Plugin>) lookupNamesField
+						.get(pluginManager);
 
 				try {
-					Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
+					Field listenersField = Bukkit.getPluginManager().getClass()
+							.getDeclaredField("listeners");
 					listenersField.setAccessible(true);
-					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
+					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField
+							.get(pluginManager);
 				} catch (Exception e) {
 					reloadlisteners = false;
 				}
 
-				Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+				Field commandMapField = Bukkit.getPluginManager().getClass()
+						.getDeclaredField("commandMap");
 				commandMapField.setAccessible(true);
-				commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
+				commandMap = (SimpleCommandMap) commandMapField
+						.get(pluginManager);
 
-				Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+				Field knownCommandsField = SimpleCommandMap.class
+						.getDeclaredField("knownCommands");
 				knownCommandsField.setAccessible(true);
-				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
+				knownCommands = (Map<String, Command>) knownCommandsField
+						.get(commandMap);
 			} catch (Exception e) {
-				sender.sendMessage("§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!");
+				sender.sendMessage("§c异常: " + e.getMessage() + " 插件 " + name
+						+ " 卸载失败!");
 				return false;
 			}
 		}
-		pluginManager.disablePlugin(plugin);
-		if (plugins != null && plugins.contains(plugin)) {
-			plugins.remove(plugin);
-		}
-		if (names != null && names.containsKey(name)) {
-			names.remove(name);
+		for (Plugin next : pluginManager.getPlugins()) {
+			if (next.getName().equals(name)) {
+				pluginManager.disablePlugin(next);
+				if ((plugins != null) && (plugins.contains(next))) {
+					plugins.remove(next);
+				}
+
+				if ((lookupNames != null) && (lookupNames.containsKey(name))) {
+					lookupNames.remove(name);
+				}
+
+				if (commandMap != null)
+					for (Iterator<Map.Entry<String, Command>> it = knownCommands
+							.entrySet().iterator(); it.hasNext();) {
+						Map.Entry<String, Command> entry = it.next();
+
+						if ((entry.getValue() instanceof PluginCommand)) {
+							PluginCommand command = (PluginCommand) entry
+									.getValue();
+
+							if (command.getPlugin() == next) {
+								command.unregister(commandMap);
+								it.remove();
+							}
+						}
+					}
+			}
 		}
 		if (listeners != null && reloadlisteners) {
 			for (SortedSet<RegisteredListener> set : listeners.values()) {
 				for (Iterator<RegisteredListener> it = set.iterator(); it.hasNext();) {
 					RegisteredListener value = it.next();
-					if (value.getPlugin() == plugin) {
-						it.remove();
-					}
-				}
-			}
-		}
-		if (commandMap != null) {
-			for (Iterator<Map.Entry<String, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
-				Map.Entry<String, Command> entry = it.next();
-				if (entry.getValue() instanceof PluginCommand) {
-					PluginCommand c = (PluginCommand) entry.getValue();
-					if (c.getPlugin() == plugin) {
-						c.unregister(commandMap);
+					if (value.getPlugin().getName().equals(name)) {
 						it.remove();
 					}
 				}
@@ -350,7 +377,6 @@ public class PluginsManager {
 			} catch (IOException ex) {
 			}
 		}
-		System.gc();
 		sender.sendMessage("§6卸载: §a插件: " + name + " 已成功卸载!");
 		return true;
 	}
