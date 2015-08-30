@@ -62,12 +62,12 @@ public class PluginsManager {
 		}
 	}
 
-	public static boolean deletePlugin(Plugin plugin) {
-		return deletePlugin(Bukkit.getConsoleSender(), plugin);
-	}
-
 	public static boolean deletePlugin(CommandSender sender, Plugin plugin) {
 		return unload(sender, plugin) && getPluginFile(plugin).delete();
+	}
+
+	public static boolean deletePlugin(Plugin plugin) {
+		return deletePlugin(Bukkit.getConsoleSender(), plugin);
 	}
 
 	public static void disable(Plugin plugin) {
@@ -106,8 +106,7 @@ public class PluginsManager {
 		ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
 		String pluginName = color + plugin.getName();
 		if (includeVersions) {
-			pluginName = pluginName + " ("
-					+ plugin.getDescription().getVersion() + ")";
+			pluginName = pluginName + " (" + plugin.getDescription().getVersion() + ")";
 		}
 		return pluginName;
 	}
@@ -135,8 +134,7 @@ public class PluginsManager {
 	public static List<String> getPluginNames(boolean fullName) {
 		List<String> plugins = new ArrayList<String>();
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			plugins.add(fullName ? plugin.getDescription().getFullName()
-					: plugin.getName());
+			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
 		}
 		return plugins;
 	}
@@ -151,15 +149,12 @@ public class PluginsManager {
 	public static String getUsages(Plugin plugin) {
 		List<String> parsedCommands = new ArrayList<String>();
 
-		Map<String, Map<String, Object>> commands = plugin.getDescription()
-				.getCommands();
+		Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
 
 		if (commands != null) {
-			Iterator<Entry<String, Map<String, Object>>> commandsIt = commands
-					.entrySet().iterator();
+			Iterator<Entry<String, Map<String, Object>>> commandsIt = commands.entrySet().iterator();
 			while (commandsIt.hasNext()) {
-				Entry<String, Map<String, Object>> thisEntry = commandsIt
-						.next();
+				Entry<String, Map<String, Object>> thisEntry = commandsIt.next();
 				if (thisEntry != null) {
 					parsedCommands.add(thisEntry.getKey());
 				}
@@ -233,16 +228,13 @@ public class PluginsManager {
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name
-					+ " 的plugin.yml文件存在错误!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 的plugin.yml文件存在错误!");
 			return false;
 		} catch (InvalidPluginException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name
-					+ " 不是一个可载入的插件!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 文件: " + name + " 不是一个可载入的插件!");
 			return false;
 		} catch (UnknownDependencyException e) {
-			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name
-					+ " 缺少部分依赖项目!");
+			sender.sendMessage("§c异常: " + e.getMessage() + " 插件: " + name + " 缺少部分依赖项目!");
 			return false;
 		}
 
@@ -260,15 +252,14 @@ public class PluginsManager {
 		return load(Bukkit.getConsoleSender(), name);
 	}
 
-	public static boolean reload(Plugin plugin) {
-		return reload(Bukkit.getConsoleSender(), plugin);
+	public static boolean reload(CommandSender sender, Plugin plugin) {
+		if (plugin != null)
+			return unload(sender, plugin) && load(sender, plugin);
+		return false;
 	}
 
-	public static boolean reload(CommandSender sender, Plugin plugin) {
-		if (plugin != null) {
-			return unload(sender, plugin) && load(sender, plugin);
-		}
-		return false;
+	public static boolean reload(Plugin plugin) {
+		return reload(Bukkit.getConsoleSender(), plugin);
 	}
 
 	public static void reloadAll() {
@@ -294,41 +285,31 @@ public class PluginsManager {
 		boolean reloadlisteners = true;
 		if (pluginManager != null) {
 			try {
-				Field pluginsField = Bukkit.getPluginManager().getClass()
-						.getDeclaredField("plugins");
+				Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
 				pluginsField.setAccessible(true);
 				plugins = (List<Plugin>) pluginsField.get(pluginManager);
 
-				Field lookupNamesField = Bukkit.getPluginManager().getClass()
-						.getDeclaredField("lookupNames");
+				Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
 				lookupNamesField.setAccessible(true);
-				lookupNames = (Map<String, Plugin>) lookupNamesField
-						.get(pluginManager);
+				lookupNames = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
 
 				try {
-					Field listenersField = Bukkit.getPluginManager().getClass()
-							.getDeclaredField("listeners");
+					Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
 					listenersField.setAccessible(true);
-					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField
-							.get(pluginManager);
+					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
 				} catch (Exception e) {
 					reloadlisteners = false;
 				}
 
-				Field commandMapField = Bukkit.getPluginManager().getClass()
-						.getDeclaredField("commandMap");
+				Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
 				commandMapField.setAccessible(true);
-				commandMap = (SimpleCommandMap) commandMapField
-						.get(pluginManager);
+				commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
 
-				Field knownCommandsField = SimpleCommandMap.class
-						.getDeclaredField("knownCommands");
+				Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
 				knownCommandsField.setAccessible(true);
-				knownCommands = (Map<String, Command>) knownCommandsField
-						.get(commandMap);
+				knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
 			} catch (Exception e) {
-				sender.sendMessage("§c异常: " + e.getMessage() + " 插件 " + name
-						+ " 卸载失败!");
+				sender.sendMessage("§c异常: " + e.getMessage() + " 插件 " + name + " 卸载失败!");
 				return false;
 			}
 		}
@@ -343,21 +324,19 @@ public class PluginsManager {
 					lookupNames.remove(name);
 				}
 
-				if (commandMap != null)
-					for (Iterator<Map.Entry<String, Command>> it = knownCommands
-							.entrySet().iterator(); it.hasNext();) {
+				if (commandMap != null) {
+					for (Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
 						Map.Entry<String, Command> entry = it.next();
 
 						if ((entry.getValue() instanceof PluginCommand)) {
-							PluginCommand command = (PluginCommand) entry
-									.getValue();
-
+							PluginCommand command = (PluginCommand) entry.getValue();
 							if (command.getPlugin() == next) {
 								command.unregister(commandMap);
 								it.remove();
 							}
 						}
 					}
+				}
 			}
 		}
 		if (listeners != null && reloadlisteners) {
