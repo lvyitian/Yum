@@ -3,12 +3,12 @@
  */
 package cn.citycraft.Yum.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.utils.PluginsManager;
 
 /**
  * 插件删除命令类
@@ -16,22 +16,22 @@ import cn.citycraft.Yum.utils.PluginsManager;
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandDelete extends BaseCommand {
-	Yum yum;
+	Yum main;
 
 	/**
 	 * @param name
 	 */
 	public CommandDelete(Yum main) {
 		super("delete");
-		this.yum = main;
+		this.main = main;
 	}
 
 	@Override
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
-		Plugin plugin = yum.getServer().getPluginManager().getPlugin(pluginname);
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			PluginsManager.deletePlugin(sender, plugin);
+			main.plugman.deletePlugin(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}

@@ -1,4 +1,5 @@
 name: ${project.artifactId}
+description: ${project.description}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
 version: ${project.version}
 auther: 喵♂呜

@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.citycraft.Yum.utils;
+package cn.citycraft.Yum.manager;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,7 +14,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 /**
- * @author 蒋天蓓 2015年8月21日下午6:08:09 TODO
+ * 下载管理类
+ * 
+ * @author 蒋天蓓
+ *         2015年8月21日下午6:08:09
  */
 public class DownloadManager {
 	Plugin plugin;
@@ -23,14 +26,27 @@ public class DownloadManager {
 		this.plugin = main;
 	}
 
+	/**
+	 * 从地址获得文件名称
+	 * 
+	 * @param url
+	 *            - 地址
+	 * @return 文件名称
+	 */
 	public String getFileName(String url) {
 		int end = url.lastIndexOf('/');
 		return url.substring(end + 1);
 	}
 
+	/**
+	 * 从地址获得文件名称
+	 * 
+	 * @param url
+	 *            - 地址
+	 * @return 文件名称
+	 */
 	public String getFileName(URL url) {
-		int end = url.getFile().lastIndexOf('/');
-		return url.getFile().substring(end + 1);
+		return getFileName(url.getFile());
 	}
 
 	private String getPer(int per) {
@@ -47,6 +63,41 @@ public class DownloadManager {
 		return sb.toString();
 	}
 
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param urlstring
+	 *            - 下载地址
+	 * @return 是否成功
+	 */
+	public boolean run(String urlstring) {
+		return run(null, urlstring);
+	}
+
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param sender
+	 *            - 命令发送者
+	 * @param urlstring
+	 *            - 下载地址
+	 * @return 是否成功
+	 */
+	public boolean run(CommandSender sender, String urlstring) {
+		return run(sender, urlstring, new File("plugins", getFileName(urlstring)));
+	}
+
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param sender
+	 *            - 命令发送者
+	 * @param urlstring
+	 *            - 下载地址
+	 * @param file
+	 *            - 保存文件
+	 * @return 是否成功
+	 */
 	public boolean run(CommandSender sender, String urlstring, File file) {
 		URL url;
 		try {
@@ -58,6 +109,17 @@ public class DownloadManager {
 		}
 	}
 
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param sender
+	 *            - 命令发送者
+	 * @param url
+	 *            - 下载地址
+	 * @param file
+	 *            - 保存文件
+	 * @return 是否成功
+	 */
 	public boolean run(CommandSender sender, URL url, File file) {
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
@@ -108,10 +170,28 @@ public class DownloadManager {
 		}
 	}
 
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param urlstring
+	 *            - 下载地址
+	 * @param file
+	 *            - 保存文件
+	 * @return 是否成功
+	 */
 	public boolean run(String urlstring, File file) {
 		return run(null, urlstring, file);
 	}
 
+	/**
+	 * 从网络下载文件
+	 * 
+	 * @param url
+	 *            - 下载地址
+	 * @param file
+	 *            - 保存文件
+	 * @return 是否成功
+	 */
 	public boolean run(URL url, File file) {
 		return run(null, url, file);
 	}

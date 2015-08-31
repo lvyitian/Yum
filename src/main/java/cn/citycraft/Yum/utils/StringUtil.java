@@ -8,9 +8,10 @@ import java.util.Collection;
 import org.bukkit.command.CommandSender;
 
 /**
+ * 字符串工具
+ * 
  * @author 蒋天蓓
  *         2015年8月22日下午12:41:59
- *         TODO
  */
 public class StringUtil {
 	/**
@@ -31,9 +32,17 @@ public class StringUtil {
 		return ret;
 	}
 
-	public static void sendStringArray(CommandSender player, Collection<String> msg) {
+	/**
+	 * 给玩家或控制台发送消息组
+	 * 
+	 * @param sender
+	 *            - 接收消息的玩家
+	 * @param msg
+	 *            - 消息组
+	 */
+	public static void sendStringArray(CommandSender sender, Collection<String> msg) {
 		for (String string : msg) {
-			player.sendMessage("§6 - §3" + string);
+			sender.sendMessage("§6 - §3" + string);
 		}
 	}
 }

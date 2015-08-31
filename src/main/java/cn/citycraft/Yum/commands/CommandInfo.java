@@ -10,7 +10,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.utils.PluginsManager;
 import cn.citycraft.Yum.utils.StringUtil;
 
 /**
@@ -19,14 +18,14 @@ import cn.citycraft.Yum.utils.StringUtil;
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandInfo extends BaseCommand {
-	Yum yum;
+	Yum main;
 
 	/**
 	 * @param name
 	 */
 	public CommandInfo(Yum main) {
 		super("info");
-		this.yum = main;
+		this.main = main;
 	}
 
 	@Override
@@ -40,7 +39,7 @@ public class CommandInfo extends BaseCommand {
 			return;
 		}
 		String pluginname = args[0];
-		Plugin plugin = yum.getServer().getPluginManager().getPlugin(pluginname);
+		Plugin plugin = main.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
 			PluginDescriptionFile desc = plugin.getDescription();
 			sender.sendMessage("§6插件名称: §3" + plugin.getName());
@@ -51,7 +50,7 @@ public class CommandInfo extends BaseCommand {
 			StringUtil.sendStringArray(sender, desc.getDepend());
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
-			sender.sendMessage("§6插件物理路径: §3" + PluginsManager.getPluginFile(plugin).getAbsolutePath());
+			sender.sendMessage("§6插件物理路径: §3" + main.plugman.getPluginFile(plugin).getAbsolutePath());
 		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 		}
