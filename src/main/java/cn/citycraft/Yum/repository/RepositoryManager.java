@@ -85,7 +85,6 @@ public class RepositoryManager {
 				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
 			}
 		}
-		sender.sendMessage("§6源: §a所有的源已更新完成!");
 		return true;
 	}
 

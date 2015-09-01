@@ -50,6 +50,7 @@ public class CommandRepo extends BaseCommand {
 			break;
 		case "update":
 			main.repo.updateRepositories(sender);
+			sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
 			break;
 		}
 	};
