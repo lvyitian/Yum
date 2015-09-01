@@ -1,7 +1,6 @@
 package cn.citycraft.Yum.manager;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,13 +16,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 
 import cn.citycraft.Yum.utils.StringUtil;
@@ -402,27 +398,17 @@ public class PluginsManager {
 		List<Plugin> plugins = null;
 		Map<String, Plugin> lookupNames = null;
 		Map<String, Command> knownCommands = null;
-		Map<Event, SortedSet<RegisteredListener>> listeners = null;
-		boolean reloadlisteners = true;
 		if (pluginManager != null) {
 			try {
-				Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
+				Field pluginsField = pluginManager.getClass().getDeclaredField("plugins");
 				pluginsField.setAccessible(true);
 				plugins = (List<Plugin>) pluginsField.get(pluginManager);
 
-				Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
+				Field lookupNamesField = pluginManager.getClass().getDeclaredField("lookupNames");
 				lookupNamesField.setAccessible(true);
 				lookupNames = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
 
-				try {
-					Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
-					listenersField.setAccessible(true);
-					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
-				} catch (Exception e) {
-					reloadlisteners = false;
-				}
-
-				Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+				Field commandMapField = pluginManager.getClass().getDeclaredField("commandMap");
 				commandMapField.setAccessible(true);
 				commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
 
@@ -439,10 +425,12 @@ public class PluginsManager {
 				pluginManager.disablePlugin(next);
 				if ((plugins != null) && (plugins.contains(next))) {
 					plugins.remove(next);
+					sender.sendMessage("§6卸载: §a从服务器插件列表删除 " + name + " 的实例!");
 				}
 
 				if ((lookupNames != null) && (lookupNames.containsKey(name))) {
 					lookupNames.remove(name);
+					sender.sendMessage("§6卸载: §a从插件查找列表删除 " + name + " 的实例!");
 				}
 
 				if (commandMap != null) {
@@ -458,25 +446,6 @@ public class PluginsManager {
 						}
 					}
 				}
-			}
-		}
-		if (listeners != null && reloadlisteners) {
-			for (SortedSet<RegisteredListener> set : listeners.values()) {
-				for (Iterator<RegisteredListener> it = set.iterator(); it.hasNext();) {
-					RegisteredListener value = it.next();
-					if (value.getPlugin().getName().equals(name)) {
-						it.remove();
-						sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + value.getListener().getClass() + " 监听器已卸载!");
-					}
-				}
-			}
-		}
-		ClassLoader cl = plugin.getClass().getClassLoader();
-		if ((cl instanceof URLClassLoader)) {
-			try {
-				((URLClassLoader) cl).close();
-				sender.sendMessage("§6卸载: §a插件 " + name + " 类加载器已卸载!");
-			} catch (IOException ex) {
 			}
 		}
 		sender.sendMessage("§6卸载: §a插件 " + name + " 已成功卸载!");
