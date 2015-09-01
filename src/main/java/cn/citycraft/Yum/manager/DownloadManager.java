@@ -141,19 +141,23 @@ public class DownloadManager {
 			byte[] data = new byte[1024];
 			long downloaded = 0L;
 			int count;
+			long time = System.currentTimeMillis();
 			while ((count = in.read(data)) != -1) {
 				downloaded += count;
 				fout.write(data, 0, count);
 				int percent = (int) (downloaded * 100L / fileLength);
 				if (percent % 10 == 0) {
-					sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+					if (fileLength < 102400 || System.currentTimeMillis() - time > 1000) {
+						sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+						time = System.currentTimeMillis();
+					}
 				}
 			}
 			sender.sendMessage("§6文件: §a" + file.getName() + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
+			sender.sendMessage("§6异常: §c" + ex.getMessage());
 			sender.sendMessage("§6文件: §c" + file.getName() + "下载失败!");
-			ex.printStackTrace();
 			return false;
 		} finally {
 			try {
