@@ -48,7 +48,7 @@ public class RepositoryManager {
 		plugins.clear();
 	}
 
-	public void updatePackage(Package pkg) {
+	public synchronized void updatePackage(Package pkg) {
 		for (Plugin plugin : pkg.plugins) {
 			PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
@@ -58,12 +58,12 @@ public class RepositoryManager {
 		}
 	}
 
-	public void cacheToJson(FileConfiguration config) {
+	public synchronized void cacheToJson(FileConfiguration config) {
 		config.set("repocache", gson.toJson(repos));
 		config.set("plugincache", gson.toJson(plugins));
 	}
 
-	public boolean jsonToCache(FileConfiguration config) {
+	public synchronized boolean jsonToCache(FileConfiguration config) {
 		String repocache = config.getString("repocache");
 		String plugincache = config.getString("plugincache");
 		try {
@@ -79,7 +79,7 @@ public class RepositoryManager {
 		}
 	}
 
-	public boolean updateRepositories(CommandSender sender) {
+	public synchronized boolean updateRepositories(CommandSender sender) {
 		plugins.clear();
 		for (String string : repos) {
 			if (addRepositories(string)) {
@@ -91,7 +91,7 @@ public class RepositoryManager {
 		return true;
 	}
 
-	public boolean addRepositories(String urlstring) {
+	public synchronized boolean addRepositories(String urlstring) {
 		String json = getHtml(urlstring);
 		if (json == "") {
 			return false;
@@ -107,7 +107,7 @@ public class RepositoryManager {
 		return true;
 	}
 
-	public boolean addPackage(String urlstring) {
+	public synchronized boolean addPackage(String urlstring) {
 		String json = getHtml(urlstring);
 		if (json == "") {
 			return false;
