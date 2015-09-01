@@ -10,6 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 import cn.citycraft.Yum.utils.StringUtil;
 
 /**
@@ -50,7 +51,7 @@ public class CommandInfo extends BaseCommand {
 			StringUtil.sendStringArray(sender, desc.getDepend());
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
-			sender.sendMessage("§6插件物理路径: §3" + main.plugman.getPluginFile(plugin).getAbsolutePath());
+			sender.sendMessage("§6插件物理路径: §3" + YumManager.plugman.getPluginFile(plugin).getAbsolutePath());
 		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 		}

@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * 子命令处理类
@@ -131,7 +132,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 				String partialPlugin = args[1];
 				List<String> plugins = null;
 				if (args[0].equalsIgnoreCase("install"))
-					plugins = main.repo.getAllPluginName();
+					plugins = YumManager.repo.getAllPluginName();
 				else if (args[0].equalsIgnoreCase("repo"))
 					plugins = Arrays.asList(new String[] {
 							"add",
@@ -140,7 +141,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 							"update"
 					});
 				else
-					plugins = main.plugman.getPluginNames(false);
+					plugins = YumManager.plugman.getPluginNames(false);
 				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
 			}
 			Collections.sort(completions);

@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * 插件删除命令类
@@ -31,7 +32,7 @@ public class CommandLoad extends BaseCommand {
 		String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin == null) {
-			main.plugman.load(sender, pluginname);
+			YumManager.plugman.load(sender, pluginname);
 		} else {
 			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
 		}

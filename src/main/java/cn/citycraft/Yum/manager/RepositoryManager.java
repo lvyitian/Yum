@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.citycraft.Yum.repository;
+package cn.citycraft.Yum.manager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,10 @@ import java.util.Map.Entry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.repository.Package;
+import cn.citycraft.Yum.repository.Plugin;
+import cn.citycraft.Yum.repository.PluginInfo;
+import cn.citycraft.Yum.repository.Repository;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -32,10 +35,10 @@ public class RepositoryManager {
 	List<String> repos;
 	HashMap<String, PluginInfo> plugins;
 
-	Yum main;
+	org.bukkit.plugin.Plugin main;
 
-	public RepositoryManager(Yum yum) {
-		this.main = yum;
+	public RepositoryManager(org.bukkit.plugin.Plugin plugin) {
+		this.main = plugin;
 		gson = new Gson();
 		plugins = new HashMap<String, PluginInfo>();
 		repos = new ArrayList<String>();
@@ -45,7 +48,7 @@ public class RepositoryManager {
 		plugins.clear();
 	}
 
-	public void update(Package pkg) {
+	public void updatePackage(Package pkg) {
 		for (Plugin plugin : pkg.plugins) {
 			PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
@@ -113,7 +116,7 @@ public class RepositoryManager {
 		if (pkg == null) {
 			return false;
 		}
-		update(pkg);
+		updatePackage(pkg);
 		return true;
 	}
 

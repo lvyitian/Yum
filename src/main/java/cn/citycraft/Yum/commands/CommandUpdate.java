@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.repository.PluginInfo;
+import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * @author 蒋天蓓 2015年8月12日下午2:04:05
@@ -34,21 +34,10 @@ public class CommandUpdate extends BaseCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
 				@Override
 				public void run() {
-					PluginInfo pi = main.repo.getPlugin(pluginname);
-					if (pi != null) {
-						String fileurl;
-						if (args.length < 2) {
-							fileurl = pi.getMavenUrl();
-						} else {
-							fileurl = pi.getMavenUrl(args[1]);
-						}
-						if (main.download.run(sender, fileurl, main.plugman.getPluginFile(plugin))) {
-							if (main.plugman.unload(sender, plugin)) {
-								main.plugman.load(sender, pluginname);
-							}
-						}
-					}
-
+					if (args.length < 2)
+						YumManager.update(sender, plugin);
+					else
+						YumManager.update(sender, plugin, args[1]);
 				}
 			});
 		} else {

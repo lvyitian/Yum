@@ -7,6 +7,7 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 import cn.citycraft.Yum.utils.StringUtil;
 
 /**
@@ -31,7 +32,7 @@ public class CommandRepo extends BaseCommand {
 		switch (cmd) {
 		case "add":
 			if (args.length == 2) {
-				if (main.repo.addRepositories(args[1])) {
+				if (YumManager.repo.addRepositories(args[1])) {
 					sender.sendMessage("§6仓库: §a插件信息已缓存!");
 				} else {
 					sender.sendMessage("§6仓库: §c源地址未找到仓库信息或无法访问!");
@@ -42,14 +43,14 @@ public class CommandRepo extends BaseCommand {
 			break;
 		case "list":
 			sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-			StringUtil.sendStringArray(sender, main.repo.getAllPluginsInfo());
+			StringUtil.sendStringArray(sender, YumManager.repo.getAllPluginsInfo());
 			break;
 		case "clean":
-			main.repo.clean();
+			YumManager.repo.clean();
 			sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
 			break;
 		case "update":
-			main.repo.updateRepositories(sender);
+			YumManager.repo.updateRepositories(sender);
 			sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
 			break;
 		}

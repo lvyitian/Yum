@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * 插件删除命令类
@@ -30,12 +31,12 @@ public class CommandReload extends BaseCommand {
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
 		if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
-			main.plugman.reloadAll(sender);
+			YumManager.plugman.reloadAll(sender);
 			return;
 		}
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			main.plugman.reload(sender, plugin);
+			YumManager.plugman.reload(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}

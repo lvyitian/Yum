@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.repository.PluginInfo;
 
 /**
  * 插件安装命令类
@@ -35,11 +34,7 @@ public class CommandInstall extends BaseCommand {
 			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
 				@Override
 				public void run() {
-					PluginInfo pi = main.repo.getPlugin(pluginname);
-					if (pi != null)
-						if (main.download.run(sender, pi.getMavenUrl())) {
-							main.plugman.load(sender, pluginname);
-						}
+
 				}
 			});
 		} else {

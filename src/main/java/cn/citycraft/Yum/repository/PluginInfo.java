@@ -12,13 +12,12 @@ public class PluginInfo {
 	public String repo;
 
 	public String getMavenUrl() {
-		return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"),
-				plugin.artifactId, plugin.version);
+		return getMavenUrl(null);
 	}
 
 	public String getMavenUrl(String version) {
 		return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"),
-				plugin.artifactId, version);
+				plugin.artifactId, version == null ? plugin.version : version);
 	}
 
 	public String getFileName() {
