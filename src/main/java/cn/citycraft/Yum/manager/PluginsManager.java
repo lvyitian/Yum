@@ -441,10 +441,10 @@ public class PluginsManager {
 							if (command.getPlugin() == next) {
 								command.unregister(commandMap);
 								it.remove();
-								sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + command.getLabel() + " 命令已卸载!");
 							}
 						}
 					}
+					sender.sendMessage("§6卸载: §a注销插件 " + name + " 的所有命令!");
 				}
 			}
 		}
