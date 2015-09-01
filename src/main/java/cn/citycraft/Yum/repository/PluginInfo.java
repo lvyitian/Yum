@@ -12,7 +12,8 @@ public class PluginInfo {
 	public String repo;
 
 	public String getMavenUrl() {
-		return String.format(url + "/%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"), plugin.artifactId, plugin.version);
+		return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"),
+				plugin.artifactId, plugin.version);
 	}
 
 	public String getFileName() {
