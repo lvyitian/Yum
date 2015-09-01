@@ -36,7 +36,7 @@ public class CommandUpdate extends BaseCommand {
 				public void run() {
 					PluginInfo pi = main.repo.getPlugin(pluginname);
 					if (pi != null)
-						if (main.download.run(sender, pi.getMavenUrl())) {
+						if (main.download.run(sender, pi.getMavenUrl(), main.plugman.getPluginFile(plugin))) {
 							if (main.plugman.unload(sender, plugin)) {
 								main.plugman.load(sender, pluginname);
 							}
