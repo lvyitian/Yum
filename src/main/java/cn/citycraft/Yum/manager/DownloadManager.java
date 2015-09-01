@@ -101,6 +101,7 @@ public class DownloadManager {
 			return run(sender, url, file);
 		} catch (MalformedURLException e) {
 			sender.sendMessage("§4错误: §c无法识别的URL地址...");
+			sender.sendMessage("§4地址: §c" + urlstring);
 			return false;
 		}
 	}
@@ -126,6 +127,11 @@ public class DownloadManager {
 			sender.sendMessage("§6开始下载: §3" + getFileName(url));
 			sender.sendMessage("§6下载地址: §3" + url.toString());
 			int fileLength = url.openConnection().getContentLength();
+			if (fileLength < 0) {
+				sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
+				sender.sendMessage("§6文件: §c " + file.getName() + " 下载失败!");
+				return false;
+			}
 			sender.sendMessage("§6文件长度: §3" + fileLength);
 			in = new BufferedInputStream(url.openStream());
 			if (!file.getParentFile().exists()) {
@@ -153,11 +159,11 @@ public class DownloadManager {
 					}
 				}
 			}
-			sender.sendMessage("§6文件: §a" + file.getName() + " 下载完成!");
+			sender.sendMessage("§6文件: §a " + file.getName() + " 下载完成!");
 			return true;
 		} catch (Exception ex) {
 			sender.sendMessage("§6异常: §c" + ex.getMessage());
-			sender.sendMessage("§6文件: §c" + file.getName() + "下载失败!");
+			sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
 			return false;
 		} finally {
 			try {
