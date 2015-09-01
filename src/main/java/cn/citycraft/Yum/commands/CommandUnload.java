@@ -3,43 +3,37 @@
  */
 package cn.citycraft.Yum.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.utils.StringUtil;
 
 /**
  * 插件删除命令类
  *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
-public class CommandRepo extends BaseCommand {
+public class CommandUnload extends BaseCommand {
 	Yum main;
 
 	/**
 	 * @param name
 	 */
-	public CommandRepo(Yum main) {
-		super("repo");
+	public CommandUnload(Yum main) {
+		super("unload");
 		this.main = main;
 	}
 
 	@Override
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String cmd = args[0];
-		switch (cmd) {
-		case "add":
-			if (args.length == 2) {
-				main.repo.addRepositories(args[1]);
-			}
-			sender.sendMessage("§6仓库: §a插件信息已缓存!");
-		case "list":
-			sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-			StringUtil.sendStringArray(sender, main.repo.getAllPluginString());
-		case "clean":
-			main.repo.clean();
-			sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
+		String pluginname = args[0];
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+		if (plugin != null) {
+			main.plugman.unload(sender, plugin);
+		} else {
+			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}
 	};
 
@@ -50,7 +44,7 @@ public class CommandRepo extends BaseCommand {
 
 	@Override
 	public String getPossibleArguments() {
-		return "<add|del|clean|list> <仓库名称>";
+		return "<插件名称>";
 	}
 
 	@Override

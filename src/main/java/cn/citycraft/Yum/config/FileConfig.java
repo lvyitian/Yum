@@ -75,7 +75,7 @@ public class FileConfig extends YamlConfiguration {
 		InputStream stream = plugin.getResource(filename);
 		try {
 			if (!file.exists()) {
-				file.mkdirs();
+				file.getParentFile().mkdirs();
 				if (stream == null) {
 					file.createNewFile();
 					loger.info("配置文件 " + filename + " 不存在 创建新文件...");

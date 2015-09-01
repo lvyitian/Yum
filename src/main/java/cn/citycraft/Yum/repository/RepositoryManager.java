@@ -43,7 +43,7 @@ public class RepositoryManager {
 			PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
 			pi.url = pkg.url;
-			plugins.put(plugin.groupId + plugin.artifactId, pi);
+			plugins.put(plugin.groupId + "." + plugin.artifactId, pi);
 		}
 	}
 
@@ -108,7 +108,7 @@ public class RepositoryManager {
 	}
 
 	public PluginInfo getPluginInfo(String groupId, String artifactId) {
-		return plugins.get(groupId + artifactId);
+		return plugins.get(groupId + "." + artifactId);
 	}
 
 	public PluginInfo getPlugin(String name) {
@@ -117,6 +117,23 @@ public class RepositoryManager {
 				return plugin.getValue();
 		}
 		return null;
+	}
+
+	public List<PluginInfo> getAllPlugin() {
+		List<PluginInfo> li = new ArrayList<PluginInfo>();
+		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			li.add(plugin.getValue());
+		}
+		return li;
+	}
+
+	public List<String> getAllPluginString() {
+		List<String> li = new ArrayList<String>();
+		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			Plugin pl = plugin.getValue().plugin;
+			li.add(String.format("%s %s(%s)", pl.groupId, pl.artifactId, pl.version));
+		}
+		return li;
 	}
 
 	public List<PluginInfo> getPluginInfo(String name) {

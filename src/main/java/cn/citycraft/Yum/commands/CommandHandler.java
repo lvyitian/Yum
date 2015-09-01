@@ -66,6 +66,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 		registerCommand(new CommandDelete(yum));
 		registerCommand(new CommandInfo(yum));
 		registerCommand(new CommandRepo(yum));
+		registerCommand(new CommandReload(yum));
+		registerCommand(new CommandLoad(yum));
+		registerCommand(new CommandUnload(yum));
 
 		RegisterCommandList = getRegisterCommands();
 	}

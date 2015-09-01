@@ -363,6 +363,17 @@ public class PluginsManager {
 	/**
 	 * 重载所有插件
 	 */
+	public void reloadAll(CommandSender sender) {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+			if (!isIgnored(plugin)) {
+				reload(sender, plugin);
+			}
+		}
+	}
+
+	/**
+	 * 重载所有插件
+	 */
 	public void reloadAll() {
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			if (!isIgnored(plugin)) {
