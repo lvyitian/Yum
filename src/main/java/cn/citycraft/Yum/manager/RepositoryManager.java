@@ -48,7 +48,7 @@ public class RepositoryManager {
 		plugins.clear();
 	}
 
-	public synchronized void updatePackage(Package pkg) {
+	public void updatePackage(Package pkg) {
 		for (Plugin plugin : pkg.plugins) {
 			PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
@@ -58,12 +58,12 @@ public class RepositoryManager {
 		}
 	}
 
-	public synchronized void cacheToJson(FileConfiguration config) {
+	public void cacheToJson(FileConfiguration config) {
 		config.set("repocache", gson.toJson(repos));
 		config.set("plugincache", gson.toJson(plugins));
 	}
 
-	public synchronized boolean jsonToCache(FileConfiguration config) {
+	public boolean jsonToCache(FileConfiguration config) {
 		String repocache = config.getString("repocache");
 		String plugincache = config.getString("plugincache");
 		try {
@@ -79,10 +79,10 @@ public class RepositoryManager {
 		}
 	}
 
-	public synchronized boolean updateRepositories(CommandSender sender) {
+	public boolean updateRepositories(CommandSender sender) {
 		plugins.clear();
 		for (String string : repos) {
-			if (addRepositories(string)) {
+			if (updateRepositories(string)) {
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
 			} else {
 				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
@@ -91,7 +91,12 @@ public class RepositoryManager {
 		return true;
 	}
 
-	public synchronized boolean addRepositories(String urlstring) {
+	public boolean addRepositories(String urlstring) {
+		repos.add(urlstring);
+		return updateRepositories(urlstring);
+	}
+
+	public boolean updateRepositories(String urlstring) {
 		String json = getHtml(urlstring);
 		if (json == "") {
 			return false;
@@ -103,11 +108,10 @@ public class RepositoryManager {
 		for (Repository repository : lrepo) {
 			addPackage(repository.url);
 		}
-		repos.add(urlstring);
 		return true;
 	}
 
-	public synchronized boolean addPackage(String urlstring) {
+	public boolean addPackage(String urlstring) {
 		String json = getHtml(urlstring);
 		if (json == "") {
 			return false;
