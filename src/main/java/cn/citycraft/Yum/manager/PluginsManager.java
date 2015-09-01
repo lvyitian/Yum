@@ -454,7 +454,7 @@ public class PluginsManager {
 							if (command.getPlugin() == next) {
 								command.unregister(commandMap);
 								it.remove();
-								sender.sendMessage("§6卸载: §a插件: " + name + " 的命令!");
+								sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + command.getDescription() + " 命令已卸载!");
 							}
 						}
 					}
@@ -467,7 +467,7 @@ public class PluginsManager {
 					RegisteredListener value = it.next();
 					if (value.getPlugin().getName().equals(name)) {
 						it.remove();
-						sender.sendMessage("§6卸载: §a插件: " + name + " 的监听器!");
+						sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + value.getListener().getClass() + " 监听器已卸载!");
 					}
 				}
 			}
@@ -476,11 +476,11 @@ public class PluginsManager {
 		if ((cl instanceof URLClassLoader)) {
 			try {
 				((URLClassLoader) cl).close();
-				sender.sendMessage("§6卸载: §a插件: " + name + " 的类加载器!");
+				sender.sendMessage("§6卸载: §a插件 " + name + " 类加载器已卸载!");
 			} catch (IOException ex) {
 			}
 		}
-		sender.sendMessage("§6卸载: §a插件: " + name + " 已成功卸载!");
+		sender.sendMessage("§6卸载: §a插件 " + name + " 已成功卸载!");
 		return true;
 	}
 

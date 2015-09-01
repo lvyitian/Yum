@@ -73,6 +73,7 @@ public class FileConfig extends YamlConfiguration {
 	private void check(File file) {
 		String filename = file.getName();
 		InputStream stream = plugin.getResource(filename);
+
 		try {
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
@@ -84,6 +85,9 @@ public class FileConfig extends YamlConfiguration {
 					loger.info("配置文件 " + filename + " 不存在 从插件释放...");
 				}
 			} else {
+				if (stream == null) {
+					return;
+				}
 				FileConfig newcfg = new FileConfig(stream);
 				FileConfig oldcfg = new FileConfig(file);
 				String newver = newcfg.getString("version");
