@@ -30,10 +30,10 @@ public class CommandLoad extends BaseCommand {
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null) {
+		if (plugin == null) {
 			main.plugman.load(sender, pluginname);
 		} else {
-			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
 		}
 	};
 

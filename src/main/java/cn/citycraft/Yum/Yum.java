@@ -24,20 +24,21 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		CommandHandler cmdhandler = new CommandHandler(this);
+		this.getCommand("yum").setExecutor(cmdhandler);
+		this.getCommand("yum").setTabCompleter(cmdhandler);
 		plugman = new PluginsManager(this);
 		download = new DownloadManager(this);
 		repo = new RepositoryManager(this);
 		config = new FileConfig(this, "config.yml");
 		repo.jsonToCache(config.getString("cache"));
-		CommandHandler cmdhandler = new CommandHandler(this);
-		this.getCommand("yum").setExecutor(cmdhandler);
-		this.getCommand("yum").setTabCompleter(cmdhandler);
-		this.getPluginLoader();
 	}
 
 	@Override
 	public void onDisable() {
-		config.set("cache", repo.cacheToJson());
+		if (config != null)
+			config.set("cache", repo.cacheToJson());
+		config.save();
 	}
 
 }

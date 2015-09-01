@@ -12,5 +12,6 @@ package cn.citycraft.Yum.repository;
 public class Plugin {
 	public String groupId;
 	public String artifactId;
+	public String description;
 	public String version;
 }

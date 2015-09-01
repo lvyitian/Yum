@@ -4,6 +4,7 @@
 package cn.citycraft.Yum.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	 */
 	public static String[] moveStrings(String[] args, int start) {
 		String[] ret = new String[args.length - start];
-		System.arraycopy(args, args.length - start, ret, 0, ret.length);
+		System.arraycopy(args, start, ret, 0, ret.length);
 		return ret;
 	}
 
@@ -128,7 +129,17 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 			}
 			if (args.length == 2) {
 				String partialPlugin = args[1];
-				List<String> plugins = main.plugman.getPluginNames(false);
+				List<String> plugins = null;
+				if (args[0].equalsIgnoreCase("install"))
+					plugins = main.repo.getAllPluginName();
+				else if (args[0].equalsIgnoreCase("repo"))
+					plugins = Arrays.asList(new String[] {
+							"add",
+							"list",
+							"clean"
+					});
+				else
+					plugins = main.plugman.getPluginNames(false);
 				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
 			}
 			Collections.sort(completions);

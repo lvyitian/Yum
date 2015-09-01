@@ -1,6 +1,3 @@
-/**
- *
- */
 package cn.citycraft.Yum.manager;
 
 import java.io.File;
@@ -30,7 +27,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 
-import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.utils.StringUtil;
 
 import com.google.common.base.Joiner;
@@ -41,10 +37,10 @@ import com.google.common.base.Joiner;
  * @author 蒋天蓓 2015年8月21日下午7:03:26
  */
 public class PluginsManager {
-	Yum main;
+	Plugin main;
 
-	public PluginsManager(Yum yum) {
-		this.main = yum;
+	public PluginsManager(Plugin plugin) {
+		this.main = plugin;
 	}
 
 	/**
@@ -272,26 +268,23 @@ public class PluginsManager {
 	 */
 	public boolean load(CommandSender sender, String name) {
 		Plugin target = null;
-
+		String filename = null;
 		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
 		}
-
 		if (!name.endsWith(".jar")) {
-			name = name + ".jar";
+			filename = name + ".jar";
 		}
-
 		File pluginDir = new File("plugins");
 		File updateDir = new File(pluginDir, "update");
-
 		if (!pluginDir.isDirectory()) {
 			sender.sendMessage("§c插件目录不存在或IO错误!");
 			return false;
 		}
 
-		File pluginFile = new File(pluginDir, name);
+		File pluginFile = new File(pluginDir, filename);
 
-		if (!pluginFile.isFile() && !new File(updateDir, name).isFile()) {
+		if (!pluginFile.isFile() && !new File(updateDir, filename).isFile()) {
 			pluginFile = null;
 			for (File file : pluginDir.listFiles()) {
 				if (file.getName().endsWith(".jar")) {
@@ -306,7 +299,7 @@ public class PluginsManager {
 				}
 			}
 			if (pluginFile == null) {
-				sender.sendMessage("§c在插件目录和更新目录均未找到 " + name + " 插件 请确认文件是否存在!");
+				sender.sendMessage("§6载入: §c在插件目录和更新目录均未找到 " + name + " 插件 请确认文件是否存在!");
 				return false;
 			}
 		}
@@ -448,13 +441,12 @@ public class PluginsManager {
 				if (commandMap != null) {
 					for (Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
 						Map.Entry<String, Command> entry = it.next();
-
 						if ((entry.getValue() instanceof PluginCommand)) {
 							PluginCommand command = (PluginCommand) entry.getValue();
 							if (command.getPlugin() == next) {
 								command.unregister(commandMap);
 								it.remove();
-								sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + command.getDescription() + " 命令已卸载!");
+								sender.sendMessage("§6卸载: §a插件 " + name + " 的 " + command.getName() + " 命令已卸载!");
 							}
 						}
 					}

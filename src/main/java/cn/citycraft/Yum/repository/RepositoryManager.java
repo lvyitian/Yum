@@ -25,13 +25,15 @@ import com.google.gson.reflect.TypeToken;
  * @author 蒋天蓓
  */
 public class RepositoryManager {
-	Gson gson = new Gson();
-	HashMap<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
+	Gson gson;
+	HashMap<String, PluginInfo> plugins;
 
 	Yum main;
 
 	public RepositoryManager(Yum yum) {
 		this.main = yum;
+		gson = new Gson();
+		plugins = new HashMap<String, PluginInfo>();
 	}
 
 	public void clean() {
@@ -52,7 +54,8 @@ public class RepositoryManager {
 	}
 
 	public boolean jsonToCache(String json) {
-		if (json == "") {
+		if (json == null || json == "") {
+			plugins = new HashMap<String, PluginInfo>();
 			return false;
 		}
 		try {
@@ -127,11 +130,19 @@ public class RepositoryManager {
 		return li;
 	}
 
+	public List<String> getAllPluginName() {
+		List<String> li = new ArrayList<String>();
+		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			li.add(plugin.getValue().plugin.artifactId);
+		}
+		return li;
+	}
+
 	public List<String> getAllPluginString() {
 		List<String> li = new ArrayList<String>();
 		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
 			Plugin pl = plugin.getValue().plugin;
-			li.add(String.format("%s %s(%s)", pl.groupId, pl.artifactId, pl.version));
+			li.add(String.format("%s %s(%s) - %s", pl.groupId, pl.artifactId, pl.version, pl.description));
 		}
 		return li;
 	}

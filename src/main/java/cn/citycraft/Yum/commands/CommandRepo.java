@@ -34,12 +34,15 @@ public class CommandRepo extends BaseCommand {
 				main.repo.addRepositories(args[1]);
 			}
 			sender.sendMessage("§6仓库: §a插件信息已缓存!");
+			break;
 		case "list":
 			sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
 			StringUtil.sendStringArray(sender, main.repo.getAllPluginString());
+			break;
 		case "clean":
 			main.repo.clean();
 			sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
+			break;
 		}
 	};
 

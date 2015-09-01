@@ -1,6 +1,3 @@
-/**
- *
- */
 package cn.citycraft.Yum.manager;
 
 import java.io.BufferedInputStream;
@@ -99,9 +96,8 @@ public class DownloadManager {
 	 * @return 是否成功
 	 */
 	public boolean run(CommandSender sender, String urlstring, File file) {
-		URL url;
 		try {
-			url = new URL(urlstring);
+			URL url = new URL(urlstring);
 			return run(sender, url, file);
 		} catch (MalformedURLException e) {
 			sender.sendMessage("§4错误: §c无法识别的URL地址...");
