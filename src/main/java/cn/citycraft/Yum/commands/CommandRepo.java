@@ -48,6 +48,9 @@ public class CommandRepo extends BaseCommand {
 			main.repo.clean();
 			sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
 			break;
+		case "update":
+			main.repo.updateRepositories(sender);
+			break;
 		}
 	};
 

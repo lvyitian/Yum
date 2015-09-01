@@ -136,7 +136,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 					plugins = Arrays.asList(new String[] {
 							"add",
 							"list",
-							"clean"
+							"clean",
+							"update"
 					});
 				else
 					plugins = main.plugman.getPluginNames(false);

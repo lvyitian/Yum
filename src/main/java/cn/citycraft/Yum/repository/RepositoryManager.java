@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+
 import cn.citycraft.Yum.Yum;
 
 import com.google.common.base.Charsets;
@@ -26,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public class RepositoryManager {
 	Gson gson;
+	List<String> repos;
 	HashMap<String, PluginInfo> plugins;
 
 	Yum main;
@@ -34,6 +38,7 @@ public class RepositoryManager {
 		this.main = yum;
 		gson = new Gson();
 		plugins = new HashMap<String, PluginInfo>();
+		repos = new ArrayList<String>();
 	}
 
 	public void clean() {
@@ -50,22 +55,38 @@ public class RepositoryManager {
 		}
 	}
 
-	public String cacheToJson() {
-		return gson.toJson(plugins);
+	public void cacheToJson(FileConfiguration config) {
+		config.set("repocache", gson.toJson(repos));
+		config.set("plugincache", gson.toJson(plugins));
 	}
 
-	public boolean jsonToCache(String json) {
-		if (json == null || json == "") {
-			plugins = new HashMap<String, PluginInfo>();
-			return false;
-		}
+	public boolean jsonToCache(FileConfiguration config) {
+		String repocache = config.getString("repocache");
+		String plugincache = config.getString("plugincache");
 		try {
-			plugins = gson.fromJson(json, new TypeToken<HashMap<String, PluginInfo>>() {
-			}.getType());
+			if (repocache != null && repocache != "")
+				repos = gson.fromJson(repocache, new TypeToken<List<String>>() {
+				}.getType());
+			if (plugincache != null && plugincache != "")
+				plugins = gson.fromJson(plugincache, new TypeToken<HashMap<String, PluginInfo>>() {
+				}.getType());
 			return true;
 		} catch (JsonSyntaxException e) {
 			return false;
 		}
+	}
+
+	public boolean updateRepositories(CommandSender sender) {
+		plugins.clear();
+		for (String string : repos) {
+			if (addRepositories(string)) {
+				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
+			} else {
+				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
+			}
+		}
+		sender.sendMessage("§6源: §a所有的源已更新完成!");
+		return true;
 	}
 
 	public boolean addRepositories(String urlstring) {
@@ -80,6 +101,7 @@ public class RepositoryManager {
 		for (Repository repository : lrepo) {
 			addPackage(repository.url);
 		}
+		repos.add(urlstring);
 		return true;
 	}
 
