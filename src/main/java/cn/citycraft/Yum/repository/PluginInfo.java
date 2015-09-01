@@ -16,6 +16,11 @@ public class PluginInfo {
 				plugin.artifactId, plugin.version);
 	}
 
+	public String getMavenUrl(String version) {
+		return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"),
+				plugin.artifactId, version);
+	}
+
 	public String getFileName() {
 		return String.format("%1$s-%2$s.jar", plugin.artifactId, plugin.version);
 	}

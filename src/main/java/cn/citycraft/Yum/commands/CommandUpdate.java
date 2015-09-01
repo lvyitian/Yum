@@ -26,7 +26,7 @@ public class CommandUpdate extends BaseCommand {
 	}
 
 	@Override
-	public void execute(final CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(final CommandSender sender, String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		sender.sendMessage("§a开始更新插件: " + pluginname);
@@ -35,12 +35,20 @@ public class CommandUpdate extends BaseCommand {
 				@Override
 				public void run() {
 					PluginInfo pi = main.repo.getPlugin(pluginname);
-					if (pi != null)
-						if (main.download.run(sender, pi.getMavenUrl(), main.plugman.getPluginFile(plugin))) {
+					if (pi != null) {
+						String fileurl;
+						if (args.length < 2) {
+							fileurl = pi.getMavenUrl();
+						} else {
+							fileurl = pi.getMavenUrl(args[1]);
+						}
+						if (main.download.run(sender, fileurl, main.plugman.getPluginFile(plugin))) {
 							if (main.plugman.unload(sender, plugin)) {
 								main.plugman.load(sender, pluginname);
 							}
 						}
+					}
+
 				}
 			});
 		} else {
@@ -55,7 +63,7 @@ public class CommandUpdate extends BaseCommand {
 
 	@Override
 	public String getPossibleArguments() {
-		return "<插件名称>";
+		return "<插件名称> <插件版本>";
 	}
 
 	@Override
