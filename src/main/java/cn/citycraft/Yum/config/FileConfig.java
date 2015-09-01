@@ -29,7 +29,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 /**
- * An implementation of {@link Configuration} which saves all files in Yaml. Note that this
+ * An implementation of {@link Configuration} which saves all files in Yaml.
+ * Note that this
  * implementation is not synchronized.
  */
 public class FileConfig extends YamlConfiguration {
@@ -74,9 +75,10 @@ public class FileConfig extends YamlConfiguration {
 		InputStream stream = plugin.getResource(filename);
 		try {
 			if (!file.exists()) {
+				file.mkdirs();
 				if (stream == null) {
 					file.createNewFile();
-					loger.info("配置文件 " + filename + " 创建失败...");
+					loger.info("配置文件 " + filename + " 不存在 创建新文件...");
 				} else {
 					plugin.saveResource(filename, true);
 					loger.info("配置文件 " + filename + " 不存在 从插件释放...");
