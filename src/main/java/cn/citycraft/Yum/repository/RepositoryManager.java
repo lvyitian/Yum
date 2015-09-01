@@ -143,7 +143,7 @@ public class RepositoryManager {
 		List<String> li = new ArrayList<String>();
 		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
 			Plugin pl = plugin.getValue().plugin;
-			li.add(String.format("%s %s(%s) - %s", plugin.getValue().repo, pl.artifactId, pl.version, pl.description));
+			li.add(String.format("§d%s §a%s(%s) §6- §e%s", plugin.getValue().repo, pl.artifactId, pl.version, pl.description));
 		}
 		return li;
 	}
