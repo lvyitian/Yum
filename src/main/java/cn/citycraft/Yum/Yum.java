@@ -37,7 +37,7 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		config = new FileConfig(this, "config.yml");
+		config = new FileConfig(this);
 	}
 
 }

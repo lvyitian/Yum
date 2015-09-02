@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.Yum.Yum;
+import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * 插件安装命令类
@@ -30,36 +31,17 @@ public class CommandInstall extends BaseCommand {
 	public void execute(final CommandSender sender, String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin == null) {
-			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-				@Override
-				public void run() {
-
-				}
+		if (plugin == null)
+			Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+				if (args.length < 2)
+					YumManager.install(sender, pluginname);
+				else
+					YumManager.install(sender, pluginname, args[1]);
 			});
-		} else {
+		else
 			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
-		}
 
 	};
-
-	// public static boolean installFromYum(CommandSender sender, String
-	// filename) {
-	// if (sender == null) {
-	// sender = Bukkit.getConsoleSender();
-	// }
-	// File file = new File("plugins/YumCenter", filename + ".jar");
-	// if (!file.exists()) {
-	// sender.sendMessage("§4错误: §c仓库不存在 " + filename + " 插件!");
-	// return false;
-	// }
-	// File pluginfile = new File("plugins", filename + ".jar");
-	// FileUtil.copyFile(file, pluginfile);
-	// if (PluginsManager.load(sender, filename + ".jar")) {
-	// sender.sendMessage("§6安装: §a从Yum仓库安装插件 " + filename + " 成功!");
-	// }
-	// return false;
-	// }
 
 	@Override
 	public int getMinimumArguments() {
