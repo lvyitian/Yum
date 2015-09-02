@@ -23,9 +23,9 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
 
-import cn.citycraft.Yum.utils.StringUtil;
-
 import com.google.common.base.Joiner;
+
+import cn.citycraft.Yum.utils.StringUtil;
 
 /**
  * 插件管理类
@@ -41,7 +41,7 @@ public class PluginsManager {
 
 	/**
 	 * 删除插件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param plugin
@@ -54,7 +54,7 @@ public class PluginsManager {
 
 	/**
 	 * 删除插件
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 是否成功
@@ -65,53 +65,47 @@ public class PluginsManager {
 
 	/**
 	 * 关闭插件
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 */
 	public void disable(Plugin plugin) {
-		if ((plugin.isEnabled()) && (plugin != null)) {
+		if ((plugin != null) && (plugin.isEnabled()))
 			Bukkit.getPluginManager().disablePlugin(plugin);
-		}
 	}
 
 	/**
 	 * 关闭所有插件
 	 */
 	public void disableAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (!isIgnored(plugin)) {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+			if (!isIgnored(plugin))
 				disable(plugin);
-			}
-		}
 	}
 
 	/**
 	 * 启用插件
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 */
 	public void enable(Plugin plugin) {
-		if ((!plugin.isEnabled()) && (plugin != null)) {
+		if ((plugin != null) && (!plugin.isEnabled()))
 			Bukkit.getPluginManager().enablePlugin(plugin);
-		}
 	}
 
 	/**
 	 * 启用所有插件
 	 */
 	public void enableAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (!isIgnored(plugin)) {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+			if (!isIgnored(plugin))
 				enable(plugin);
-			}
-		}
 	}
 
 	/**
 	 * 获得格式化的插件名称
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 格式化的插件名称
@@ -122,7 +116,7 @@ public class PluginsManager {
 
 	/**
 	 * 获得格式化的插件名称(可带版本)
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @param includeVersions
@@ -132,15 +126,14 @@ public class PluginsManager {
 	public String getFormattedName(Plugin plugin, boolean includeVersions) {
 		ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
 		String pluginName = color + plugin.getName();
-		if (includeVersions) {
+		if (includeVersions)
 			pluginName = pluginName + " (" + plugin.getDescription().getVersion() + ")";
-		}
 		return pluginName;
 	}
 
 	/**
 	 * 通过名称获得插件
-	 * 
+	 *
 	 * @param name
 	 *            - 名称
 	 * @return 插件
@@ -151,7 +144,7 @@ public class PluginsManager {
 
 	/**
 	 * 通过名称获得插件(处理带空格的插件)
-	 * 
+	 *
 	 * @param name
 	 *            - 名称
 	 * @return 插件
@@ -162,7 +155,7 @@ public class PluginsManager {
 
 	/**
 	 * 获得插件绝对路径
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 插件的绝对路径
@@ -181,15 +174,14 @@ public class PluginsManager {
 
 	public List<String> getPluginNames(boolean fullName) {
 		List<String> plugins = new ArrayList<String>();
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
 			plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
-		}
 		return plugins;
 	}
 
 	/**
 	 * 获得插件版本
-	 * 
+	 *
 	 * @param name
 	 *            - 插件名称
 	 * @return 插件版本
@@ -203,7 +195,7 @@ public class PluginsManager {
 
 	/**
 	 * 获得插件命令
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 插件命令
@@ -217,9 +209,8 @@ public class PluginsManager {
 			Iterator<Entry<String, Map<String, Object>>> commandsIt = commands.entrySet().iterator();
 			while (commandsIt.hasNext()) {
 				Entry<String, Map<String, Object>> thisEntry = commandsIt.next();
-				if (thisEntry != null) {
+				if (thisEntry != null)
 					parsedCommands.add(thisEntry.getKey());
-				}
 			}
 		}
 		if (parsedCommands.isEmpty())
@@ -229,7 +220,7 @@ public class PluginsManager {
 
 	/**
 	 * 判断插件是否在忽略列表
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 是否
@@ -240,22 +231,21 @@ public class PluginsManager {
 
 	/**
 	 * 判断插件是否在忽略列表
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件名称
 	 * @return 是否
 	 */
 	public boolean isIgnored(String plugin) {
-		for (String name : new ArrayList<String>()) {
+		for (String name : new ArrayList<String>())
 			if (name.equalsIgnoreCase(plugin))
 				return true;
-		}
 		return false;
 	}
 
 	/**
 	 * 载入插件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param name
@@ -265,12 +255,10 @@ public class PluginsManager {
 	public boolean load(CommandSender sender, String name) {
 		Plugin target = null;
 		String filename = null;
-		if (sender == null) {
+		if (sender == null)
 			sender = Bukkit.getConsoleSender();
-		}
-		if (!name.endsWith(".jar")) {
+		if (!name.endsWith(".jar"))
 			filename = name + ".jar";
-		}
 		File pluginDir = new File("plugins");
 		File updateDir = new File(pluginDir, "update");
 		if (!pluginDir.isDirectory()) {
@@ -282,8 +270,8 @@ public class PluginsManager {
 
 		if (!pluginFile.isFile() && !new File(updateDir, filename).isFile()) {
 			pluginFile = null;
-			for (File file : pluginDir.listFiles()) {
-				if (file.getName().endsWith(".jar")) {
+			for (File file : pluginDir.listFiles())
+				if (file.getName().endsWith(".jar"))
 					try {
 						PluginDescriptionFile desc = main.getPluginLoader().getPluginDescription(file);
 						if (desc.getName().equalsIgnoreCase(name)) {
@@ -292,8 +280,6 @@ public class PluginsManager {
 						}
 					} catch (InvalidDescriptionException e) {
 					}
-				}
-			}
 			if (pluginFile == null) {
 				sender.sendMessage("§6载入: §c在插件目录和更新目录均未找到 " + name + " 插件 请确认文件是否存在!");
 				return false;
@@ -332,7 +318,7 @@ public class PluginsManager {
 
 	/**
 	 * 删除重载插件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param plugin
@@ -347,7 +333,7 @@ public class PluginsManager {
 
 	/**
 	 * 重载插件
-	 * 
+	 *
 	 * @param plugin
 	 *            - 插件
 	 * @return 是否成功
@@ -359,28 +345,24 @@ public class PluginsManager {
 	/**
 	 * 重载所有插件
 	 */
-	public void reloadAll(CommandSender sender) {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (!isIgnored(plugin)) {
-				reload(sender, plugin);
-			}
-		}
+	public void reloadAll() {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+			if (!isIgnored(plugin))
+				reload(plugin);
 	}
 
 	/**
 	 * 重载所有插件
 	 */
-	public void reloadAll() {
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (!isIgnored(plugin)) {
-				reload(plugin);
-			}
-		}
+	public void reloadAll(CommandSender sender) {
+		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+			if (!isIgnored(plugin))
+				reload(sender, plugin);
 	}
 
 	/**
 	 * 卸载插件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param plugin
@@ -390,37 +372,38 @@ public class PluginsManager {
 	@SuppressWarnings("unchecked")
 	public boolean unload(CommandSender sender, Plugin plugin) {
 		String name = plugin.getName();
-		if (sender == null) {
+		if (sender == null)
 			sender = Bukkit.getConsoleSender();
-		}
 		PluginManager pluginManager = Bukkit.getPluginManager();
 		SimpleCommandMap commandMap = null;
 		List<Plugin> plugins = null;
 		Map<String, Plugin> lookupNames = null;
 		Map<String, Command> knownCommands = null;
-		if (pluginManager != null) {
-			try {
-				Field pluginsField = pluginManager.getClass().getDeclaredField("plugins");
-				pluginsField.setAccessible(true);
-				plugins = (List<Plugin>) pluginsField.get(pluginManager);
-
-				Field lookupNamesField = pluginManager.getClass().getDeclaredField("lookupNames");
-				lookupNamesField.setAccessible(true);
-				lookupNames = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
-
-				Field commandMapField = pluginManager.getClass().getDeclaredField("commandMap");
-				commandMapField.setAccessible(true);
-				commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
-
-				Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-				knownCommandsField.setAccessible(true);
-				knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-			} catch (Exception e) {
-				sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 " + name + " 卸载失败!");
-				return false;
-			}
+		if (pluginManager == null) {
+			sender.sendMessage("§4异常: §c插件管理类为Null!");
+			return false;
 		}
-		for (Plugin next : pluginManager.getPlugins()) {
+		try {
+			Field pluginsField = pluginManager.getClass().getDeclaredField("plugins");
+			pluginsField.setAccessible(true);
+			plugins = (List<Plugin>) pluginsField.get(pluginManager);
+
+			Field lookupNamesField = pluginManager.getClass().getDeclaredField("lookupNames");
+			lookupNamesField.setAccessible(true);
+			lookupNames = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
+
+			Field commandMapField = pluginManager.getClass().getDeclaredField("commandMap");
+			commandMapField.setAccessible(true);
+			commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
+
+			Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+			knownCommandsField.setAccessible(true);
+			knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+		} catch (Exception e) {
+			sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 " + name + " 卸载失败!");
+			return false;
+		}
+		for (Plugin next : pluginManager.getPlugins())
 			if (next.getName().equals(name)) {
 				pluginManager.disablePlugin(next);
 				if ((plugins != null) && (plugins.contains(next))) {
@@ -447,14 +430,13 @@ public class PluginsManager {
 					sender.sendMessage("§6卸载: §a注销插件 " + name + " 的所有命令!");
 				}
 			}
-		}
 		sender.sendMessage("§6卸载: §a插件 " + name + " 已成功卸载!");
 		return true;
 	}
 
 	/**
 	 * 卸载插件
-	 * 
+	 *
 	 * @param plugin
 	 *            - 卸载插件
 	 * @return 是否成功

@@ -6,8 +6,9 @@ package cn.citycraft.Yum;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.Yum.commands.CommandHandler;
-import cn.citycraft.Yum.config.FileConfig;
 import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.config.FileConfig;
+import cn.citycraft.utils.VersionChecker;
 
 /**
  * MC插件仓库
@@ -19,8 +20,9 @@ public class Yum extends JavaPlugin {
 	public FileConfig config;
 
 	@Override
-	public void onLoad() {
-		config = new FileConfig(this, "config.yml");
+	public void onDisable() {
+		YumManager.repo.cacheToJson(config);
+		config.save();
 	}
 
 	@Override
@@ -30,12 +32,12 @@ public class Yum extends JavaPlugin {
 		this.getCommand("yum").setTabCompleter(cmdhandler);
 		yumgr = new YumManager(this);
 		YumManager.repo.jsonToCache(config);
+		new VersionChecker(this);
 	}
 
 	@Override
-	public void onDisable() {
-		YumManager.repo.cacheToJson(config);
-		config.save();
+	public void onLoad() {
+		config = new FileConfig(this, "config.yml");
 	}
 
 }

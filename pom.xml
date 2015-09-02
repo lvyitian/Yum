@@ -23,12 +23,37 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<minimizeJar>true</minimizeJar>
+					<artifactSet>
+						<includes>
+							<include>cn.citycraft:PluginHelper</include>
+						</includes>
+					</artifactSet>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>citycraft-repo</id>
+			<url>http://ci.citycraft.cn:8800/jenkins/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -37,6 +62,12 @@
 			<artifactId>spigot-api</artifactId>
 			<type>jar</type>
 			<version>1.8.3-R0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.citycraft</groupId>
+			<artifactId>PluginHelper</artifactId>
+			<type>jar</type>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 	<properties>

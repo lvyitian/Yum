@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * 下载管理类
- * 
+ *
  * @author 蒋天蓓
  *         2015年8月21日下午6:08:09
  */
@@ -25,7 +25,7 @@ public class DownloadManager {
 
 	/**
 	 * 从地址获得文件名称
-	 * 
+	 *
 	 * @param url
 	 *            - 地址
 	 * @return 文件名称
@@ -37,7 +37,7 @@ public class DownloadManager {
 
 	/**
 	 * 从地址获得文件名称
-	 * 
+	 *
 	 * @param url
 	 *            - 地址
 	 * @return 文件名称
@@ -48,32 +48,19 @@ public class DownloadManager {
 
 	private String getPer(int per) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 11; i++) {
-			if (per > i) {
+		for (int i = 0; i < 11; i++)
+			if (per > i)
 				sb.append("==");
-			} else if (per == i) {
+			else if (per == i)
 				sb.append("> ");
-			} else {
+			else
 				sb.append("  ");
-			}
-		}
 		return sb.toString();
 	}
 
 	/**
 	 * 从网络下载文件
-	 * 
-	 * @param urlstring
-	 *            - 下载地址
-	 * @return 是否成功
-	 */
-	public boolean run(String urlstring) {
-		return run(null, urlstring);
-	}
-
-	/**
-	 * 从网络下载文件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param urlstring
@@ -86,7 +73,7 @@ public class DownloadManager {
 
 	/**
 	 * 从网络下载文件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param urlstring
@@ -108,7 +95,7 @@ public class DownloadManager {
 
 	/**
 	 * 从网络下载文件
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param url
@@ -120,9 +107,8 @@ public class DownloadManager {
 	public boolean run(CommandSender sender, URL url, File file) {
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
-		if (sender == null) {
+		if (sender == null)
 			sender = Bukkit.getConsoleSender();
-		}
 		try {
 			sender.sendMessage("§6开始下载: §3" + getFileName(url));
 			sender.sendMessage("§6下载地址: §3" + url.toString());
@@ -138,9 +124,8 @@ public class DownloadManager {
 				file.getParentFile().mkdirs();
 				sender.sendMessage("§6创建新目录: §d" + file.getParentFile().getAbsolutePath());
 			}
-			if (file.exists()) {
+			if (file.exists())
 				file.delete();
-			}
 			file.createNewFile();
 			sender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
 			fout = new FileOutputStream(file);
@@ -152,12 +137,11 @@ public class DownloadManager {
 				downloaded += count;
 				fout.write(data, 0, count);
 				int percent = (int) (downloaded * 100L / fileLength);
-				if (percent % 10 == 0) {
+				if (percent % 10 == 0)
 					if (fileLength < 102400 || System.currentTimeMillis() - time > 1000) {
 						sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 						time = System.currentTimeMillis();
 					}
-				}
 			}
 			sender.sendMessage("§6文件: §a " + file.getName() + " 下载完成!");
 			return true;
@@ -167,10 +151,10 @@ public class DownloadManager {
 			return false;
 		} finally {
 			try {
-				if (in != null) {
+				if (in != null)
 					in.close();
+				if (fout != null)
 					fout.close();
-				}
 			} catch (Exception ex) {
 			}
 		}
@@ -178,7 +162,18 @@ public class DownloadManager {
 
 	/**
 	 * 从网络下载文件
-	 * 
+	 *
+	 * @param urlstring
+	 *            - 下载地址
+	 * @return 是否成功
+	 */
+	public boolean run(String urlstring) {
+		return run(null, urlstring);
+	}
+
+	/**
+	 * 从网络下载文件
+	 *
 	 * @param urlstring
 	 *            - 下载地址
 	 * @param file
@@ -191,7 +186,7 @@ public class DownloadManager {
 
 	/**
 	 * 从网络下载文件
-	 * 
+	 *
 	 * @param url
 	 *            - 下载地址
 	 * @param file
