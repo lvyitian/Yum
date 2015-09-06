@@ -1,6 +1,7 @@
 package cn.citycraft.Yum.manager;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -485,8 +486,9 @@ public class PluginsManager {
 	 *
 	 * @return 是否成功
 	 */
-	public boolean updateall(CommandSender sender) {
-		return updateall(sender, Bukkit.getServer().getUpdateFolderFile());
+	public boolean upgrade(CommandSender sender) {
+		sender.sendMessage("§6升级: §a开始升级 服务器更新 目录下的所有插件!");
+		return upgrade(sender, null, null);
 	}
 
 	/**
@@ -498,27 +500,36 @@ public class PluginsManager {
 	 *            - 更新目录
 	 * @return 是否成功
 	 */
-	public boolean updateall(CommandSender sender, File directory) {
+	public boolean upgrade(CommandSender sender, File directory, Plugin plugin) {
+		boolean result = false;
 		PluginLoader loader = main.getPluginLoader();
 		File updateDirectory;
-		if (!directory.isDirectory())
+		if (directory == null || !directory.isDirectory())
 			updateDirectory = Bukkit.getServer().getUpdateFolderFile();
 		else
 			updateDirectory = directory;
+		try {
+			sender.sendMessage("§6升级: §b从 " + updateDirectory.getCanonicalPath() + " 文件夹检索插件插件!");
+		} catch (SecurityException | IOException e1) {
+			sender.sendMessage("§4异常: §c文件夹 " + updateDirectory.getName() + " 权限不足或IO错误!");
+		}
 		for (File file : updateDirectory.listFiles()) {
 			PluginDescriptionFile description = null;
 			try {
 				description = loader.getPluginDescription(file);
 				String name = description.getName();
-				sender.sendMessage("§6升级: 开始升级 " + name + " 插件!");
+				if (plugin != null && name != plugin.getName())
+					continue;
+				result = true;
+				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
 				reload(sender, name);
 			} catch (InvalidDescriptionException e) {
 				sender.sendMessage("§4异常: §c" + e.getMessage());
-				sender.sendMessage("§c文件: " + file.getName() + " 的plugin.yml文件存在错误!");
+				sender.sendMessage("§4文件: §c" + file.getName() + " 的plugin.yml文件存在错误!");
 				continue;
 			}
 		}
-		return false;
+		return result;
 	}
 
 	/**
@@ -526,7 +537,18 @@ public class PluginsManager {
 	 *
 	 * @return 是否成功
 	 */
-	public boolean updateall(File directory) {
-		return updateall(Bukkit.getConsoleSender(), directory);
+	public boolean upgrade(CommandSender sender, Plugin plugin) {
+		sender.sendMessage("§6升级: §a开始升级 " + plugin.getName() + " 插件!");
+		return upgrade(sender, null, plugin);
+	}
+
+	/**
+	 * 重载update文件夹的插件
+	 *
+	 * @return 是否成功
+	 */
+	public boolean upgrade(File directory) {
+		Bukkit.getConsoleSender().sendMessage("§6升级: §a开始升级 " + directory.getName() + " 目录下的所有插件!");
+		return upgrade(Bukkit.getConsoleSender(), directory, null);
 	}
 }

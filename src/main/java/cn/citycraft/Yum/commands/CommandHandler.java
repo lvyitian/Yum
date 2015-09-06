@@ -71,6 +71,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 		registerCommand(new CommandReload(yum));
 		registerCommand(new CommandLoad(yum));
 		registerCommand(new CommandUnload(yum));
+		registerCommand(new CommandUpgrade(yum));
 
 		RegisterCommandList = getRegisterCommands();
 	}
@@ -82,9 +83,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	 */
 	public List<String> getRegisterCommands() {
 		List<String> cmds = new ArrayList<String>();
-		for (BaseCommand command : commandlist) {
+		for (BaseCommand command : commandlist)
 			cmds.addAll(command.getCommandList());
-		}
 		return cmds;
 	}
 
@@ -94,7 +94,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 			return true;
 		String subcmd = args[0];
 		String[] subargs = moveStrings(args, 1);
-		for (BaseCommand command : commandlist) {
+		for (BaseCommand command : commandlist)
 			if (command.isValidTrigger(subcmd)) {
 				if (!command.hasPermission(sender)) {
 					sender.sendMessage("你没有此命令的权限!");
@@ -104,18 +104,16 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 					sender.sendMessage("控制台无法使用此命令!");
 					return true;
 				}
-				if (subargs.length >= command.getMinimumArguments()) {
+				if (subargs.length >= command.getMinimumArguments())
 					try {
 						command.execute(sender, subcmd, subargs);
 						return true;
 					} catch (CommandException e) {
 						sender.sendMessage(e.getMessage());
 					}
-				} else {
+				else
 					sender.sendMessage("错误的参数 /yum " + command.getName() + command.getPossibleArguments());
-				}
 			}
-		}
 		return false;
 	}
 
@@ -134,12 +132,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 				if (args[0].equalsIgnoreCase("install"))
 					plugins = YumManager.repo.getAllPluginName();
 				else if (args[0].equalsIgnoreCase("repo"))
-					plugins = Arrays.asList(new String[] {
-							"add",
-							"list",
-							"clean",
-							"update"
-					});
+					plugins = Arrays.asList(new String[] {	"add",
+															"list",
+															"clean",
+															"update" });
 				else
 					plugins = YumManager.plugman.getPluginNames(false);
 				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);

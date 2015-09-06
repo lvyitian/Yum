@@ -55,24 +55,4 @@ public class YumManager {
 			sender.sendMessage("§6更新: §c仓库缓存中未找到插件 " + plugin.getName());
 		return false;
 	}
-
-	public static boolean upgrade(CommandSender sender) {
-		return plugman.updateall(sender);
-	}
-
-	public static boolean upgrade(CommandSender sender, Plugin plugin) {
-		return update(sender, plugin, null);
-	}
-
-	public static boolean upgrade(CommandSender sender, Plugin plugin, String version) {
-		PluginInfo pi = repo.getPlugin(plugin.getName());
-		if (pi != null) {
-			if (download.run(sender, pi.getMavenUrl(version), plugman.getPluginFile(plugin)))
-				return plugman.reload(sender, plugin);
-			return false;
-		} else {
-			sender.sendMessage("§6更新: §c仓库缓存中未找到插件 " + plugin.getName());
-			return false;
-		}
-	}
 }
