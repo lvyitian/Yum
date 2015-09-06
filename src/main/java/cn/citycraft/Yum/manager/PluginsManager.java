@@ -529,6 +529,7 @@ public class PluginsManager {
 				continue;
 			}
 		}
+		sender.sendMessage("§6升级: §a所有插件升级完毕!");
 		return result;
 	}
 
