@@ -21,7 +21,7 @@ public class CommandUpgrade extends BaseCommand {
 	 * @param name
 	 */
 	public CommandUpgrade(Yum main) {
-		super("update");
+		super("upgrade");
 		this.main = main;
 	}
 
