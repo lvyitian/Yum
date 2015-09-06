@@ -20,6 +20,7 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
 
@@ -312,6 +313,13 @@ public class PluginsManager {
 		return true;
 	}
 
+	/**
+	 * 载入插件
+	 *
+	 * @param name
+	 *            - 插件名称
+	 * @return 是否成功
+	 */
 	public boolean load(String name) {
 		return load(Bukkit.getConsoleSender(), name);
 	}
@@ -328,6 +336,21 @@ public class PluginsManager {
 	public boolean reload(CommandSender sender, Plugin plugin) {
 		if (plugin != null)
 			return unload(sender, plugin) && load(sender, plugin.getName());
+		return false;
+	}
+
+	/**
+	 * 删除重载插件
+	 *
+	 * @param sender
+	 *            - 命令发送者
+	 * @param plugin
+	 *            - 插件
+	 * @return 是否成功
+	 */
+	public boolean reload(CommandSender sender, String name) {
+		if (name != null)
+			return unload(sender, name) && load(sender, name);
 		return false;
 	}
 
@@ -369,9 +392,21 @@ public class PluginsManager {
 	 *            - 插件
 	 * @return 是否成功
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean unload(CommandSender sender, Plugin plugin) {
-		String name = plugin.getName();
+		return unload(sender, plugin.getName());
+	}
+
+	/**
+	 * 卸载插件
+	 *
+	 * @param sender
+	 *            - 命令发送者
+	 * @param name
+	 *            - 插件名称
+	 * @return 是否成功
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean unload(CommandSender sender, String name) {
 		if (sender == null)
 			sender = Bukkit.getConsoleSender();
 		PluginManager pluginManager = Bukkit.getPluginManager();
@@ -443,5 +478,55 @@ public class PluginsManager {
 	 */
 	public boolean unload(Plugin plugin) {
 		return unload(Bukkit.getConsoleSender(), plugin);
+	}
+
+	/**
+	 * 重载update文件夹的插件
+	 *
+	 * @return 是否成功
+	 */
+	public boolean updateall(CommandSender sender) {
+		return updateall(sender, Bukkit.getServer().getUpdateFolderFile());
+	}
+
+	/**
+	 * 重载update文件夹的插件
+	 *
+	 * @param sender
+	 *            - 命令发送者
+	 * @param directory
+	 *            - 更新目录
+	 * @return 是否成功
+	 */
+	public boolean updateall(CommandSender sender, File directory) {
+		PluginLoader loader = main.getPluginLoader();
+		File updateDirectory;
+		if (!directory.isDirectory())
+			updateDirectory = Bukkit.getServer().getUpdateFolderFile();
+		else
+			updateDirectory = directory;
+		for (File file : updateDirectory.listFiles()) {
+			PluginDescriptionFile description = null;
+			try {
+				description = loader.getPluginDescription(file);
+				String name = description.getName();
+				sender.sendMessage("§6升级: 开始升级 " + name + " 插件!");
+				reload(sender, name);
+			} catch (InvalidDescriptionException e) {
+				sender.sendMessage("§4异常: §c" + e.getMessage());
+				sender.sendMessage("§c文件: " + file.getName() + " 的plugin.yml文件存在错误!");
+				continue;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 重载update文件夹的插件
+	 *
+	 * @return 是否成功
+	 */
+	public boolean updateall(File directory) {
+		return updateall(Bukkit.getConsoleSender(), directory);
 	}
 }
