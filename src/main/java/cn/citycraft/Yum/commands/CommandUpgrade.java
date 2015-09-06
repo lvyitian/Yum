@@ -43,7 +43,7 @@ public class CommandUpgrade extends BaseCommand {
 
 	@Override
 	public int getMinimumArguments() {
-		return 1;
+		return 0;
 	}
 
 	@Override

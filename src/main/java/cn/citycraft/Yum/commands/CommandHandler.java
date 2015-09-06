@@ -26,29 +26,14 @@ import cn.citycraft.Yum.manager.YumManager;
  */
 public class CommandHandler implements CommandExecutor, TabCompleter {
 	/**
-	 * 转移数组
-	 *
-	 * @param args
-	 *            - 原数组
-	 * @param start
-	 *            - 数组开始位置
-	 * @return 转移后的数组字符串
-	 */
-	public static String[] moveStrings(String[] args, int start) {
-		String[] ret = new String[args.length - start];
-		System.arraycopy(args, start, ret, 0, ret.length);
-		return ret;
-	}
-
-	/**
 	 * 已注册命令列表(包括别名)
 	 */
-	List<String> RegisterCommandList = new ArrayList<String>();;
+	List<String> RegisterCommandList = new ArrayList<String>();
+
 	/**
 	 * 命令监听类列表
 	 */
-	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();
-
+	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();;
 	/**
 	 * 插件主类
 	 */
@@ -77,6 +62,21 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	}
 
 	/**
+	 * 转移数组
+	 *
+	 * @param args
+	 *            - 原数组
+	 * @param start
+	 *            - 数组开始位置
+	 * @return 转移后的数组字符串
+	 */
+	public static String[] moveStrings(String[] args, int start) {
+		String[] ret = new String[args.length - start];
+		System.arraycopy(args, start, ret, 0, ret.length);
+		return ret;
+	}
+
+	/**
 	 * 获得已注册的命令列表
 	 *
 	 * @return - 返回已注册的命令List
@@ -97,11 +97,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 		for (BaseCommand command : commandlist)
 			if (command.isValidTrigger(subcmd)) {
 				if (!command.hasPermission(sender)) {
-					sender.sendMessage("你没有此命令的权限!");
+					sender.sendMessage("§c你没有此命令的权限!");
 					return true;
 				}
 				if (command.isOnlyPlayerExecutable() && !(sender instanceof Player)) {
-					sender.sendMessage("控制台无法使用此命令!");
+					sender.sendMessage("§c控制台无法使用此命令!");
 					return true;
 				}
 				if (subargs.length >= command.getMinimumArguments())
@@ -112,7 +112,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 						sender.sendMessage(e.getMessage());
 					}
 				else
-					sender.sendMessage("错误的参数 /yum " + command.getName() + command.getPossibleArguments());
+					sender.sendMessage("§c错误的参数 §e使用方法 /yum " + command.getName() + command.getPossibleArguments());
 			}
 		return false;
 	}
