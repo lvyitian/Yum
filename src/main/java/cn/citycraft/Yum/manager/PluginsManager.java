@@ -512,13 +512,14 @@ public class PluginsManager {
 			sender.sendMessage("§6升级: §b从 " + updateDirectory.getCanonicalPath() + " 文件夹检索插件插件!");
 		} catch (SecurityException | IOException e1) {
 			sender.sendMessage("§4异常: §c文件夹 " + updateDirectory.getName() + " 权限不足或IO错误!");
+			return false;
 		}
 		for (File file : updateDirectory.listFiles()) {
 			PluginDescriptionFile description = null;
 			try {
 				description = loader.getPluginDescription(file);
 				String name = description.getName();
-				if (plugin != null && name != plugin.getName())
+				if (plugin != null && !name.equals(plugin.getName()))
 					continue;
 				result = true;
 				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
@@ -539,7 +540,6 @@ public class PluginsManager {
 	 * @return 是否成功
 	 */
 	public boolean upgrade(CommandSender sender, Plugin plugin) {
-		sender.sendMessage("§6升级: §a开始升级 " + plugin.getName() + " 插件!");
 		return upgrade(sender, null, plugin);
 	}
 
