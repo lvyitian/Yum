@@ -31,12 +31,16 @@ public class CommandDelete extends BaseCommand {
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null) {
+		if (plugin != null)
 			YumManager.plugman.deletePlugin(sender, plugin);
-		} else {
+		else
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
-		}
 	};
+
+	@Override
+	public String getDescription() {
+		return "删除插件";
+	}
 
 	@Override
 	public int getMinimumArguments() {

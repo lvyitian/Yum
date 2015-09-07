@@ -15,7 +15,7 @@ import cn.citycraft.Yum.utils.StringUtil;
 
 /**
  * 插件删除命令类
- * 
+ *
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandInfo extends BaseCommand {
@@ -30,15 +30,9 @@ public class CommandInfo extends BaseCommand {
 	}
 
 	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	};
-
-	@Override
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		if (args.length == 0) {
+		if (args.length == 0)
 			return;
-		}
 		String pluginname = args[0];
 		Plugin plugin = main.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
@@ -52,9 +46,13 @@ public class CommandInfo extends BaseCommand {
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
 			sender.sendMessage("§6插件物理路径: §3" + YumManager.plugman.getPluginFile(plugin).getAbsolutePath());
-		} else {
+		} else
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
-		}
+	};
+
+	@Override
+	public String getDescription() {
+		return "查看插件详情";
 	}
 
 	@Override
@@ -65,5 +63,10 @@ public class CommandInfo extends BaseCommand {
 	@Override
 	public String getPossibleArguments() {
 		return "<插件名称>";
+	}
+
+	@Override
+	public boolean isOnlyPlayerExecutable() {
+		return false;
 	}
 }

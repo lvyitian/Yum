@@ -5,7 +5,7 @@ package cn.citycraft.Yum;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import cn.citycraft.Yum.commands.CommandHandler;
+import cn.citycraft.Yum.commands.HandlerCommand;
 import cn.citycraft.Yum.manager.YumManager;
 import cn.citycraft.config.FileConfig;
 import cn.citycraft.utils.VersionChecker;
@@ -27,7 +27,7 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		CommandHandler cmdhandler = new CommandHandler(this);
+		HandlerCommand cmdhandler = new HandlerCommand(this);
 		this.getCommand("yum").setExecutor(cmdhandler);
 		this.getCommand("yum").setTabCompleter(cmdhandler);
 		yumgr = new YumManager(this);

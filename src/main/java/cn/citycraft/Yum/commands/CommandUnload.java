@@ -31,12 +31,16 @@ public class CommandUnload extends BaseCommand {
 	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
 		String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null) {
+		if (plugin != null)
 			YumManager.plugman.unload(sender, plugin);
-		} else {
+		else
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
-		}
 	};
+
+	@Override
+	public String getDescription() {
+		return "卸载插件";
+	}
 
 	@Override
 	public int getMinimumArguments() {

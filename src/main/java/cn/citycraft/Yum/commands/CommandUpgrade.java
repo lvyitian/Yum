@@ -43,13 +43,18 @@ public class CommandUpgrade extends BaseCommand {
 	};
 
 	@Override
+	public String getDescription() {
+		return "升级插件";
+	}
+
+	@Override
 	public int getMinimumArguments() {
 		return 0;
 	}
 
 	@Override
 	public String getPossibleArguments() {
-		return "<插件名称> <插件版本>";
+		return "[插件名称]";
 	}
 
 	@Override

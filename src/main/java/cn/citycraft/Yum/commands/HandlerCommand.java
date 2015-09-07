@@ -24,7 +24,7 @@ import cn.citycraft.Yum.manager.YumManager;
  *
  * @author 蒋天蓓 2015年8月22日上午8:29:44
  */
-public class CommandHandler implements CommandExecutor, TabCompleter {
+public class HandlerCommand implements CommandExecutor, TabCompleter {
 	/**
 	 * 已注册命令列表(包括别名)
 	 */
@@ -45,7 +45,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	 * @param yum
 	 *            - 插件主类
 	 */
-	public CommandHandler(Yum yum) {
+	public HandlerCommand(Yum yum) {
 		this.main = yum;
 		registerCommand(new CommandList(yum));
 		registerCommand(new CommandInstall(yum));
@@ -93,6 +93,12 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 		if (args.length == 0)
 			return true;
 		String subcmd = args[0];
+		if (subcmd.equalsIgnoreCase("help")) {
+			sender.sendMessage("§6=========YUM插件帮助列表=========");
+			for (BaseCommand command : commandlist)
+				sender.sendMessage(String.format("§6/yum §a%1$s %2$s §6- §b%3$s", command.getName(), command.getPossibleArguments(), command.getDescription()));
+			return true;
+		}
 		String[] subargs = moveStrings(args, 1);
 		for (BaseCommand command : commandlist)
 			if (command.isValidTrigger(subcmd)) {

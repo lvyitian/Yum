@@ -32,14 +32,12 @@ public class CommandRepo extends BaseCommand {
 		switch (cmd) {
 		case "add":
 			if (args.length == 2) {
-				if (YumManager.repo.addRepositories(args[1])) {
+				if (YumManager.repo.addRepositories(args[1]))
 					sender.sendMessage("§6仓库: §a插件信息已缓存!");
-				} else {
+				else
 					sender.sendMessage("§6仓库: §c源地址未找到仓库信息或无法访问!");
-				}
-			} else {
+			} else
 				sender.sendMessage("§6仓库: §c请输入源地址!");
-			}
 			break;
 		case "list":
 			sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
@@ -55,6 +53,11 @@ public class CommandRepo extends BaseCommand {
 			break;
 		}
 	};
+
+	@Override
+	public String getDescription() {
+		return "插件源命令";
+	}
 
 	@Override
 	public int getMinimumArguments() {

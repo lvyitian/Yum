@@ -44,6 +44,11 @@ public class CommandInstall extends BaseCommand {
 	};
 
 	@Override
+	public String getDescription() {
+		return "安装插件";
+	}
+
+	@Override
 	public int getMinimumArguments() {
 		return 1;
 	}
