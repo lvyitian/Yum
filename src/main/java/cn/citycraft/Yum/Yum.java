@@ -3,12 +3,15 @@
  */
 package cn.citycraft.Yum;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import java.io.IOException;
 
+import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
+
+import cn.citycraft.PluginHelper.config.FileConfig;
+import cn.citycraft.PluginHelper.utils.VersionChecker;
 import cn.citycraft.Yum.commands.HandlerCommand;
 import cn.citycraft.Yum.manager.YumManager;
-import cn.citycraft.config.FileConfig;
-import cn.citycraft.utils.VersionChecker;
 
 /**
  * MC插件仓库
@@ -33,6 +36,11 @@ public class Yum extends JavaPlugin {
 		yumgr = new YumManager(this);
 		YumManager.repo.jsonToCache(config);
 		new VersionChecker(this);
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+		}
 	}
 
 	@Override

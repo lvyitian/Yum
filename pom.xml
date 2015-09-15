@@ -33,8 +33,19 @@
 					<artifactSet>
 						<includes>
 							<include>cn.citycraft:PluginHelper</include>
+							<include>org.mcstats.*:*</include>
 						</includes>
 					</artifactSet>
+					<relocations>
+						<relocation>
+							<pattern>org.mcstats</pattern>
+							<shadedPattern>${project.groupId}.${project.artifactId}.mcstats</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>cn.citycraft.PluginHelper</pattern>
+							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
+						</relocation>
+					</relocations>
 				</configuration>
 				<executions>
 					<execution>
@@ -56,6 +67,10 @@
 			<id>citycraft-repo</id>
 			<url>http://ci.citycraft.cn:8800/jenkins/plugin/repository/everything/</url>
 		</repository>
+		<repository>
+			<id>Plugin Metrics</id>
+			<url>http://repo.mcstats.org/content/repositories/public</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -69,6 +84,12 @@
 			<artifactId>PluginHelper</artifactId>
 			<type>jar</type>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mcstats.bukkit</groupId>
+			<artifactId>metrics</artifactId>
+			<version>R8-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<properties>
