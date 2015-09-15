@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
-import cn.citycraft.Yum.utils.StringUtil;
 
 /**
  * 插件删除命令类

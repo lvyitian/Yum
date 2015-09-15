@@ -6,9 +6,9 @@ package cn.citycraft.Yum.commands;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 
+import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
-import cn.citycraft.Yum.utils.StringUtil;
 
 /**
  * 插件删除命令类
