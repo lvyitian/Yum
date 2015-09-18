@@ -168,7 +168,7 @@ public class RepositoryManager {
 			pi.repo = pkg.name;
 			plugins.put(plugin.groupId + "." + plugin.artifactId, pi);
 		}
-		sender.sendMessage("仓库: §e" + pkg.name + " §a更新成功!");
+		sender.sendMessage("§6仓库: §e" + pkg.name + " §a更新成功!");
 	}
 
 	public boolean updateRepositories(CommandSender sender) {
