@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -20,10 +21,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import cn.citycraft.Yum.repository.Package;
-import cn.citycraft.Yum.repository.Plugin;
-import cn.citycraft.Yum.repository.PluginInfo;
-import cn.citycraft.Yum.repository.Repository;
+import cn.citycraft.Yum.manager.Repositories.PackageInfo;
+import cn.citycraft.Yum.manager.Repositories.Plugin;
+import cn.citycraft.Yum.manager.Repositories.Repository;;
 
 /**
  * 仓库管理类
@@ -44,22 +44,22 @@ public class RepositoryManager {
 		repos = new ArrayList<String>();
 	}
 
-	public boolean addPackage(String urlstring) {
+	public boolean addPackage(CommandSender sender, String urlstring) {
 		String json = getHtml(urlstring);
 		if (json == "")
 			return false;
-		Package pkg = jsonToPackage(json);
+		PackageInfo pkg = jsonToPackage(json);
 		if (pkg == null)
 			return false;
-		updatePackage(pkg);
+		updatePackage(sender, pkg);
 		return true;
 	}
 
-	public boolean addRepositories(String urlstring) {
+	public boolean addRepositories(CommandSender sender, String urlstring) {
 		if (urlstring == null || urlstring.isEmpty())
 			return false;
 		repos.add(urlstring);
-		return updateRepositories(urlstring);
+		return updateRepositories(sender, urlstring);
 	}
 
 	public void cacheToJson(FileConfiguration config) {
@@ -143,9 +143,9 @@ public class RepositoryManager {
 		}
 	}
 
-	public Package jsonToPackage(String json) {
+	public PackageInfo jsonToPackage(String json) {
 		try {
-			return gson.fromJson(json, Package.class);
+			return gson.fromJson(json, PackageInfo.class);
 		} catch (JsonSyntaxException e) {
 			return null;
 		}
@@ -160,7 +160,7 @@ public class RepositoryManager {
 		}
 	}
 
-	public void updatePackage(Package pkg) {
+	public void updatePackage(CommandSender sender, PackageInfo pkg) {
 		for (Plugin plugin : pkg.plugins) {
 			PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
@@ -168,19 +168,22 @@ public class RepositoryManager {
 			pi.repo = pkg.name;
 			plugins.put(plugin.groupId + "." + plugin.artifactId, pi);
 		}
+		sender.sendMessage("仓库: §e" + pkg.name + " §a更新成功!");
 	}
 
 	public boolean updateRepositories(CommandSender sender) {
 		plugins.clear();
 		for (String string : repos)
-			if (updateRepositories(string))
+			if (updateRepositories(sender, string))
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
 			else
 				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
 		return true;
 	}
 
-	public boolean updateRepositories(String urlstring) {
+	public boolean updateRepositories(CommandSender sender, String urlstring) {
+		if (sender == null)
+			sender = Bukkit.getConsoleSender();
 		if (!urlstring.endsWith("repo.info"))
 			urlstring = urlstring + "/repo.info";
 		String json = getHtml(urlstring);
@@ -190,7 +193,7 @@ public class RepositoryManager {
 		if (lrepo == null)
 			return false;
 		for (Repository repository : lrepo)
-			addPackage(repository.url);
+			addPackage(sender, repository.url);
 		return true;
 	}
 }
