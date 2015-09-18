@@ -6,8 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.Yum.repository.PluginInfo;
-
 /**
  * 自动更新类
  *

@@ -32,7 +32,7 @@ public class CommandRepo extends BaseCommand {
 		switch (cmd) {
 		case "add":
 			if (args.length == 2) {
-				if (YumManager.repo.addRepositories(args[1]))
+				if (YumManager.repo.addRepositories(sender, args[1]))
 					sender.sendMessage("§6仓库: §a插件信息已缓存!");
 				else
 					sender.sendMessage("§6仓库: §c源地址未找到仓库信息或无法访问!");
