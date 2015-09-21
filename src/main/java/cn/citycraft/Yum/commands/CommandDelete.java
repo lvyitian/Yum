@@ -32,7 +32,10 @@ public class CommandDelete extends BaseCommand {
 		String pluginname = args[0];
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null)
-			YumManager.plugman.deletePlugin(sender, plugin);
+			if (YumManager.plugman.deletePlugin(sender, plugin))
+				sender.sendMessage("§c删除: §a插件 " + pluginname + " 已从服务器卸载并删除!");
+			else
+				sender.sendMessage("§c删除: §c插件 " + pluginname + " 卸载或删除时发生错误 删除失败!");
 		else
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 	};
