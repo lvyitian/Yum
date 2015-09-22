@@ -527,7 +527,6 @@ public class PluginsManager {
 			} catch (InvalidDescriptionException e) {
 				sender.sendMessage("§4异常: §c" + e.getMessage());
 				sender.sendMessage("§4文件: §c" + file.getName() + " 的plugin.yml文件存在错误!");
-				continue;
 			}
 		}
 		sender.sendMessage("§6升级: §a所有插件升级完毕!");

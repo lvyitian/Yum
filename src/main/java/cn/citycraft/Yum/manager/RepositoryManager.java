@@ -46,7 +46,7 @@ public class RepositoryManager {
 
 	public boolean addPackage(CommandSender sender, String urlstring) {
 		String json = getHtml(urlstring);
-		if (json == "")
+		if (json.isEmpty())
 			return false;
 		PackageInfo pkg = jsonToPackage(json);
 		if (pkg == null)
@@ -56,7 +56,7 @@ public class RepositoryManager {
 	}
 
 	public boolean addRepositories(CommandSender sender, String urlstring) {
-		if (urlstring == null || urlstring.isEmpty())
+		if (urlstring.isEmpty())
 			return false;
 		repos.add(urlstring);
 		return updateRepositories(sender, urlstring);
@@ -131,10 +131,10 @@ public class RepositoryManager {
 		String repocache = config.getString("repocache");
 		String plugincache = config.getString("plugincache");
 		try {
-			if (repocache != null && repocache != "")
+			if (!repocache.isEmpty())
 				repos = gson.fromJson(repocache, new TypeToken<List<String>>() {
 				}.getType());
-			if (plugincache != null && plugincache != "")
+			if (!plugincache.isEmpty())
 				plugins = gson.fromJson(plugincache, new TypeToken<HashMap<String, PluginInfo>>() {
 				}.getType());
 			return true;
@@ -156,7 +156,7 @@ public class RepositoryManager {
 			return gson.fromJson(json, new TypeToken<List<Repository>>() {
 			}.getType());
 		} catch (JsonSyntaxException e) {
-			return null;
+			return new ArrayList<Repository>();
 		}
 	}
 
@@ -187,10 +187,10 @@ public class RepositoryManager {
 		if (!urlstring.endsWith("repo.info"))
 			urlstring = urlstring + "/repo.info";
 		String json = getHtml(urlstring);
-		if (json == "")
+		if (json.isEmpty())
 			return false;
 		List<Repository> lrepo = jsonToRepositories(json);
-		if (lrepo == null)
+		if (lrepo.isEmpty())
 			return false;
 		for (Repository repository : lrepo)
 			addPackage(sender, repository.url);
