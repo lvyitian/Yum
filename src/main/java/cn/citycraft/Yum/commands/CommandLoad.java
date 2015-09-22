@@ -25,6 +25,9 @@ public class CommandLoad extends BaseCommand {
 	public CommandLoad(Yum main) {
 		super("load");
 		this.main = main;
+		setDescription("载入插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -36,24 +39,4 @@ public class CommandLoad extends BaseCommand {
 		else
 			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
 	};
-
-	@Override
-	public String getDescription() {
-		return "载入插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

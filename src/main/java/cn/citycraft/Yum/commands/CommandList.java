@@ -25,6 +25,7 @@ public class CommandList extends BaseCommand {
 	public CommandList(Yum main) {
 		super("list");
 		this.main = main;
+		setDescription("列出已安装插件列表");
 	}
 
 	@Override
@@ -33,24 +34,4 @@ public class CommandList extends BaseCommand {
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
 			sender.sendMessage("§6 - " + YumManager.plugman.getFormattedName(plugin, true));
 	};
-
-	@Override
-	public String getDescription() {
-		return "列出已安装插件列表";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 0;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

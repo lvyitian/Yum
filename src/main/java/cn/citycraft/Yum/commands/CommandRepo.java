@@ -24,6 +24,9 @@ public class CommandRepo extends BaseCommand {
 	public CommandRepo(Yum main) {
 		super("repo");
 		this.main = main;
+		setDescription("插件源命令");
+		setMinimumArguments(1);
+		setPossibleArguments("<add|del|clean|list> <仓库名称>");
 	}
 
 	@Override
@@ -53,24 +56,4 @@ public class CommandRepo extends BaseCommand {
 			break;
 		}
 	};
-
-	@Override
-	public String getDescription() {
-		return "插件源命令";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<add|del|clean|list> <仓库名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

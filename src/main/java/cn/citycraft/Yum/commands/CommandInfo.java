@@ -27,6 +27,8 @@ public class CommandInfo extends BaseCommand {
 	public CommandInfo(Yum main) {
 		super("info");
 		this.main = main;
+		setDescription("查看插件详情");
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -49,24 +51,4 @@ public class CommandInfo extends BaseCommand {
 		} else
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 	};
-
-	@Override
-	public String getDescription() {
-		return "查看插件详情";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 0;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

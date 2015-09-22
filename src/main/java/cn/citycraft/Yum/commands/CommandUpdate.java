@@ -23,6 +23,9 @@ public class CommandUpdate extends BaseCommand {
 	public CommandUpdate(Yum main) {
 		super("update");
 		this.main = main;
+		setDescription("更新插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称> [插件版本]");
 	}
 
 	@Override
@@ -40,24 +43,4 @@ public class CommandUpdate extends BaseCommand {
 		else
 			sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
 	};
-
-	@Override
-	public String getDescription() {
-		return "更新插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称> [插件版本]";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

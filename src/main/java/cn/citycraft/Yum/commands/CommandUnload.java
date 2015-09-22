@@ -25,6 +25,9 @@ public class CommandUnload extends BaseCommand {
 	public CommandUnload(Yum main) {
 		super("unload");
 		this.main = main;
+		setDescription("卸载插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -36,24 +39,4 @@ public class CommandUnload extends BaseCommand {
 		else
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 	};
-
-	@Override
-	public String getDescription() {
-		return "卸载插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

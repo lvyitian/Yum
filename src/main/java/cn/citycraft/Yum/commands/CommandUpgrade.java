@@ -23,6 +23,9 @@ public class CommandUpgrade extends BaseCommand {
 	public CommandUpgrade(Yum main) {
 		super("upgrade");
 		this.main = main;
+		setDescription("升级插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -41,24 +44,4 @@ public class CommandUpgrade extends BaseCommand {
 			}
 		});
 	};
-
-	@Override
-	public String getDescription() {
-		return "升级插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 0;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "[插件名称]";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

@@ -25,6 +25,9 @@ public class CommandInstall extends BaseCommand {
 	public CommandInstall(Yum main) {
 		super("install");
 		this.main = main;
+		setDescription("安装插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -42,24 +45,4 @@ public class CommandInstall extends BaseCommand {
 			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
 
 	};
-
-	@Override
-	public String getDescription() {
-		return "安装插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }

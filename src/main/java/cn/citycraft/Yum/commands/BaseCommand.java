@@ -20,6 +20,10 @@ public abstract class BaseCommand {
 	private String name;
 	private String permission;
 	private String[] aliases;
+	private String description = "无";
+	private int minimumArguments = 0;
+	private String possibleArguments = "";
+	private boolean onlyPlayerExecutable = false;
 
 	public BaseCommand(String name) {
 		this(name, new String[0]);
@@ -56,14 +60,18 @@ public abstract class BaseCommand {
 	 *
 	 * @return 命令描述
 	 */
-	public abstract String getDescription();
+	public String getDescription() {
+		return description;
+	}
 
 	/**
 	 * 获得最小参数个数
 	 *
 	 * @return 最小参数个数
 	 */
-	public abstract int getMinimumArguments();
+	public int getMinimumArguments() {
+		return minimumArguments;
+	}
 
 	/**
 	 * 获取命令名称
@@ -88,7 +96,9 @@ public abstract class BaseCommand {
 	 *
 	 * @return
 	 */
-	public abstract String getPossibleArguments();
+	public String getPossibleArguments() {
+		return possibleArguments;
+	}
 
 	/**
 	 * 检查Sender权限
@@ -108,7 +118,9 @@ public abstract class BaseCommand {
 	 *
 	 * @return 是否为玩家命令
 	 */
-	public abstract boolean isOnlyPlayerExecutable();
+	public boolean isOnlyPlayerExecutable() {
+		return onlyPlayerExecutable;
+	}
 
 	/**
 	 * 命令匹配检测
@@ -128,6 +140,36 @@ public abstract class BaseCommand {
 	}
 
 	/**
+	 * 设置命令的描述信息
+	 *
+	 * @param description
+	 *            - 命令描述
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * 设置命令的最小参数个数
+	 *
+	 * @param minimumArguments
+	 *            - 最小参数个数
+	 */
+	public void setMinimumArguments(int minimumArguments) {
+		this.minimumArguments = minimumArguments;
+	}
+
+	/**
+	 * 设置是否只允许玩家执行
+	 *
+	 * @param onlyPlayerExecutable
+	 *            - 是否只允许玩家执行
+	 */
+	public void setOnlyPlayerExecutable(boolean onlyPlayerExecutable) {
+		this.onlyPlayerExecutable = onlyPlayerExecutable;
+	}
+
+	/**
 	 * 设置命令权限
 	 *
 	 * @param permission
@@ -135,6 +177,16 @@ public abstract class BaseCommand {
 	 */
 	public void setPermission(String permission) {
 		this.permission = permission;
+	}
+
+	/**
+	 * 设置可能的命令参数
+	 * 
+	 * @param possibleArguments
+	 *            - 可能的命令参数
+	 */
+	public void setPossibleArguments(String possibleArguments) {
+		this.possibleArguments = possibleArguments;
 	}
 
 }

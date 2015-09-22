@@ -25,6 +25,9 @@ public class CommandDelete extends BaseCommand {
 	public CommandDelete(Yum main) {
 		super("delete");
 		this.main = main;
+		setDescription("删除插件");
+		setMinimumArguments(1);
+		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
@@ -39,24 +42,4 @@ public class CommandDelete extends BaseCommand {
 		else
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 	};
-
-	@Override
-	public String getDescription() {
-		return "删除插件";
-	}
-
-	@Override
-	public int getMinimumArguments() {
-		return 1;
-	}
-
-	@Override
-	public String getPossibleArguments() {
-		return "<插件名称>";
-	}
-
-	@Override
-	public boolean isOnlyPlayerExecutable() {
-		return false;
-	}
 }
