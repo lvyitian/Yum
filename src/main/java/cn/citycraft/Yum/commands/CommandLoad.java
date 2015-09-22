@@ -23,9 +23,8 @@ public class CommandLoad extends BaseCommand {
 	 * @param name
 	 */
 	public CommandLoad(Yum main) {
-		super("load");
+		super("load", "载入插件");
 		this.main = main;
-		setDescription("载入插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称>");
 	}

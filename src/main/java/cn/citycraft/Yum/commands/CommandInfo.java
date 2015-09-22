@@ -25,9 +25,8 @@ public class CommandInfo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInfo(Yum main) {
-		super("info");
+		super("info", "查看插件详情");
 		this.main = main;
-		setDescription("查看插件详情");
 		setPossibleArguments("<插件名称>");
 	}
 

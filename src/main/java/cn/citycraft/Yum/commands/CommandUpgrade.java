@@ -21,9 +21,8 @@ public class CommandUpgrade extends BaseCommand {
 	 * @param name
 	 */
 	public CommandUpgrade(Yum main) {
-		super("upgrade");
+		super("upgrade", "升级插件");
 		this.main = main;
-		setDescription("升级插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称>");
 	}

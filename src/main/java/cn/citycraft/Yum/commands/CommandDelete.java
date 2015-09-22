@@ -23,9 +23,8 @@ public class CommandDelete extends BaseCommand {
 	 * @param name
 	 */
 	public CommandDelete(Yum main) {
-		super("delete");
+		super("delete", "删除插件");
 		this.main = main;
-		setDescription("删除插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称>");
 	}

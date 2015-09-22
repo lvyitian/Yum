@@ -23,9 +23,8 @@ public class CommandUnload extends BaseCommand {
 	 * @param name
 	 */
 	public CommandUnload(Yum main) {
-		super("unload");
+		super("unload", "卸载插件");
 		this.main = main;
-		setDescription("卸载插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称>");
 	}

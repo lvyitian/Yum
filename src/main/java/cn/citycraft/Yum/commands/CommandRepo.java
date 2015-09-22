@@ -22,9 +22,8 @@ public class CommandRepo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandRepo(Yum main) {
-		super("repo");
+		super("repo", "插件源命令");
 		this.main = main;
-		setDescription("插件源命令");
 		setMinimumArguments(1);
 		setPossibleArguments("<add|del|clean|list> <仓库名称>");
 	}

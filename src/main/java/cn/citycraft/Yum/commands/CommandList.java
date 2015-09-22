@@ -23,9 +23,8 @@ public class CommandList extends BaseCommand {
 	 * @param name
 	 */
 	public CommandList(Yum main) {
-		super("list");
+		super("list", "列出已安装插件列表");
 		this.main = main;
-		setDescription("列出已安装插件列表");
 	}
 
 	@Override

@@ -23,9 +23,8 @@ public class CommandReload extends BaseCommand {
 	 * @param name
 	 */
 	public CommandReload(Yum main) {
-		super("reload");
+		super("reload", "重载插件");
 		this.main = main;
-		setDescription("重载插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称|all|*>");
 	}

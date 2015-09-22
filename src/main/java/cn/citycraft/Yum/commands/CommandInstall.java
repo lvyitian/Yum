@@ -23,9 +23,8 @@ public class CommandInstall extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInstall(Yum main) {
-		super("install");
+		super("install", "安装插件");
 		this.main = main;
-		setDescription("安装插件");
 		setMinimumArguments(1);
 		setPossibleArguments("<插件名称>");
 	}

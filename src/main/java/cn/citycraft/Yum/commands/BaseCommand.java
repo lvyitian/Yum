@@ -20,17 +20,18 @@ public abstract class BaseCommand {
 	private String name;
 	private String permission;
 	private String[] aliases;
-	private String description = "无";
+	private String description;
 	private int minimumArguments = 0;
 	private String possibleArguments = "";
 	private boolean onlyPlayerExecutable = false;
 
-	public BaseCommand(String name) {
-		this(name, new String[0]);
+	public BaseCommand(String name, String description) {
+		this(name, description, new String[0]);
 	}
 
-	public BaseCommand(String name, String... aliases) {
+	public BaseCommand(String name, String description, String... aliases) {
 		this.name = name;
+		this.description = description;
 		this.aliases = aliases;
 	}
 
@@ -48,6 +49,11 @@ public abstract class BaseCommand {
 	 */
 	public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException;
 
+	/**
+	 * 获得当前命令的别名
+	 * 
+	 * @return 当前命令的别名
+	 */
 	public List<String> getCommandList() {
 		List<String> cmds = new ArrayList<String>();
 		cmds.add(name);
@@ -140,16 +146,6 @@ public abstract class BaseCommand {
 	}
 
 	/**
-	 * 设置命令的描述信息
-	 *
-	 * @param description
-	 *            - 命令描述
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
 	 * 设置命令的最小参数个数
 	 *
 	 * @param minimumArguments
@@ -181,7 +177,7 @@ public abstract class BaseCommand {
 
 	/**
 	 * 设置可能的命令参数
-	 * 
+	 *
 	 * @param possibleArguments
 	 *            - 可能的命令参数
 	 */
