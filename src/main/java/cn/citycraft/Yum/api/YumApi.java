@@ -3,7 +3,6 @@
  */
 package cn.citycraft.Yum.api;
 
-
 /**
  * Yum仓库插件API
  *

@@ -32,37 +32,40 @@ import cn.citycraft.Yum.manager.Repositories.Repository;;
  */
 public class RepositoryManager {
 	Gson gson;
-	List<String> repos;
+	org.bukkit.plugin.Plugin main;
 	HashMap<String, PluginInfo> plugins;
 
-	org.bukkit.plugin.Plugin main;
+	List<String> repos;
 
-	public RepositoryManager(org.bukkit.plugin.Plugin plugin) {
+	public RepositoryManager(final org.bukkit.plugin.Plugin plugin) {
 		this.main = plugin;
 		gson = new Gson();
 		plugins = new HashMap<String, PluginInfo>();
 		repos = new ArrayList<String>();
 	}
 
-	public boolean addPackage(CommandSender sender, String urlstring) {
-		String json = getHtml(urlstring);
-		if (json.isEmpty())
+	public boolean addPackage(final CommandSender sender, final String urlstring) {
+		final String json = getHtml(urlstring);
+		if (json.isEmpty()) {
 			return false;
-		PackageInfo pkg = jsonToPackage(json);
-		if (pkg == null)
+		}
+		final PackageInfo pkg = jsonToPackage(json);
+		if (pkg == null) {
 			return false;
+		}
 		updatePackage(sender, pkg);
 		return true;
 	}
 
-	public boolean addRepositories(CommandSender sender, String urlstring) {
-		if (urlstring.isEmpty())
+	public boolean addRepositories(final CommandSender sender, final String urlstring) {
+		if (urlstring.isEmpty()) {
 			return false;
+		}
 		repos.add(urlstring);
 		return updateRepositories(sender, urlstring);
 	}
 
-	public void cacheToJson(FileConfiguration config) {
+	public void cacheToJson(final FileConfiguration config) {
 		config.set("repocache", gson.toJson(repos));
 		config.set("plugincache", gson.toJson(plugins));
 	}
@@ -72,97 +75,106 @@ public class RepositoryManager {
 	}
 
 	public List<PluginInfo> getAllPlugin() {
-		List<PluginInfo> li = new ArrayList<PluginInfo>();
-		for (Entry<String, PluginInfo> plugin : plugins.entrySet())
+		final List<PluginInfo> li = new ArrayList<PluginInfo>();
+		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
 			li.add(plugin.getValue());
+		}
 		return li;
 	}
 
 	public List<String> getAllPluginName() {
-		List<String> li = new ArrayList<String>();
-		for (Entry<String, PluginInfo> plugin : plugins.entrySet())
+		final List<String> li = new ArrayList<String>();
+		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
 			li.add(plugin.getValue().plugin.artifactId);
+		}
 		return li;
 	}
 
 	public List<String> getAllPluginsInfo() {
-		List<String> li = new ArrayList<String>();
-		for (Entry<String, PluginInfo> plugin : plugins.entrySet()) {
-			Plugin pl = plugin.getValue().plugin;
+		final List<String> li = new ArrayList<String>();
+		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			final Plugin pl = plugin.getValue().plugin;
 			li.add(String.format("§d%s §a%s(%s) §6- §e%s", plugin.getValue().repo, pl.artifactId, pl.version, pl.description));
 		}
 		return li;
 	}
 
-	public String getHtml(String urlstring) {
+	public String getHtml(final String urlstring) {
 		String html = "";
 		try {
-			URL url = new URL(urlstring);
-			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), Charsets.UTF_8));
+			final URL url = new URL(urlstring);
+			final BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), Charsets.UTF_8));
 			String line;
-			while ((line = br.readLine()) != null)
+			while ((line = br.readLine()) != null) {
 				html += line;
+			}
 			return html;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return null;
 		}
 	}
 
-	public PluginInfo getPlugin(String name) {
-		for (Entry<String, PluginInfo> plugin : plugins.entrySet())
-			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name))
+	public PluginInfo getPlugin(final String name) {
+		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name)) {
 				return plugin.getValue();
+			}
+		}
 		return null;
 	}
 
-	public List<PluginInfo> getPluginInfo(String name) {
-		List<PluginInfo> li = new ArrayList<PluginInfo>();
-		for (Entry<String, PluginInfo> plugin : plugins.entrySet())
-			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name))
+	public List<PluginInfo> getPluginInfo(final String name) {
+		final List<PluginInfo> li = new ArrayList<PluginInfo>();
+		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
+			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name)) {
 				li.add(plugin.getValue());
+			}
+		}
 		return li;
 	}
 
-	public PluginInfo getPluginInfo(String groupId, String artifactId) {
+	public PluginInfo getPluginInfo(final String groupId, final String artifactId) {
 		return plugins.get(groupId + "." + artifactId);
 	}
 
-	public boolean jsonToCache(FileConfiguration config) {
-		String repocache = config.getString("repocache");
-		String plugincache = config.getString("plugincache");
+	public boolean jsonToCache(final FileConfiguration config) {
+		final String repocache = config.getString("repocache");
+		final String plugincache = config.getString("plugincache");
 		try {
-			if (!repocache.isEmpty())
+			if (!repocache.isEmpty()) {
 				repos = gson.fromJson(repocache, new TypeToken<List<String>>() {
 				}.getType());
-			if (!plugincache.isEmpty())
+			}
+			if (!plugincache.isEmpty()) {
 				plugins = gson.fromJson(plugincache, new TypeToken<HashMap<String, PluginInfo>>() {
 				}.getType());
+			}
 			return true;
-		} catch (JsonSyntaxException e) {
+		} catch (final JsonSyntaxException e) {
 			return false;
 		}
 	}
 
-	public PackageInfo jsonToPackage(String json) {
+	public PackageInfo jsonToPackage(final String json) {
 		try {
 			return gson.fromJson(json, PackageInfo.class);
-		} catch (JsonSyntaxException e) {
+		} catch (final JsonSyntaxException e) {
 			return null;
 		}
 	}
 
-	public List<Repository> jsonToRepositories(String json) {
+	public List<Repository> jsonToRepositories(final String json) {
 		try {
 			return gson.fromJson(json, new TypeToken<List<Repository>>() {
 			}.getType());
-		} catch (JsonSyntaxException e) {
+		} catch (final JsonSyntaxException e) {
 			return new ArrayList<Repository>();
 		}
 	}
 
-	public void updatePackage(CommandSender sender, PackageInfo pkg) {
-		for (Plugin plugin : pkg.plugins) {
-			PluginInfo pi = new PluginInfo();
+	public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
+		for (final Plugin plugin : pkg.plugins) {
+			final PluginInfo pi = new PluginInfo();
 			pi.plugin = plugin;
 			pi.url = pkg.url;
 			pi.repo = pkg.name;
@@ -171,29 +183,36 @@ public class RepositoryManager {
 		sender.sendMessage("§6仓库: §e" + pkg.name + " §a更新成功!");
 	}
 
-	public boolean updateRepositories(CommandSender sender) {
+	public boolean updateRepositories(final CommandSender sender) {
 		plugins.clear();
-		for (String string : repos)
-			if (updateRepositories(sender, string))
+		for (final String string : repos) {
+			if (updateRepositories(sender, string)) {
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
-			else
+			} else {
 				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
+			}
+		}
 		return true;
 	}
 
 	public boolean updateRepositories(CommandSender sender, String urlstring) {
-		if (sender == null)
+		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
-		if (!urlstring.endsWith("repo.info"))
+		}
+		if (!urlstring.endsWith("repo.info")) {
 			urlstring = urlstring + "/repo.info";
-		String json = getHtml(urlstring);
-		if (json.isEmpty())
+		}
+		final String json = getHtml(urlstring);
+		if (json.isEmpty()) {
 			return false;
-		List<Repository> lrepo = jsonToRepositories(json);
-		if (lrepo.isEmpty())
+		}
+		final List<Repository> lrepo = jsonToRepositories(json);
+		if (lrepo.isEmpty()) {
 			return false;
-		for (Repository repository : lrepo)
+		}
+		for (final Repository repository : lrepo) {
 			addPackage(sender, repository.url);
+		}
 		return true;
 	}
 }

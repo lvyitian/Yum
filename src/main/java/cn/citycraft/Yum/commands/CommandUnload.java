@@ -22,7 +22,7 @@ public class CommandUnload extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandUnload(Yum main) {
+	public CommandUnload(final Yum main) {
 		super("unload", "卸载插件");
 		this.main = main;
 		setMinimumArguments(1);
@@ -30,12 +30,13 @@ public class CommandUnload extends BaseCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null)
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		final String pluginname = args[0];
+		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+		if (plugin != null) {
 			YumManager.plugman.unload(sender, plugin);
-		else
+		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+		}
 	};
 }

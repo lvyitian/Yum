@@ -22,15 +22,16 @@ public class CommandList extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandList(Yum main) {
+	public CommandList(final Yum main) {
 		super("list", "列出已安装插件列表");
 		this.main = main;
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
 		sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
-		for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+		for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			sender.sendMessage("§6 - " + YumManager.plugman.getFormattedName(plugin, true));
+		}
 	};
 }

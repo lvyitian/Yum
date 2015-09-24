@@ -22,7 +22,7 @@ public class CommandDelete extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandDelete(Yum main) {
+	public CommandDelete(final Yum main) {
 		super("delete", "删除插件");
 		this.main = main;
 		setMinimumArguments(1);
@@ -30,15 +30,17 @@ public class CommandDelete extends BaseCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null)
-			if (YumManager.plugman.deletePlugin(sender, plugin))
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		final String pluginname = args[0];
+		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+		if (plugin != null) {
+			if (YumManager.plugman.deletePlugin(sender, plugin)) {
 				sender.sendMessage("§c删除: §a插件 " + pluginname + " 已从服务器卸载并删除!");
-			else
+			} else {
 				sender.sendMessage("§c删除: §c插件 " + pluginname + " 卸载或删除时发生错误 删除失败!");
-		else
+			}
+		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+		}
 	};
 }

@@ -22,7 +22,7 @@ public class CommandReload extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandReload(Yum main) {
+	public CommandReload(final Yum main) {
 		super("reload", "重载插件");
 		this.main = main;
 		setMinimumArguments(1);
@@ -30,16 +30,17 @@ public class CommandReload extends BaseCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		final String pluginname = args[0];
 		if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
 			YumManager.plugman.reloadAll(sender);
 			return;
 		}
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin != null)
+		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+		if (plugin != null) {
 			YumManager.plugman.reload(sender, plugin);
-		else
+		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+		}
 	};
 }

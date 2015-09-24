@@ -21,7 +21,7 @@ public class CommandRepo extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandRepo(Yum main) {
+	public CommandRepo(final Yum main) {
 		super("repo", "插件源命令");
 		this.main = main;
 		setMinimumArguments(1);
@@ -29,17 +29,19 @@ public class CommandRepo extends BaseCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String cmd = args[0];
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		final String cmd = args[0];
 		switch (cmd) {
 		case "add":
 			if (args.length == 2) {
-				if (YumManager.repo.addRepositories(sender, args[1]))
+				if (YumManager.repo.addRepositories(sender, args[1])) {
 					sender.sendMessage("§6仓库: §a插件信息已缓存!");
-				else
+				} else {
 					sender.sendMessage("§6仓库: §c源地址未找到仓库信息或无法访问!");
-			} else
+				}
+			} else {
 				sender.sendMessage("§6仓库: §c请输入源地址!");
+			}
 			break;
 		case "list":
 			sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");

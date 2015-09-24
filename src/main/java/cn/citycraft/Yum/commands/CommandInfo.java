@@ -24,20 +24,21 @@ public class CommandInfo extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandInfo(Yum main) {
+	public CommandInfo(final Yum main) {
 		super("info", "查看插件详情");
 		this.main = main;
 		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		if (args.length == 0)
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		if (args.length == 0) {
 			return;
-		String pluginname = args[0];
-		Plugin plugin = main.getServer().getPluginManager().getPlugin(pluginname);
+		}
+		final String pluginname = args[0];
+		final Plugin plugin = main.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			PluginDescriptionFile desc = plugin.getDescription();
+			final PluginDescriptionFile desc = plugin.getDescription();
 			sender.sendMessage("§6插件名称: §3" + plugin.getName());
 			sender.sendMessage("§6插件版本: §3" + desc.getVersion());
 			sender.sendMessage("§6插件作者: §3" + StringUtils.join(desc.getAuthors(), " "));
@@ -47,7 +48,8 @@ public class CommandInfo extends BaseCommand {
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend());
 			sender.sendMessage("§6插件物理路径: §3" + YumManager.plugman.getPluginFile(plugin).getAbsolutePath());
-		} else
+		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
+		}
 	};
 }

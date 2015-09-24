@@ -15,22 +15,22 @@ import java.util.List;
 public class Repositories {
 	public class PackageInfo {
 		public String name;
-		public String url;
 		public List<Plugin> plugins = new ArrayList<>();
+		public String url;
 	}
 
 	public class Plugin {
-		public String groupId;
 		public String artifactId;
 		public String description;
-		public String version;
+		public String groupId;
 		public List<TagInfo> tags;
+		public String version;
 	}
 
 	public class Repository {
 		public String id;
-		public String url;
 		public String type;
+		public String url;
 	}
 
 	public class TagInfo {

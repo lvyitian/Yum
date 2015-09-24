@@ -22,7 +22,7 @@ public class CommandLoad extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandLoad(Yum main) {
+	public CommandLoad(final Yum main) {
 		super("load", "载入插件");
 		this.main = main;
 		setMinimumArguments(1);
@@ -30,12 +30,13 @@ public class CommandLoad extends BaseCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String label, String[] args) throws CommandException {
-		String pluginname = args[0];
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin == null)
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+		final String pluginname = args[0];
+		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+		if (plugin == null) {
 			YumManager.plugman.load(sender, pluginname);
-		else
+		} else {
 			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
+		}
 	};
 }

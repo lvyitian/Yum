@@ -17,19 +17,19 @@ import org.bukkit.command.CommandSender;
  *         2015年8月12日下午12:49:34
  */
 public abstract class BaseCommand {
-	private String name;
-	private String permission;
-	private String[] aliases;
-	private String description;
+	private final String[] aliases;
+	private final String description;
 	private int minimumArguments = 0;
-	private String possibleArguments = "";
+	private final String name;
 	private boolean onlyPlayerExecutable = false;
+	private String permission;
+	private String possibleArguments = "";
 
-	public BaseCommand(String name, String description) {
+	public BaseCommand(final String name, final String description) {
 		this(name, description, new String[0]);
 	}
 
-	public BaseCommand(String name, String description, String... aliases) {
+	public BaseCommand(final String name, final String description, final String... aliases) {
 		this.name = name;
 		this.description = description;
 		this.aliases = aliases;
@@ -51,11 +51,11 @@ public abstract class BaseCommand {
 
 	/**
 	 * 获得当前命令的别名
-	 * 
+	 *
 	 * @return 当前命令的别名
 	 */
 	public List<String> getCommandList() {
-		List<String> cmds = new ArrayList<String>();
+		final List<String> cmds = new ArrayList<String>();
 		cmds.add(name);
 		cmds.addAll(Arrays.asList(aliases));
 		return cmds;
@@ -113,9 +113,10 @@ public abstract class BaseCommand {
 	 *            - 命令发送者
 	 * @return 是否有权限执行命令
 	 */
-	public final boolean hasPermission(CommandSender sender) {
-		if (permission == null)
+	public final boolean hasPermission(final CommandSender sender) {
+		if (permission == null) {
 			return true;
+		}
 		return sender.hasPermission(permission);
 	}
 
@@ -135,13 +136,17 @@ public abstract class BaseCommand {
 	 *            - 命令
 	 * @return 是否匹配
 	 */
-	public final boolean isValidTrigger(String name) {
-		if (this.name.equalsIgnoreCase(name))
+	public final boolean isValidTrigger(final String name) {
+		if (this.name.equalsIgnoreCase(name)) {
 			return true;
-		if (aliases != null)
-			for (String alias : aliases)
-				if (alias.equalsIgnoreCase(name))
+		}
+		if (aliases != null) {
+			for (final String alias : aliases) {
+				if (alias.equalsIgnoreCase(name)) {
 					return true;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -151,7 +156,7 @@ public abstract class BaseCommand {
 	 * @param minimumArguments
 	 *            - 最小参数个数
 	 */
-	public void setMinimumArguments(int minimumArguments) {
+	public void setMinimumArguments(final int minimumArguments) {
 		this.minimumArguments = minimumArguments;
 	}
 
@@ -161,7 +166,7 @@ public abstract class BaseCommand {
 	 * @param onlyPlayerExecutable
 	 *            - 是否只允许玩家执行
 	 */
-	public void setOnlyPlayerExecutable(boolean onlyPlayerExecutable) {
+	public void setOnlyPlayerExecutable(final boolean onlyPlayerExecutable) {
 		this.onlyPlayerExecutable = onlyPlayerExecutable;
 	}
 
@@ -171,7 +176,7 @@ public abstract class BaseCommand {
 	 * @param permission
 	 *            - 命令权限
 	 */
-	public void setPermission(String permission) {
+	public void setPermission(final String permission) {
 		this.permission = permission;
 	}
 
@@ -181,7 +186,7 @@ public abstract class BaseCommand {
 	 * @param possibleArguments
 	 *            - 可能的命令参数
 	 */
-	public void setPossibleArguments(String possibleArguments) {
+	public void setPossibleArguments(final String possibleArguments) {
 		this.possibleArguments = possibleArguments;
 	}
 

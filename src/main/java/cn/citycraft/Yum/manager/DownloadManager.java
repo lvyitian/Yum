@@ -19,7 +19,7 @@ import org.bukkit.plugin.Plugin;
 public class DownloadManager {
 	Plugin plugin;
 
-	public DownloadManager(Plugin main) {
+	public DownloadManager(final Plugin main) {
 		this.plugin = main;
 	}
 
@@ -30,8 +30,8 @@ public class DownloadManager {
 	 *            - 地址
 	 * @return 文件名称
 	 */
-	public String getFileName(String url) {
-		int end = url.lastIndexOf('/');
+	public String getFileName(final String url) {
+		final int end = url.lastIndexOf('/');
 		return url.substring(end + 1);
 	}
 
@@ -42,20 +42,8 @@ public class DownloadManager {
 	 *            - 地址
 	 * @return 文件名称
 	 */
-	public String getFileName(URL url) {
+	public String getFileName(final URL url) {
 		return getFileName(url.getFile());
-	}
-
-	private String getPer(int per) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 11; i++)
-			if (per > i)
-				sb.append("==");
-			else if (per == i)
-				sb.append("> ");
-			else
-				sb.append("  ");
-		return sb.toString();
 	}
 
 	/**
@@ -67,7 +55,7 @@ public class DownloadManager {
 	 *            - 下载地址
 	 * @return 是否成功
 	 */
-	public boolean run(CommandSender sender, String urlstring) {
+	public boolean run(final CommandSender sender, final String urlstring) {
 		return run(sender, urlstring, new File("plugins", getFileName(urlstring)));
 	}
 
@@ -82,11 +70,11 @@ public class DownloadManager {
 	 *            - 保存文件
 	 * @return 是否成功
 	 */
-	public boolean run(CommandSender sender, String urlstring, File file) {
+	public boolean run(final CommandSender sender, final String urlstring, final File file) {
 		try {
-			URL url = new URL(urlstring);
+			final URL url = new URL(urlstring);
 			return run(sender, url, file);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			sender.sendMessage("§4错误: §c无法识别的URL地址...");
 			sender.sendMessage("§4地址: §c" + urlstring);
 			return false;
@@ -104,15 +92,16 @@ public class DownloadManager {
 	 *            - 保存文件
 	 * @return 是否成功
 	 */
-	public boolean run(CommandSender sender, URL url, File file) {
+	public boolean run(CommandSender sender, final URL url, final File file) {
 		BufferedInputStream in = null;
 		FileOutputStream fout = null;
-		if (sender == null)
+		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
+		}
 		try {
 			sender.sendMessage("§6开始下载: §3" + getFileName(url));
 			sender.sendMessage("§6下载地址: §3" + url.toString());
-			int fileLength = url.openConnection().getContentLength();
+			final int fileLength = url.openConnection().getContentLength();
 			if (fileLength < 0) {
 				sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
 				sender.sendMessage("§6文件: §c " + file.getName() + " 下载失败!");
@@ -124,38 +113,42 @@ public class DownloadManager {
 				file.getParentFile().mkdirs();
 				sender.sendMessage("§6创建新目录: §d" + file.getParentFile().getAbsolutePath());
 			}
-			if (file.exists())
+			if (file.exists()) {
 				file.delete();
+			}
 			file.createNewFile();
 			sender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
 			fout = new FileOutputStream(file);
-			byte[] data = new byte[1024];
+			final byte[] data = new byte[1024];
 			long downloaded = 0L;
 			int count;
 			long time = System.currentTimeMillis();
 			while ((count = in.read(data)) != -1) {
 				downloaded += count;
 				fout.write(data, 0, count);
-				int percent = (int) (downloaded * 100L / fileLength);
-				if (percent % 10 == 0)
+				final int percent = (int) (downloaded * 100L / fileLength);
+				if (percent % 10 == 0) {
 					if (fileLength < 102400 || System.currentTimeMillis() - time > 1000) {
 						sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 						time = System.currentTimeMillis();
 					}
+				}
 			}
 			sender.sendMessage("§6文件: §a " + file.getName() + " 下载完成!");
 			return true;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			sender.sendMessage("§6异常: §c" + ex.getMessage());
 			sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
 			return false;
 		} finally {
 			try {
-				if (in != null)
+				if (in != null) {
 					in.close();
-				if (fout != null)
+				}
+				if (fout != null) {
 					fout.close();
-			} catch (Exception ex) {
+				}
+			} catch (final Exception ex) {
 			}
 		}
 	}
@@ -167,7 +160,7 @@ public class DownloadManager {
 	 *            - 下载地址
 	 * @return 是否成功
 	 */
-	public boolean run(String urlstring) {
+	public boolean run(final String urlstring) {
 		return run(null, urlstring);
 	}
 
@@ -180,7 +173,7 @@ public class DownloadManager {
 	 *            - 保存文件
 	 * @return 是否成功
 	 */
-	public boolean run(String urlstring, File file) {
+	public boolean run(final String urlstring, final File file) {
 		return run(null, urlstring, file);
 	}
 
@@ -193,8 +186,22 @@ public class DownloadManager {
 	 *            - 保存文件
 	 * @return 是否成功
 	 */
-	public boolean run(URL url, File file) {
+	public boolean run(final URL url, final File file) {
 		return run(null, url, file);
+	}
+
+	private String getPer(final int per) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 11; i++) {
+			if (per > i) {
+				sb.append("==");
+			} else if (per == i) {
+				sb.append("> ");
+			} else {
+				sb.append("  ");
+			}
+		}
+		return sb.toString();
 	}
 
 }

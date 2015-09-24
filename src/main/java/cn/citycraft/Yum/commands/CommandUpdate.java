@@ -20,7 +20,7 @@ public class CommandUpdate extends BaseCommand {
 	/**
 	 * @param name
 	 */
-	public CommandUpdate(Yum main) {
+	public CommandUpdate(final Yum main) {
 		super("update", "更新插件");
 		this.main = main;
 		setMinimumArguments(1);
@@ -28,18 +28,20 @@ public class CommandUpdate extends BaseCommand {
 	}
 
 	@Override
-	public void execute(final CommandSender sender, String label, final String[] args) throws CommandException {
+	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		sender.sendMessage("§a开始更新插件: " + pluginname);
-		if (plugin != null)
+		if (plugin != null) {
 			Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-				if (args.length < 2)
+				if (args.length < 2) {
 					YumManager.update(sender, plugin);
-				else
+				} else {
 					YumManager.update(sender, plugin, args[1]);
+				}
 			});
-		else
+		} else {
 			sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
+		}
 	};
 }

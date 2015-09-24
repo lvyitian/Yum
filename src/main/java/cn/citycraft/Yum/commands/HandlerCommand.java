@@ -26,18 +26,18 @@ import cn.citycraft.Yum.manager.YumManager;
  */
 public class HandlerCommand implements CommandExecutor, TabCompleter {
 	/**
-	 * 已注册命令列表(包括别名)
-	 */
-	List<String> RegisterCommandList = new ArrayList<String>();
-
-	/**
 	 * 命令监听类列表
 	 */
-	private List<BaseCommand> commandlist = new ArrayList<BaseCommand>();;
+	private final List<BaseCommand> commandlist = new ArrayList<BaseCommand>();
+
 	/**
 	 * 插件主类
 	 */
-	Yum main;
+	Yum main;;
+	/**
+	 * 已注册命令列表(包括别名)
+	 */
+	List<String> RegisterCommandList = new ArrayList<String>();
 
 	/**
 	 * 注册子命令
@@ -45,7 +45,7 @@ public class HandlerCommand implements CommandExecutor, TabCompleter {
 	 * @param yum
 	 *            - 插件主类
 	 */
-	public HandlerCommand(Yum yum) {
+	public HandlerCommand(final Yum yum) {
 		this.main = yum;
 		registerCommand(new CommandList(yum));
 		registerCommand(new CommandInstall(yum));
@@ -70,8 +70,8 @@ public class HandlerCommand implements CommandExecutor, TabCompleter {
 	 *            - 数组开始位置
 	 * @return 转移后的数组字符串
 	 */
-	public static String[] moveStrings(String[] args, int start) {
-		String[] ret = new String[args.length - start];
+	public static String[] moveStrings(final String[] args, final int start) {
+		final String[] ret = new String[args.length - start];
 		System.arraycopy(args, start, ret, 0, ret.length);
 		return ret;
 	}
@@ -82,25 +82,28 @@ public class HandlerCommand implements CommandExecutor, TabCompleter {
 	 * @return - 返回已注册的命令List
 	 */
 	public List<String> getRegisterCommands() {
-		List<String> cmds = new ArrayList<String>();
-		for (BaseCommand command : commandlist)
+		final List<String> cmds = new ArrayList<String>();
+		for (final BaseCommand command : commandlist) {
 			cmds.addAll(command.getCommandList());
+		}
 		return cmds;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 0)
-			return true;
-		String subcmd = args[0];
-		if (subcmd.equalsIgnoreCase("help")) {
-			sender.sendMessage("§6=========YUM插件帮助列表=========");
-			for (BaseCommand command : commandlist)
-				sender.sendMessage(String.format("§6/yum §a%1$s %2$s §6- §b%3$s", command.getName(), command.getPossibleArguments(), command.getDescription()));
+	public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
+		if (args.length == 0) {
 			return true;
 		}
-		String[] subargs = moveStrings(args, 1);
-		for (BaseCommand command : commandlist)
+		final String subcmd = args[0];
+		if (subcmd.equalsIgnoreCase("help")) {
+			sender.sendMessage("§6=========YUM插件帮助列表=========");
+			for (final BaseCommand command : commandlist) {
+				sender.sendMessage(String.format("§6/yum §a%1$s %2$s §6- §b%3$s", command.getName(), command.getPossibleArguments(), command.getDescription()));
+			}
+			return true;
+		}
+		final String[] subargs = moveStrings(args, 1);
+		for (final BaseCommand command : commandlist) {
 			if (command.isValidTrigger(subcmd)) {
 				if (!command.hasPermission(sender)) {
 					sender.sendMessage("§c你没有此命令的权限!");
@@ -110,40 +113,40 @@ public class HandlerCommand implements CommandExecutor, TabCompleter {
 					sender.sendMessage("§c控制台无法使用此命令!");
 					return true;
 				}
-				if (subargs.length >= command.getMinimumArguments())
+				if (subargs.length >= command.getMinimumArguments()) {
 					try {
 						command.execute(sender, subcmd, subargs);
 						return true;
-					} catch (CommandException e) {
+					} catch (final CommandException e) {
 						sender.sendMessage(e.getMessage());
 					}
-				else
+				} else {
 					sender.sendMessage("§c错误的参数 §e使用方法 /yum " + command.getName() + command.getPossibleArguments());
+				}
 			}
+		}
 		return false;
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (sender.isOp() || sender.hasPermission("yum.admin") || sender.hasPermission("yum." + args[0])) {
-			List<String> completions = new ArrayList<>();
+			final List<String> completions = new ArrayList<>();
 			if (args.length == 1) {
-				String partialCommand = args[0];
-				List<String> commands = RegisterCommandList;
+				final String partialCommand = args[0];
+				final List<String> commands = RegisterCommandList;
 				StringUtil.copyPartialMatches(partialCommand, commands, completions);
 			}
 			if (args.length == 2) {
-				String partialPlugin = args[1];
+				final String partialPlugin = args[1];
 				List<String> plugins = null;
-				if (args[0].equalsIgnoreCase("install"))
+				if (args[0].equalsIgnoreCase("install")) {
 					plugins = YumManager.repo.getAllPluginName();
-				else if (args[0].equalsIgnoreCase("repo"))
-					plugins = Arrays.asList(new String[] {	"add",
-															"list",
-															"clean",
-															"update" });
-				else
+				} else if (args[0].equalsIgnoreCase("repo")) {
+					plugins = Arrays.asList(new String[] { "add", "list", "clean", "update" });
+				} else {
 					plugins = YumManager.plugman.getPluginNames(false);
+				}
 				StringUtil.copyPartialMatches(partialPlugin, plugins, completions);
 			}
 			Collections.sort(completions);
@@ -158,7 +161,7 @@ public class HandlerCommand implements CommandExecutor, TabCompleter {
 	 * @param command
 	 *            - 被注册的命令类
 	 */
-	public void registerCommand(BaseCommand command) {
+	public void registerCommand(final BaseCommand command) {
 		commandlist.add(command);
 	}
 

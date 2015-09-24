@@ -19,8 +19,8 @@ import cn.citycraft.Yum.manager.YumManager;
  * @author 蒋天蓓 2015年8月21日下午5:14:39
  */
 public class Yum extends JavaPlugin {
-	public YumManager yumgr;
 	public FileConfig config;
+	public YumManager yumgr;
 
 	@Override
 	public void onDisable() {
@@ -30,16 +30,16 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		HandlerCommand cmdhandler = new HandlerCommand(this);
+		final HandlerCommand cmdhandler = new HandlerCommand(this);
 		this.getCommand("yum").setExecutor(cmdhandler);
 		this.getCommand("yum").setTabCompleter(cmdhandler);
 		yumgr = new YumManager(this);
 		YumManager.repo.jsonToCache(config);
 		new VersionChecker(this);
 		try {
-			Metrics metrics = new Metrics(this);
+			final Metrics metrics = new Metrics(this);
 			metrics.start();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 	}
 
