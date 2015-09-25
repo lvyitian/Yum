@@ -23,8 +23,7 @@ public class CommandUpgrade extends BaseCommand {
 	public CommandUpgrade(final Yum main) {
 		super("upgrade", "升级插件");
 		this.main = main;
-		setMinimumArguments(1);
-		setPossibleArguments("<插件名称>");
+		setPossibleArguments("[插件名称]");
 	}
 
 	@Override
