@@ -2,7 +2,7 @@ name: ${project.artifactId}
 description: ${project.description}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
 version: ${project.version}
-auther: 喵♂呜
+author: 喵♂呜
 website: http://ci.citycraft.cn:8800/jenkins/job/${project.artifactId}/
 commands:
   yum:
