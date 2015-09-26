@@ -33,11 +33,14 @@ public class CommandUpdate extends BaseCommand {
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		sender.sendMessage("§a开始更新插件: " + pluginname);
 		if (plugin != null) {
-			Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-				if (args.length < 2) {
-					YumManager.update(sender, plugin);
-				} else {
-					YumManager.update(sender, plugin, args[1]);
+			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+				@Override
+				public void run() {
+					if (args.length < 2) {
+						YumManager.update(sender, plugin);
+					} else {
+						YumManager.update(sender, plugin, args[1]);
+					}
 				}
 			});
 		} else {

@@ -28,17 +28,20 @@ public class CommandUpgrade extends BaseCommand {
 
 	@Override
 	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
-		Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-			if (args.length == 0) {
-				YumManager.plugman.upgrade(sender);
-			} else {
-				final String pluginname = args[0];
-				final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-				sender.sendMessage("§a开始升级插件: " + pluginname);
-				if (plugin != null) {
-					YumManager.plugman.upgrade(sender, plugin);
+		Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+			@Override
+			public void run() {
+				if (args.length == 0) {
+					YumManager.plugman.upgrade(sender);
 				} else {
-					sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
+					final String pluginname = args[0];
+					final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+					sender.sendMessage("§a开始升级插件: " + pluginname);
+					if (plugin != null) {
+						YumManager.plugman.upgrade(sender, plugin);
+					} else {
+						sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
+					}
 				}
 			}
 		});

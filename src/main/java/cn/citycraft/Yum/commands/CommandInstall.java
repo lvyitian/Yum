@@ -34,11 +34,14 @@ public class CommandInstall extends BaseCommand {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin == null) {
-			Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-				if (args.length < 2) {
-					YumManager.install(sender, pluginname);
-				} else {
-					YumManager.install(sender, pluginname, args[1]);
+			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+				@Override
+				public void run() {
+					if (args.length < 2) {
+						YumManager.install(sender, pluginname);
+					} else {
+						YumManager.install(sender, pluginname, args[1]);
+					}
 				}
 			});
 		} else {
