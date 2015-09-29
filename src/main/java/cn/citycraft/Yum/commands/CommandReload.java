@@ -4,10 +4,12 @@
 package cn.citycraft.Yum.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
 
@@ -23,14 +25,15 @@ public class CommandReload extends BaseCommand {
 	 * @param name
 	 */
 	public CommandReload(final Yum main) {
-		super("reload", "重载插件");
+		super("reload");
 		this.main = main;
 		setMinimumArguments(1);
+		setDescription("重载插件");
 		setPossibleArguments("<插件名称|all|*>");
 	}
 
 	@Override
-	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
 			YumManager.plugman.reloadAll(sender);

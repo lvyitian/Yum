@@ -3,9 +3,11 @@
  */
 package cn.citycraft.Yum.commands;
 
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 
+import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
@@ -22,14 +24,15 @@ public class CommandRepo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandRepo(final Yum main) {
-		super("repo", "插件源命令");
+		super("repo");
 		this.main = main;
 		setMinimumArguments(1);
+		setDescription("插件源命令");
 		setPossibleArguments("<add|del|clean|list> <仓库名称>");
 	}
 
 	@Override
-	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		final String cmd = args[0];
 		switch (cmd) {
 		case "add":

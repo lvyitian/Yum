@@ -4,10 +4,12 @@
 package cn.citycraft.Yum.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
 
@@ -23,14 +25,15 @@ public class CommandInstall extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInstall(final Yum main) {
-		super("install", "安装插件");
+		super("install");
 		this.main = main;
 		setMinimumArguments(1);
+		setDescription("安装插件");
 		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
-	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
+	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin == null) {
@@ -45,8 +48,7 @@ public class CommandInstall extends BaseCommand {
 				}
 			});
 		} else {
-			sender.sendMessage("§c插件已安装在服务器 需要更新请使用yum update " + pluginname + "!");
+			sender.sendMessage("§c插件" + pluginname + "已安装在服务器 需要更新请使用yum update " + pluginname + "!");
 		}
-
-	};
+	}
 }

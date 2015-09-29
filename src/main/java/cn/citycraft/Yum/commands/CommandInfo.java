@@ -4,11 +4,13 @@
 package cn.citycraft.Yum.commands;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.manager.YumManager;
@@ -25,16 +27,15 @@ public class CommandInfo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInfo(final Yum main) {
-		super("info", "查看插件详情");
+		super("info");
 		this.main = main;
+		setMinimumArguments(1);
+		setDescription("查看插件详情");
 		setPossibleArguments("<插件名称>");
 	}
 
 	@Override
-	public void execute(final CommandSender sender, final String label, final String[] args) throws CommandException {
-		if (args.length == 0) {
-			return;
-		}
+	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		final Plugin plugin = main.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
