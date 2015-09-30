@@ -3,6 +3,9 @@
  */
 package cn.citycraft.Yum.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -52,5 +55,13 @@ public class CommandInfo extends BaseCommand {
 		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 		}
-	};
+	}
+
+	@Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+		if (!args[0].equalsIgnoreCase("install") && !args[0].equalsIgnoreCase("repo")) {
+			return StringUtil.copyPartialMatches(args[1], YumManager.plugman.getPluginNames(false), new ArrayList<String>());
+		}
+		return null;
+	}
 }

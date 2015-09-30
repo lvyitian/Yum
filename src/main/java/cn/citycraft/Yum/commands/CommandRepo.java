@@ -3,6 +3,10 @@
  */
 package cn.citycraft.Yum.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
@@ -59,5 +63,13 @@ public class CommandRepo extends BaseCommand {
 			sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
 			break;
 		}
-	};
+	}
+
+	@Override
+	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+		if (args[0].equalsIgnoreCase("repo")) {
+			return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "list", "clean", "update" }), new ArrayList<String>());
+		}
+		return null;
+	}
 }
