@@ -48,9 +48,9 @@ public class CommandInfo extends BaseCommand {
 			sender.sendMessage("§6插件作者: §3" + StringUtils.join(desc.getAuthors(), " "));
 			sender.sendMessage("§6插件描述: §3" + (desc.getDescription() == null ? "无" : desc.getDescription()));
 			sender.sendMessage("§6插件依赖: §3" + (desc.getDepend().size() == 0 ? "无" : ""));
-			StringUtil.sendStringArray(sender, desc.getDepend(), "§6 - ");
+			StringUtil.sendStringArray(sender, desc.getDepend(), "§6 - §a");
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
-			StringUtil.sendStringArray(sender, desc.getSoftDepend(), "§6 - ");
+			StringUtil.sendStringArray(sender, desc.getSoftDepend(), "§6 - §a");
 			sender.sendMessage("§6插件物理路径: §3" + YumManager.plugman.getPluginFile(plugin).getAbsolutePath());
 		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
