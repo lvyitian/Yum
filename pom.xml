@@ -64,8 +64,8 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>citycraft-repo</id>
-			<url>http://ci.citycraft.cn:8800/jenkins/plugin/repository/everything/</url>
+			<id>sumcraft-repo</id>
+			<url>http://ci.sumcraft.net:8080/plugin/repository/everything/</url>
 		</repository>
 		<repository>
 			<id>Plugin Metrics</id>
@@ -77,7 +77,7 @@
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<type>jar</type>
-			<version>1.8.3-R0.1-SNAPSHOT</version>
+			<version>1.8.8-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>cn.citycraft</groupId>
