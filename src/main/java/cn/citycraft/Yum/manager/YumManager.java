@@ -18,10 +18,10 @@ public class YumManager {
 	public static PluginsManager plugman;
 	public static RepositoryManager repo;
 
-	Plugin plugin;
+	protected static Plugin plugin;
 
 	public YumManager(final Plugin plugin) {
-		this.plugin = plugin;
+		YumManager.plugin = plugin;
 		plugman = new PluginsManager(plugin);
 		download = new DownloadManager(plugin);
 		repo = new RepositoryManager(plugin);
@@ -64,5 +64,14 @@ public class YumManager {
 			return true;
 		}
 		return false;
+	}
+
+	public static void updaterepo() {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+				repo.updateRepositories(Bukkit.getConsoleSender());
+			}
+		});
 	}
 }

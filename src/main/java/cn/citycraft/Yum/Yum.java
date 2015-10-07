@@ -59,6 +59,7 @@ public class Yum extends JavaPlugin {
 		this.initCommands();
 		yumgr = new YumManager(this);
 		YumManager.repo.jsonToCache(config);
+		YumManager.updaterepo();
 		new VersionChecker(this);
 		try {
 			final Metrics metrics = new Metrics(this);
