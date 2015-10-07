@@ -128,7 +128,7 @@ public class DownloadManager {
 				fout.write(data, 0, count);
 				final int percent = (int) (downloaded * 100L / fileLength);
 				if (percent % 10 == 0) {
-					if (fileLength < 102400 || System.currentTimeMillis() - time > 1000) {
+					if (System.currentTimeMillis() - time > 500) {
 						sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
 						time = System.currentTimeMillis();
 					}

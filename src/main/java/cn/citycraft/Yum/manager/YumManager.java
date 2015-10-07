@@ -1,6 +1,7 @@
 package cn.citycraft.Yum.manager;
 
 import java.io.File;
+import java.net.URL;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -53,6 +54,14 @@ public class YumManager {
 			}
 		} else {
 			sender.sendMessage("§6更新: §c仓库缓存中未找到插件 " + plugin.getName());
+		}
+		return false;
+	}
+
+	public static boolean update(final CommandSender sender, final Plugin plugin, final URL url, final String version) {
+		if (download.run(sender, url, new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
+			sender.sendMessage("§6更新: §a已下载插件 " + plugin.getName() + " 到update文件夹 重启后自动更新(或使用upgrade直接升级)!");
+			return true;
 		}
 		return false;
 	}

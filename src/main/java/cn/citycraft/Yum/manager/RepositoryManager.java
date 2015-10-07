@@ -141,11 +141,11 @@ public class RepositoryManager {
 		final String repocache = config.getString("repocache");
 		final String plugincache = config.getString("plugincache");
 		try {
-			if (!repocache.isEmpty()) {
+			if (repocache != null && !repocache.isEmpty()) {
 				repos = gson.fromJson(repocache, new TypeToken<List<String>>() {
 				}.getType());
 			}
-			if (!plugincache.isEmpty()) {
+			if (plugincache != null && !plugincache.isEmpty()) {
 				plugins = gson.fromJson(plugincache, new TypeToken<HashMap<String, PluginInfo>>() {
 				}.getType());
 			}
