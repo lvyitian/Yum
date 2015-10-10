@@ -203,11 +203,11 @@ public class RepositoryManager {
 			urlstring = urlstring + "/repo.info";
 		}
 		final String json = getHtml(urlstring);
-		if (json.isEmpty()) {
+		if (json == null || json.isEmpty()) {
 			return false;
 		}
 		final List<Repository> lrepo = jsonToRepositories(json);
-		if (lrepo.isEmpty()) {
+		if (lrepo == null || lrepo.isEmpty()) {
 			return false;
 		}
 		for (final Repository repository : lrepo) {
