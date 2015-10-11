@@ -73,11 +73,7 @@ public class CommandRepo extends BaseCommand {
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args[0].equalsIgnoreCase("repo")) {
-			return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] {	"add",
-																						"list",
-																						"clean",
-																						"update" }),
-					new ArrayList<String>());
+			return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "list", "clean", "update" }), new ArrayList<String>());
 		}
 		return null;
 	}
