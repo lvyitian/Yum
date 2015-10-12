@@ -58,7 +58,8 @@ public class RepositoryManager {
 	}
 
 	public boolean addRepositories(final CommandSender sender, final String urlstring) {
-		if (urlstring.isEmpty()) {
+		final int urllength = urlstring.length();
+		if (urllength == 0 || repos.contains(urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength))) {
 			return false;
 		}
 		repos.add(urlstring);
@@ -72,6 +73,14 @@ public class RepositoryManager {
 
 	public void clean() {
 		plugins.clear();
+	}
+
+	public boolean delRepositories(final CommandSender sender, final String urlstring) {
+		if (urlstring.isEmpty() || !repos.contains(urlstring)) {
+			return false;
+		}
+		repos.remove(urlstring);
+		return true;
 	}
 
 	public List<PluginInfo> getAllPlugin() {
@@ -135,6 +144,14 @@ public class RepositoryManager {
 
 	public PluginInfo getPluginInfo(final String groupId, final String artifactId) {
 		return plugins.get(groupId + "." + artifactId);
+	}
+
+	public HashMap<String, PluginInfo> getPlugins() {
+		return plugins;
+	}
+
+	public List<String> getRepos() {
+		return repos;
 	}
 
 	public boolean jsonToCache(final FileConfiguration config) {

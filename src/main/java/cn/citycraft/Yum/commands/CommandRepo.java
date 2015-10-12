@@ -45,12 +45,23 @@ public class CommandRepo extends BaseCommand {
 				case "add":
 					if (args.length == 2) {
 						if (YumManager.repo.addRepositories(sender, args[1])) {
-							sender.sendMessage("§6仓库: §a插件信息已缓存!");
+							sender.sendMessage("§6仓库: §a§a源地址 " + args[1] + " 的插件信息已缓存!");
 						} else {
-							sender.sendMessage("§6仓库: §c源地址未找到仓库信息或无法访问!");
+							sender.sendMessage("§6仓库: §c源地址未找到仓库信息或当前地址已缓存!");
 						}
 					} else {
-						sender.sendMessage("§6仓库: §c请输入源地址!");
+						sender.sendMessage("§6仓库: §c请输入需要添加的源地址!");
+					}
+					break;
+				case "del":
+					if (args.length == 2) {
+						if (YumManager.repo.delRepositories(sender, args[1])) {
+							sender.sendMessage("§6仓库: §a源地址 " + args[1] + " 已删除 请使用 yum repo update 更新缓存!");
+						} else {
+							sender.sendMessage("§6仓库: §c源地址未找到!");
+						}
+					} else {
+						sender.sendMessage("§6仓库: §c请输入需要删除的源地址!");
 					}
 					break;
 				case "list":
@@ -73,7 +84,12 @@ public class CommandRepo extends BaseCommand {
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args[0].equalsIgnoreCase("repo")) {
-			return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "list", "clean", "update" }), new ArrayList<String>());
+			if (args.length == 2) {
+				return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "list", "clean", "update", "del" }), new ArrayList<String>());
+			}
+			if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
+				return StringUtil.copyPartialMatches(args[2], YumManager.repo.getRepos(), new ArrayList<String>());
+			}
 		}
 		return null;
 	}
