@@ -64,8 +64,8 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>sumcraft-repo</id>
-			<url>http://ci.sumcraft.net:8080/plugin/repository/everything/</url>
+			<id>citycraft-repo</id>
+			<url>${jenkins.url}/plugin/repository/everything/</url>
 		</repository>
 		<repository>
 			<id>Plugin Metrics</id>
@@ -94,5 +94,6 @@
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
 	</properties>
 </project>

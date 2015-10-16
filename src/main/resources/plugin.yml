@@ -3,7 +3,7 @@ description: ${project.description}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
 version: ${project.version}
 author: 喵♂呜
-website: http://ci.citycraft.cn:8800/jenkins/job/${project.artifactId}/
+website: ${jenkins.url}/job/${project.artifactId}/
 commands:
   yum:
     description: MC插件仓库
