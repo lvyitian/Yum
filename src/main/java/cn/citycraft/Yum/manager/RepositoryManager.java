@@ -59,7 +59,14 @@ public class RepositoryManager {
 
 	public boolean addRepositories(final CommandSender sender, final String urlstring) {
 		final int urllength = urlstring.length();
-		if (urllength == 0 || repos.contains(urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength))) {
+		String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
+		if (!url.startsWith("http://")) {
+			url = "http://" + url;
+		}
+		if (!url.endsWith("repo.info")) {
+			url = url + "/repo.info";
+		}
+		if (urllength == 0 || repos.contains(url)) {
 			return false;
 		}
 		repos.add(urlstring);
@@ -202,6 +209,9 @@ public class RepositoryManager {
 
 	public boolean updateRepositories(final CommandSender sender) {
 		plugins.clear();
+		if (repos.isEmpty()) {
+			repos.add("http://citycraft.cn/repo/repo.info");
+		}
 		for (final String string : repos) {
 			if (updateRepositories(sender, string)) {
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
@@ -212,15 +222,14 @@ public class RepositoryManager {
 		return true;
 	}
 
-	public boolean updateRepositories(CommandSender sender, String urlstring) {
+	public boolean updateRepositories(CommandSender sender, final String urlstring) {
 		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
 		}
-		if (!urlstring.endsWith("repo.info")) {
-			urlstring = urlstring + "/repo.info";
-		}
 		final String json = getHtml(urlstring);
 		if (json == null || json.isEmpty()) {
+			sender.sendMessage("§6源: §e" + urlstring + " §c未找到任何仓库信息 已删除!");
+			repos.remove(urlstring);
 			return false;
 		}
 		final List<Repository> lrepo = jsonToRepositories(json);
