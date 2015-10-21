@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.7</version>
+	<version>1.7.1</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -33,14 +33,9 @@
 					<artifactSet>
 						<includes>
 							<include>cn.citycraft:PluginHelper</include>
-							<include>org.mcstats.*:*</include>
 						</includes>
 					</artifactSet>
 					<relocations>
-						<relocation>
-							<pattern>org.mcstats</pattern>
-							<shadedPattern>${project.groupId}.${project.artifactId}.mcstats</shadedPattern>
-						</relocation>
 						<relocation>
 							<pattern>cn.citycraft.PluginHelper</pattern>
 							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
@@ -58,6 +53,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<properties>
+		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
+		<update.description>更新7老板底层Gson库 移除Plugin Metrics...</update.description>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>
@@ -66,10 +66,6 @@
 		<repository>
 			<id>citycraft-repo</id>
 			<url>${jenkins.url}/plugin/repository/everything/</url>
-		</repository>
-		<repository>
-			<id>Plugin Metrics</id>
-			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -85,15 +81,5 @@
 			<type>jar</type>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.mcstats.bukkit</groupId>
-			<artifactId>metrics</artifactId>
-			<version>R8-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-	</properties>
 </project>

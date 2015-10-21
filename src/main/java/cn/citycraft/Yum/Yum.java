@@ -3,10 +3,7 @@
  */
 package cn.citycraft.Yum;
 
-import java.io.IOException;
-
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 import cn.citycraft.PluginHelper.commands.HandlerSubCommand;
 import cn.citycraft.PluginHelper.config.FileConfig;
@@ -61,11 +58,6 @@ public class Yum extends JavaPlugin {
 		YumManager.repo.jsonToCache(config);
 		YumManager.updaterepo();
 		new VersionChecker(this);
-		try {
-			final Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (final IOException e) {
-		}
 	}
 
 	@Override

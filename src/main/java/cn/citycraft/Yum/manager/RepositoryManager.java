@@ -17,10 +17,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.common.base.Charsets;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import cn.citycraft.PluginHelper.gson.GsonLib;
+import cn.citycraft.PluginHelper.gson.api.Gson;
 import cn.citycraft.Yum.manager.Repositories.PackageInfo;
 import cn.citycraft.Yum.manager.Repositories.Plugin;
 import cn.citycraft.Yum.manager.Repositories.Repository;;
@@ -39,7 +40,7 @@ public class RepositoryManager {
 
 	public RepositoryManager(final org.bukkit.plugin.Plugin plugin) {
 		this.main = plugin;
-		gson = new Gson();
+		gson = GsonLib.newGson();
 		plugins = new HashMap<String, PluginInfo>();
 		repos = new ArrayList<String>();
 	}
