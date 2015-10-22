@@ -17,14 +17,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.common.base.Charsets;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
-import cn.citycraft.PluginHelper.gson.GsonLib;
-import cn.citycraft.PluginHelper.gson.api.Gson;
 import cn.citycraft.Yum.manager.Repositories.PackageInfo;
 import cn.citycraft.Yum.manager.Repositories.Plugin;
-import cn.citycraft.Yum.manager.Repositories.Repository;;
+import cn.citycraft.Yum.manager.Repositories.Repository;
+import cn.mcraft.gson.GsonLib;
+import cn.mcraft.gson.api.Gson;
+import cn.mcraft.gson.api.exception.JsonSyntaxException;
+import cn.mcraft.gson.api.reflect.TypeToken;;
 
 /**
  * 仓库管理类
