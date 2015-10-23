@@ -23,6 +23,7 @@ public class Repositories {
 		public String artifactId;
 		public String description;
 		public String groupId;
+		public String name;
 		public List<TagInfo> tags;
 		public String version;
 	}

@@ -102,7 +102,7 @@ public class RepositoryManager {
 	public List<String> getAllPluginName() {
 		final List<String> li = new ArrayList<String>();
 		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
-			li.add(plugin.getValue().plugin.artifactId);
+			li.add(plugin.getValue().plugin.name);
 		}
 		return li;
 	}
@@ -111,7 +111,7 @@ public class RepositoryManager {
 		final List<String> li = new ArrayList<String>();
 		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
 			final Plugin pl = plugin.getValue().plugin;
-			li.add(String.format("§d%s §a%s(%s) §6- §e%s", plugin.getValue().repo, pl.artifactId, pl.version, pl.description));
+			li.add(String.format("§d%s §a%s(%s) §6- §e%s", plugin.getValue().repo, pl.name, pl.version, pl.description));
 		}
 		return li;
 	}
@@ -133,7 +133,7 @@ public class RepositoryManager {
 
 	public PluginInfo getPlugin(final String name) {
 		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
-			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name)) {
+			if (plugin.getValue().plugin.name.equalsIgnoreCase(name)) {
 				return plugin.getValue();
 			}
 		}
@@ -143,7 +143,7 @@ public class RepositoryManager {
 	public List<PluginInfo> getPluginInfo(final String name) {
 		final List<PluginInfo> li = new ArrayList<PluginInfo>();
 		for (final Entry<String, PluginInfo> plugin : plugins.entrySet()) {
-			if (plugin.getValue().plugin.artifactId.equalsIgnoreCase(name)) {
+			if (plugin.getValue().plugin.name.equalsIgnoreCase(name)) {
 				li.add(plugin.getValue());
 			}
 		}
