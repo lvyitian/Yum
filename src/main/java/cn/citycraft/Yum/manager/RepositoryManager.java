@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -34,7 +35,7 @@ import cn.mcraft.gson.api.reflect.TypeToken;;
 public class RepositoryManager {
 	Gson gson;
 	org.bukkit.plugin.Plugin main;
-	HashMap<String, PluginInfo> plugins;
+	Map<String, PluginInfo> plugins;
 
 	List<String> repos;
 
@@ -154,7 +155,7 @@ public class RepositoryManager {
 		return plugins.get(groupId + "." + artifactId);
 	}
 
-	public HashMap<String, PluginInfo> getPlugins() {
+	public Map<String, PluginInfo> getPlugins() {
 		return plugins;
 	}
 
@@ -171,7 +172,7 @@ public class RepositoryManager {
 				}.getType());
 			}
 			if (plugincache != null && !plugincache.isEmpty()) {
-				plugins = gson.fromJson(plugincache, new TypeToken<HashMap<String, PluginInfo>>() {
+				plugins = gson.fromJson(plugincache, new TypeToken<Map<String, PluginInfo>>() {
 				}.getType());
 			}
 			return true;
