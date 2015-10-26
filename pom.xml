@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.7.2</version>
+	<version>1.7.3</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -60,7 +60,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>更新7老板底层Gson库 移除Plugin Metrics...</update.description>
+		<update.description>\u00A7a移除对纯净1.7.10的支持\u00A7c(去怪7老板= =) \u00A73修复一个迭代错误...</update.description>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>

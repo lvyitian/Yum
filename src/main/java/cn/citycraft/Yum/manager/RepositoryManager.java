@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,14 +19,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import cn.citycraft.Yum.manager.Repositories.PackageInfo;
 import cn.citycraft.Yum.manager.Repositories.Plugin;
 import cn.citycraft.Yum.manager.Repositories.Repository;
-import cn.mcraft.gson.GsonLib;
-import cn.mcraft.gson.api.Gson;
-import cn.mcraft.gson.api.exception.JsonSyntaxException;
-import cn.mcraft.gson.api.reflect.TypeToken;;
 
 /**
  * 仓库管理类
@@ -41,7 +41,7 @@ public class RepositoryManager {
 
 	public RepositoryManager(final org.bukkit.plugin.Plugin plugin) {
 		this.main = plugin;
-		gson = GsonLib.newGson();
+		gson = new Gson();
 		plugins = new HashMap<String, PluginInfo>();
 		repos = new ArrayList<String>();
 	}
@@ -214,7 +214,9 @@ public class RepositoryManager {
 		if (repos.isEmpty()) {
 			repos.add("http://citycraft.cn/repo/repo.info");
 		}
-		for (final String string : repos) {
+		final Iterator<String> keys = repos.iterator();
+		while (keys.hasNext()) {
+			final String string = keys.next();
 			if (updateRepositories(sender, string)) {
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
 			} else {
