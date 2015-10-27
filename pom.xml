@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;a移除对纯净1.7.10的支持&amp;c(去怪7老板= =) &amp;3修复一个迭代错误...</update.description>
+		<update.description>&amp;3修复一个迭代错误 &amp;a安装插件时命名为插件名称...</update.description>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
