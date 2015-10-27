@@ -33,16 +33,11 @@
 					<artifactSet>
 						<includes>
 							<include>cn.citycraft:PluginHelper</include>
-							<include>cn.mcraft:Gson</include>
 						</includes>
 					</artifactSet>
 					<relocations>
 						<relocation>
 							<pattern>cn.citycraft.PluginHelper</pattern>
-							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
-						</relocation>
-						<relocation>
-							<pattern>cn.mcraft</pattern>
 							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
 						</relocation>
 					</relocations>
@@ -85,12 +80,6 @@
 			<artifactId>PluginHelper</artifactId>
 			<type>jar</type>
 			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>cn.mcraft</groupId>
-			<artifactId>Gson</artifactId>
-			<type>jar</type>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
