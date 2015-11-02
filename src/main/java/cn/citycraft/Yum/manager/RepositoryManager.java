@@ -48,7 +48,7 @@ public class RepositoryManager {
 
 	public boolean addPackage(final CommandSender sender, final String urlstring) {
 		final String json = getHtml(urlstring);
-		if (json.isEmpty()) {
+		if (json == null || json.isEmpty()) {
 			return false;
 		}
 		final PackageInfo pkg = jsonToPackage(json);
