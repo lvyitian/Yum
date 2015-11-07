@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>修复更新仓库时产生的NPE错误...</update.description>
+		<update.description>修复一个更新源数据时发现的迭代错误...</update.description>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>

@@ -220,7 +220,8 @@ public class RepositoryManager {
 			if (updateRepositories(sender, string)) {
 				sender.sendMessage("§6源: §e" + string + " §a更新成功!");
 			} else {
-				sender.sendMessage("§6源: §e" + string + " §c更新失败!");
+				sender.sendMessage("§6源: §e" + string + " §c未找到任何仓库信息 已删除!");
+				keys.remove();
 			}
 		}
 		return true;
@@ -232,13 +233,11 @@ public class RepositoryManager {
 		}
 		final String json = getHtml(urlstring);
 		if (json == null || json.isEmpty()) {
-			sender.sendMessage("§6源: §e" + urlstring + " §c未找到任何仓库信息 已删除!");
-			repos.remove(urlstring);
 			return false;
 		}
 		final List<Repository> lrepo = jsonToRepositories(json);
 		if (lrepo == null || lrepo.isEmpty()) {
-			return false;
+			return true;
 		}
 		for (final Repository repository : lrepo) {
 			addPackage(sender, repository.url);
