@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.7.4</version>
+	<version>1.8</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>修复一个更新源数据时发现的迭代错误...</update.description>
+		<update.description>&amp;c大版本更新 &amp;a全版本兼容...</update.description>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
