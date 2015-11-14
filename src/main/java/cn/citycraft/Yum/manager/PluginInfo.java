@@ -2,8 +2,8 @@ package cn.citycraft.Yum.manager;
 
 import java.util.List;
 
-import cn.citycraft.Yum.manager.Repositories.Plugin;
-import cn.citycraft.Yum.manager.Repositories.TagInfo;
+import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
+import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
 
 public class PluginInfo {
 	public Plugin plugin;

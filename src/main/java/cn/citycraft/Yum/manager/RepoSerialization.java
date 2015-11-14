@@ -12,7 +12,7 @@ import java.util.List;
  * @author 蒋天蓓
  *         2015年8月31日下午7:41:53
  */
-public class Repositories {
+public class RepoSerialization {
 	public class PackageInfo {
 		public String name;
 		public List<Plugin> plugins = new ArrayList<>();
@@ -26,6 +26,11 @@ public class Repositories {
 		public String name;
 		public List<TagInfo> tags;
 		public String version;
+	}
+
+	public class Repositories {
+		public String name;
+		public List<Repository> repos;
 	}
 
 	public class Repository {

@@ -88,7 +88,7 @@ public class CommandRepo extends BaseCommand {
 				return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "list", "clean", "update", "del" }), new ArrayList<String>());
 			}
 			if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
-				return StringUtil.copyPartialMatches(args[2], YumManager.repo.getRepos(), new ArrayList<String>());
+				return StringUtil.copyPartialMatches(args[2], YumManager.repo.getRepos().keySet(), new ArrayList<String>());
 			}
 		}
 		return null;
