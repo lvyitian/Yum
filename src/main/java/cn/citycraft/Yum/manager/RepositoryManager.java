@@ -17,6 +17,7 @@ import com.google.gson.JsonSyntaxException;
 
 import cn.citycraft.PluginHelper.jsonresult.JsonResult;
 import cn.citycraft.PluginHelper.utils.IOUtil;
+import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
 import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
@@ -96,9 +97,9 @@ public class RepositoryManager {
 
 	public List<String> getAllPluginsInfo() {
 		final List<String> li = new ArrayList<String>();
-		for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
-			final Plugin pl = plugin.getValue().plugin;
-			li.add(String.format("§d%s §a%s(%s) §6- §e%s", plugin.getValue().repo, pl.name, pl.version, pl.description));
+		for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
+			final Plugin plugin = pi.getValue().plugin;
+			li.add(String.format("§d%s §a%s(%s) §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.version, plugin.description));
 		}
 		return li;
 	}
@@ -161,9 +162,9 @@ public class RepositoryManager {
 	public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
 		for (final Plugin plugin : pkg.plugins) {
 			final PluginInfo pi = new PluginInfo();
-			pi.name = plugin.name == null ? plugin.artifactId : plugin.name;
-			pi.branch = plugin.branch == null ? "master" : plugin.branch;
-			pi.pom = plugin.pom == null ? pkg.pom : plugin.pom;
+			pi.name = StringUtil.getNotNull(plugin.name, plugin.artifactId);
+			pi.branch = StringUtil.getNotNull(plugin.branch, "master");
+			pi.pom = StringUtil.getNotNull(plugin.pom, pkg.pom);
 			pi.plugin = plugin;
 			pi.url = pkg.url;
 			pi.repo = pkg.name;

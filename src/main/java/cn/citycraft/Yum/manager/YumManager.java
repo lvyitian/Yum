@@ -34,7 +34,7 @@ public class YumManager {
 	public static boolean install(final CommandSender sender, final String pluginname, final String version) {
 		final PluginInfo pi = repo.getPlugin(pluginname);
 		if (pi != null) {
-			if (download.run(sender, pi.getMavenUrl(sender, version), new File("plugins", pi.plugin.name + ".jar"))) {
+			if (download.run(sender, pi.getMavenUrl(sender, version), new File("plugins", pi.name + ".jar"))) {
 				return plugman.load(sender, pluginname);
 			}
 		}
