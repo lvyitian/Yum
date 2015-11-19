@@ -34,7 +34,7 @@ public class YumManager {
 	public static boolean install(final CommandSender sender, final String pluginname, final String version) {
 		final PluginInfo pi = repo.getPlugin(pluginname);
 		if (pi != null) {
-			if (download.run(sender, pi.getMavenUrl(version), new File("plugins", pi.plugin.name + ".jar"))) {
+			if (download.run(sender, pi.getMavenUrl(sender, version), new File("plugins", pi.plugin.name + ".jar"))) {
 				return plugman.load(sender, pluginname);
 			}
 		}
@@ -48,7 +48,7 @@ public class YumManager {
 	public static boolean update(final CommandSender sender, final Plugin plugin, final String version) {
 		final PluginInfo pi = repo.getPlugin(plugin.getName());
 		if (pi != null) {
-			if (download.run(sender, pi.getMavenUrl(version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
+			if (download.run(sender, pi.getMavenUrl(sender, version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
 				sender.sendMessage("§6更新: §a已下载插件 " + plugin.getName() + " 到update文件夹 重启后自动更新(或使用upgrade直接升级)!");
 				return true;
 			}

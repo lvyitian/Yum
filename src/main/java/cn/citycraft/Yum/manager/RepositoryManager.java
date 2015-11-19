@@ -89,7 +89,7 @@ public class RepositoryManager {
 	public List<String> getAllPluginName() {
 		final List<String> li = new ArrayList<String>();
 		for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
-			li.add(plugin.getValue().plugin.name);
+			li.add(plugin.getValue().name);
 		}
 		return li;
 	}
@@ -105,7 +105,7 @@ public class RepositoryManager {
 
 	public PluginInfo getPlugin(final String name) {
 		for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
-			if (plugin.getValue().plugin.name.equalsIgnoreCase(name)) {
+			if (plugin.getValue().name.equalsIgnoreCase(name)) {
 				return plugin.getValue();
 			}
 		}
@@ -115,7 +115,7 @@ public class RepositoryManager {
 	public List<PluginInfo> getPluginInfo(final String name) {
 		final List<PluginInfo> li = new ArrayList<PluginInfo>();
 		for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
-			if (plugin.getValue().plugin.name.equalsIgnoreCase(name)) {
+			if (plugin.getValue().name.equalsIgnoreCase(name)) {
 				li.add(plugin.getValue());
 			}
 		}
@@ -161,6 +161,9 @@ public class RepositoryManager {
 	public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
 		for (final Plugin plugin : pkg.plugins) {
 			final PluginInfo pi = new PluginInfo();
+			pi.name = plugin.name == null ? plugin.artifactId : plugin.name;
+			pi.branch = plugin.branch == null ? "master" : plugin.branch;
+			pi.pom = plugin.pom == null ? pkg.pom : plugin.pom;
 			pi.plugin = plugin;
 			pi.url = pkg.url;
 			pi.repo = pkg.name;

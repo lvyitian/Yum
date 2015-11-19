@@ -16,14 +16,17 @@ public class RepoSerialization {
 	public class PackageInfo {
 		public String name;
 		public List<Plugin> plugins = new ArrayList<>();
+		public String pom;
 		public String url;
 	}
 
 	public class Plugin {
 		public String artifactId;
+		public String branch;
 		public String description;
 		public String groupId;
 		public String name;
+		public String pom;
 		public List<TagInfo> tags;
 		public String version;
 	}

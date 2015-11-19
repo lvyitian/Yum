@@ -309,7 +309,7 @@ public class PluginsManager {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (final InvalidDescriptionException e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 的plugin.yml文件存在错误!");
+			sender.sendMessage("§c插件: " + name + " 的 plugin.yml 文件存在错误!");
 			return false;
 		} catch (final UnsupportedClassVersionError e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
@@ -320,8 +320,8 @@ public class PluginsManager {
 			sender.sendMessage("§c文件: " + name + " 不是一个可载入的插件!");
 			return false;
 		} catch (final UnknownDependencyException e) {
-			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 缺少部分依赖项目!");
+			sender.sendMessage("§4异常: §c服务器未安装必须依赖: " + e.getMessage());
+			sender.sendMessage("§c插件: " + name + " 载入失败 缺少部分依赖项目!");
 			return false;
 		}
 
