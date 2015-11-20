@@ -37,7 +37,7 @@ public class PluginInfo {
 					}
 				}
 			} else if (pom != null && !pom.isEmpty()) {
-				pom = pom.replace("[name]", plugin.name).replace("[branch]", branch);
+				pom = pom.replace("[name]", name).replace("[branch]", branch);
 				sender.sendMessage("§6版本: §b尝试从在线POM文件获取最新版本...");
 				ver = IOUtil.getXMLTag(pom, "version", plugin.version);
 				if (ver != null) {
