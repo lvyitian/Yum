@@ -1,7 +1,10 @@
 package cn.citycraft.Yum.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cn.citycraft.PluginHelper.jsonresult.JsonResult;
 import cn.citycraft.PluginHelper.utils.IOUtil;
@@ -31,6 +34,14 @@ public class RepoCache {
 		repos.put(repo, reposes);
 		return reposes;
 
+	}
+
+	public List<String> getAllRepoInfo() {
+		final List<String> repoinfo = new ArrayList<String>();
+		for (final Entry<String, Repositories> repo : repos.entrySet()) {
+			repoinfo.add(String.format("§d仓库: §e%s §6- §3%s", repo.getValue().name, repo.getKey()));
+		}
+		return repoinfo;
 	}
 
 	public Map<String, PluginInfo> getPlugins() {

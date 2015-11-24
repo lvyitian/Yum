@@ -52,15 +52,8 @@ public class RepositoryManager {
 	}
 
 	public boolean addRepositories(final CommandSender sender, final String urlstring) {
-		final int urllength = urlstring.length();
-		String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
-		if (!url.startsWith("http://")) {
-			url = "http://" + url;
-		}
-		if (!url.endsWith("repo.info")) {
-			url = url + "/repo.info";
-		}
-		final Repositories repo = repocache.addRepo(urlstring);
+		final String url = handerRepoUrl(urlstring);
+		final Repositories repo = repocache.addRepo(url);
 		if (repo == null) {
 			return false;
 		}
@@ -76,7 +69,7 @@ public class RepositoryManager {
 	}
 
 	public boolean delRepositories(final CommandSender sender, final String urlstring) {
-		return repocache.removeRepo(urlstring);
+		return repocache.removeRepo(handerRepoUrl(urlstring));
 	}
 
 	public List<PluginInfo> getAllPlugin() {
@@ -131,8 +124,27 @@ public class RepositoryManager {
 		return repocache.getPlugins();
 	}
 
+	public RepoCache getRepoCache() {
+		return repocache;
+	}
+
+	public Repositories getRepoCache(final String urlstring) {
+		return repocache.repos.get(handerRepoUrl(urlstring));
+	}
+
 	public Map<String, Repositories> getRepos() {
 		return repocache.getRepos();
+	}
+
+	public boolean getRepositories(final CommandSender sender, final String urlstring) {
+		final int urllength = urlstring.length();
+		final String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
+		handerRepoUrl(url);
+		final Repositories repo = repocache.addRepo(urlstring);
+		if (repo == null) {
+			return false;
+		}
+		return updateRepositories(sender, repo);
 	}
 
 	public boolean jsonToCache(final FileConfiguration config) {
@@ -176,7 +188,7 @@ public class RepositoryManager {
 	public boolean updateRepositories(final CommandSender sender) {
 		repocache.getPlugins().clear();
 		if (repocache.getRepos().isEmpty()) {
-			repocache.addRepo("http://citycraft.cn/yumcenter/repo.info");
+			repocache.addRepo("https://coding.net/u/502647092/p/YumData/git/raw/master/yumcenter/repo.info");
 		}
 		final Iterator<Entry<String, Repositories>> keys = repocache.getRepos().entrySet().iterator();
 		while (keys.hasNext()) {
@@ -204,4 +216,17 @@ public class RepositoryManager {
 		}
 		return true;
 	}
+
+	private String handerRepoUrl(String url) {
+		final int urllength = url.length();
+		url = url.substring(0, url.endsWith("/") ? urllength - 1 : urllength);
+		if (!url.startsWith("http://")) {
+			url = "http://" + url;
+		}
+		if (!url.endsWith("repo.info")) {
+			url = url + "/repo.info";
+		}
+		return url;
+	}
+
 }
