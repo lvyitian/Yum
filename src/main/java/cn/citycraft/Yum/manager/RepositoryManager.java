@@ -92,7 +92,7 @@ public class RepositoryManager {
 		final List<String> li = new ArrayList<String>();
 		for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
 			final Plugin plugin = pi.getValue().plugin;
-			li.add(String.format("§d%s §a%s(%s) §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.version, plugin.description));
+			li.add(String.format("§d%s §a%s §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.description));
 		}
 		return li;
 	}
