@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.8.3</version>
+	<version>1.8.5</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;b默认使用国内源数据 添加仓库查看命令...</update.description>
+		<update.description>&amp;c重大更新 支持一键更新老版本插件...</update.description>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>

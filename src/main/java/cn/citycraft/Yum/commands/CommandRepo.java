@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * 插件删除命令类
@@ -44,8 +44,8 @@ public class CommandRepo extends BaseCommand {
 				switch (cmd) {
 				case "add":
 					if (args.length == 2) {
-						if (YumManager.repo.addRepositories(sender, args[1])) {
-							final String reponame = YumManager.repo.getRepoCache(args[1]).name;
+						if (YumAPI.repo.addRepositories(sender, args[1])) {
+							final String reponame = YumAPI.repo.getRepoCache(args[1]).name;
 							sender.sendMessage("§6仓库: §a源仓库 §e" + reponame + " §a的插件信息已缓存!");
 						} else {
 							sender.sendMessage("§6仓库: §c源地址未找到仓库信息或当前地址已缓存!");
@@ -56,8 +56,8 @@ public class CommandRepo extends BaseCommand {
 					break;
 				case "del":
 					if (args.length == 2) {
-						if (YumManager.repo.delRepositories(sender, args[1])) {
-							final String reponame = YumManager.repo.getRepoCache(args[1]).name;
+						if (YumAPI.repo.delRepositories(sender, args[1])) {
+							final String reponame = YumAPI.repo.getRepoCache(args[1]).name;
 							sender.sendMessage("§6仓库: §a源仓库 §e" + reponame + " §c已删除 §a请使用 §b/yum repo update §a更新缓存!");
 						} else {
 							sender.sendMessage("§6仓库: §c源地址未找到!");
@@ -68,18 +68,18 @@ public class CommandRepo extends BaseCommand {
 					break;
 				case "list":
 					sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-					StringUtil.sendStringArray(sender, YumManager.repo.getAllPluginsInfo());
+					StringUtil.sendStringArray(sender, YumAPI.repo.getAllPluginsInfo());
 					break;
 				case "all":
 					sender.sendMessage("§6仓库: §b缓存的仓库信息如下 ");
-					StringUtil.sendStringArray(sender, YumManager.repo.getRepoCache().getAllRepoInfo());
+					StringUtil.sendStringArray(sender, YumAPI.repo.getRepoCache().getAllRepoInfo());
 					break;
 				case "clean":
-					YumManager.repo.clean();
+					YumAPI.repo.clean();
 					sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
 					break;
 				case "update":
-					YumManager.repo.updateRepositories(sender);
+					YumAPI.repo.updateRepositories(sender);
 					sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
 					break;
 				}
@@ -94,7 +94,7 @@ public class CommandRepo extends BaseCommand {
 				return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "clean", "update", "del" }), new ArrayList<String>());
 			}
 			if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
-				return StringUtil.copyPartialMatches(args[2], YumManager.repo.getRepos().keySet(), new ArrayList<String>());
+				return StringUtil.copyPartialMatches(args[2], YumAPI.repo.getRepos().keySet(), new ArrayList<String>());
 			}
 		}
 		return null;

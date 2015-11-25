@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * @author 蒋天蓓 2015年8月12日下午2:04:05
@@ -40,9 +40,9 @@ public class CommandUpdate extends BaseCommand {
 				@Override
 				public void run() {
 					if (args.length < 2) {
-						YumManager.update(sender, plugin);
+						YumAPI.updatefromyum(sender, plugin);
 					} else {
-						YumManager.update(sender, plugin, args[1]);
+						YumAPI.updatefromyum(sender, plugin, args[1]);
 					}
 				}
 			});

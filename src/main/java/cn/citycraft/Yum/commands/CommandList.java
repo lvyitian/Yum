@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * 插件查看命令类
@@ -34,7 +34,7 @@ public class CommandList extends BaseCommand {
 	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
 		for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			sender.sendMessage("§6 - " + YumManager.plugman.getFormattedName(plugin, true));
+			sender.sendMessage("§6 - " + YumAPI.plugman.getFormattedName(plugin, true));
 		}
 	};
 }

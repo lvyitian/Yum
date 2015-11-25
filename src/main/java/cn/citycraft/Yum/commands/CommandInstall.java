@@ -15,7 +15,7 @@ import org.bukkit.plugin.Plugin;
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * 插件安装命令类
@@ -45,9 +45,9 @@ public class CommandInstall extends BaseCommand {
 				@Override
 				public void run() {
 					if (args.length < 2) {
-						YumManager.install(sender, pluginname);
+						YumAPI.installfromyum(sender, pluginname);
 					} else {
-						YumManager.install(sender, pluginname, args[1]);
+						YumAPI.installfromyum(sender, pluginname, args[1]);
 					}
 				}
 			});
@@ -59,7 +59,7 @@ public class CommandInstall extends BaseCommand {
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args[0].equalsIgnoreCase("install")) {
-			return StringUtil.copyPartialMatches(args[1], YumManager.repo.getAllPluginName(), new ArrayList<String>());
+			return StringUtil.copyPartialMatches(args[1], YumAPI.repo.getAllPluginName(), new ArrayList<String>());
 		}
 		return null;
 	}

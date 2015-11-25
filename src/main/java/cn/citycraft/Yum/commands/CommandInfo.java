@@ -16,7 +16,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * 插件删除命令类
@@ -51,7 +51,7 @@ public class CommandInfo extends BaseCommand {
 			StringUtil.sendStringArray(sender, desc.getDepend(), "§6 - §a");
 			sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().size() == 0 ? "无" : ""));
 			StringUtil.sendStringArray(sender, desc.getSoftDepend(), "§6 - §a");
-			sender.sendMessage("§6插件物理路径: §3" + YumManager.plugman.getPluginFile(plugin).getAbsolutePath());
+			sender.sendMessage("§6插件物理路径: §3" + YumAPI.plugman.getPluginFile(plugin).getAbsolutePath());
 		} else {
 			sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
 		}
@@ -60,7 +60,7 @@ public class CommandInfo extends BaseCommand {
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (!args[0].equalsIgnoreCase("install") && !args[0].equalsIgnoreCase("repo")) {
-			return StringUtil.copyPartialMatches(args[1], YumManager.plugman.getPluginNames(false), new ArrayList<String>());
+			return StringUtil.copyPartialMatches(args[1], YumAPI.plugman.getPluginNames(false), new ArrayList<String>());
 		}
 		return null;
 	}

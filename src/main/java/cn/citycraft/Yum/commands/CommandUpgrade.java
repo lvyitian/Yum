@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.manager.YumManager;
+import cn.citycraft.Yum.api.YumAPI;
 
 /**
  * @author 蒋天蓓 2015年8月12日下午2:04:05
@@ -35,13 +35,13 @@ public class CommandUpgrade extends BaseCommand {
 			@Override
 			public void run() {
 				if (args.length == 0) {
-					YumManager.plugman.upgrade(sender);
+					YumAPI.plugman.upgrade(sender);
 				} else {
 					final String pluginname = args[0];
 					final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 					sender.sendMessage("§a开始升级插件: " + pluginname);
 					if (plugin != null) {
-						YumManager.plugman.upgrade(sender, plugin);
+						YumAPI.upgrade(sender, plugin);
 					} else {
 						sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
 					}

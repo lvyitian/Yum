@@ -363,7 +363,7 @@ public class PluginsManager {
 	 *
 	 * @param sender
 	 *            - 命令发送者
-	 * @param plugin
+	 * @param main
 	 *            - 插件
 	 * @return 是否成功
 	 */

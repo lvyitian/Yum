@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import cn.citycraft.PluginHelper.commands.HandlerSubCommand;
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
+import cn.citycraft.Yum.api.YumAPI;
 import cn.citycraft.Yum.commands.CommandDelete;
 import cn.citycraft.Yum.commands.CommandInfo;
 import cn.citycraft.Yum.commands.CommandInstall;
@@ -19,7 +20,6 @@ import cn.citycraft.Yum.commands.CommandUnload;
 import cn.citycraft.Yum.commands.CommandUpdate;
 import cn.citycraft.Yum.commands.CommandUpdateAll;
 import cn.citycraft.Yum.commands.CommandUpgrade;
-import cn.citycraft.Yum.manager.YumManager;
 
 /**
  * MC插件仓库
@@ -28,7 +28,7 @@ import cn.citycraft.Yum.manager.YumManager;
  */
 public class Yum extends JavaPlugin {
 	public FileConfig config;
-	public YumManager yumgr;
+	public YumAPI yumgr;
 
 	public void initCommands() {
 		final HandlerSubCommand cmdhandler = new HandlerSubCommand(this, "yum");
@@ -47,16 +47,16 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		YumManager.repo.cacheToJson(config);
+		YumAPI.repo.cacheToJson(config);
 		config.save();
 	}
 
 	@Override
 	public void onEnable() {
 		this.initCommands();
-		yumgr = new YumManager(this);
-		YumManager.repo.jsonToCache(config);
-		YumManager.updaterepo();
+		yumgr = new YumAPI(this);
+		YumAPI.repo.jsonToCache(config);
+		YumAPI.updaterepo();
 		new VersionChecker(this);
 	}
 

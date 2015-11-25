@@ -25,6 +25,15 @@ public class PluginInfo {
 		return String.format("%1$s-%2$s.jar", plugin.artifactId, version);
 	}
 
+	/**
+	 * 获取Maven仓库指定插件的下载地址
+	 * 
+	 * @param sender
+	 *            - 命令发送者
+	 * @param version
+	 *            - 需要更新的版本
+	 * @return 更新地址
+	 */
 	public String getMavenUrl(final CommandSender sender, final String version) {
 		String ver = version;
 		if (ver == null) {
