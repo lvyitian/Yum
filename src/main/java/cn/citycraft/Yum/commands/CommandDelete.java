@@ -25,7 +25,7 @@ public class CommandDelete extends BaseCommand {
 	 * @param name
 	 */
 	public CommandDelete(final Yum main) {
-		super("delete", "remove");
+		super("remove");
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("删除插件");

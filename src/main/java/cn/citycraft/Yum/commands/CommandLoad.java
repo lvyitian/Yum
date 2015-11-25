@@ -25,7 +25,7 @@ public class CommandLoad extends BaseCommand {
 	 * @param name
 	 */
 	public CommandLoad(final Yum main) {
-		super("load");
+		super();
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("载入插件");

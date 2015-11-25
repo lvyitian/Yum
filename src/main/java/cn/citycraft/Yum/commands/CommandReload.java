@@ -25,7 +25,7 @@ public class CommandReload extends BaseCommand {
 	 * @param name
 	 */
 	public CommandReload(final Yum main) {
-		super("reload");
+		super();
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("重载插件");

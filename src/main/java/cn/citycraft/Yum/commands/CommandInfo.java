@@ -30,7 +30,7 @@ public class CommandInfo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInfo(final Yum main) {
-		super("info");
+		super();
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("查看插件详情");

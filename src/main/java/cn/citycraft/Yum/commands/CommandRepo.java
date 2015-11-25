@@ -28,7 +28,7 @@ public class CommandRepo extends BaseCommand {
 	 * @param name
 	 */
 	public CommandRepo(final Yum main) {
-		super("repo");
+		super();
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("插件源命令");

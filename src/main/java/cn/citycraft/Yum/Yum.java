@@ -17,6 +17,7 @@ import cn.citycraft.Yum.commands.CommandReload;
 import cn.citycraft.Yum.commands.CommandRepo;
 import cn.citycraft.Yum.commands.CommandUnload;
 import cn.citycraft.Yum.commands.CommandUpdate;
+import cn.citycraft.Yum.commands.CommandUpdateAll;
 import cn.citycraft.Yum.commands.CommandUpgrade;
 import cn.citycraft.Yum.manager.YumManager;
 
@@ -30,10 +31,11 @@ public class Yum extends JavaPlugin {
 	public YumManager yumgr;
 
 	public void initCommands() {
-		final HandlerSubCommand cmdhandler = new HandlerSubCommand(this);
+		final HandlerSubCommand cmdhandler = new HandlerSubCommand(this, "yum");
 		cmdhandler.registerCommand(new CommandList(this));
 		cmdhandler.registerCommand(new CommandInstall(this));
 		cmdhandler.registerCommand(new CommandUpdate(this));
+		cmdhandler.registerCommand(new CommandUpdateAll(this));
 		cmdhandler.registerCommand(new CommandDelete(this));
 		cmdhandler.registerCommand(new CommandInfo(this));
 		cmdhandler.registerCommand(new CommandRepo(this));
@@ -41,8 +43,6 @@ public class Yum extends JavaPlugin {
 		cmdhandler.registerCommand(new CommandLoad(this));
 		cmdhandler.registerCommand(new CommandUnload(this));
 		cmdhandler.registerCommand(new CommandUpgrade(this));
-		this.getCommand("yum").setExecutor(cmdhandler);
-		this.getCommand("yum").setTabCompleter(cmdhandler);
 	}
 
 	@Override

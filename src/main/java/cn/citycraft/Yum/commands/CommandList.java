@@ -25,7 +25,7 @@ public class CommandList extends BaseCommand {
 	 * @param name
 	 */
 	public CommandList(final Yum main) {
-		super("list");
+		super();
 		this.main = main;
 		setDescription("列出已安装插件列表");
 	}
