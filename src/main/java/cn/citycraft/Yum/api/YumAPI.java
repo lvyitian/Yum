@@ -22,9 +22,11 @@ import cn.citycraft.Yum.manager.RepositoryManager;
  *         2015年9月1日上午10:59:47
  */
 public class YumAPI {
-	public static DownloadManager download;
-	public static PluginsManager plugman;
-	public static RepositoryManager repo;
+	private static DownloadManager download;
+
+	private static PluginsManager plugman;
+
+	private static RepositoryManager repo;
 
 	protected static Plugin main;
 
@@ -43,6 +45,33 @@ public class YumAPI {
 	 */
 	public static void delete(final Plugin plugin) {
 		plugman.deletePlugin(plugin);
+	}
+
+	/**
+	 * 获得下载管理器
+	 *
+	 * @return {@link DownloadManager}
+	 */
+	public static DownloadManager getDownload() {
+		return download;
+	}
+
+	/**
+	 * 获得插件管理器
+	 *
+	 * @return {@link PluginsManager}
+	 */
+	public static PluginsManager getPlugman() {
+		return plugman;
+	}
+
+	/**
+	 * 获得仓库管理器
+	 *
+	 * @return {@link RepositoryManager}
+	 */
+	public static RepositoryManager getRepo() {
+		return repo;
 	}
 
 	/**

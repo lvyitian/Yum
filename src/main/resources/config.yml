@@ -1,0 +1,3 @@
+Version: 1.0
+#是否只允许控制台执行插件命令
+onlyCommandConsole: false

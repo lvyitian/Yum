@@ -35,7 +35,7 @@ public class CommandUpgrade extends BaseCommand {
 			@Override
 			public void run() {
 				if (args.length == 0) {
-					YumAPI.plugman.upgrade(sender);
+					YumAPI.getPlugman().upgrade(sender);
 				} else {
 					final String pluginname = args[0];
 					final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);

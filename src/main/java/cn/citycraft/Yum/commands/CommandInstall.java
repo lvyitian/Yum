@@ -59,7 +59,7 @@ public class CommandInstall extends BaseCommand {
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args[0].equalsIgnoreCase("install")) {
-			return StringUtil.copyPartialMatches(args[1], YumAPI.repo.getAllPluginName(), new ArrayList<String>());
+			return StringUtil.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
 		}
 		return null;
 	}

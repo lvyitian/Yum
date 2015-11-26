@@ -19,9 +19,6 @@ import cn.citycraft.Yum.api.YumAPI;
 public class CommandUpdate extends BaseCommand {
 	Yum main;
 
-	/**
-	 * @param name
-	 */
 	public CommandUpdate(final Yum main) {
 		super();
 		this.main = main;

@@ -37,7 +37,7 @@ public class CommandUnload extends BaseCommand {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			YumAPI.plugman.unload(sender, plugin);
+			YumAPI.getPlugman().unload(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}

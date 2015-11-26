@@ -36,12 +36,12 @@ public class CommandReload extends BaseCommand {
 	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		final String pluginname = args[0];
 		if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
-			YumAPI.plugman.reloadAll(sender);
+			YumAPI.getPlugman().reloadAll(sender);
 			return;
 		}
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin != null) {
-			YumAPI.plugman.reload(sender, plugin);
+			YumAPI.getPlugman().reload(sender, plugin);
 		} else {
 			sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
 		}

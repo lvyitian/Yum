@@ -37,7 +37,7 @@ public class CommandLoad extends BaseCommand {
 		final String pluginname = args[0];
 		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
 		if (plugin == null) {
-			YumAPI.plugman.load(sender, pluginname);
+			YumAPI.getPlugman().load(sender, pluginname);
 		} else {
 			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
 		}
