@@ -14,6 +14,36 @@ permissions:
   yum.use:
     description: 插件管理系统使用权限!
     default: op
+  yum.delete:
+    description: 删除插件命令使用权限!
+    default: op
+  yum.install:
+    description: 安装插件命令使用权限!
+    default: op
+  yum.list:
+    description: 列出已安装插件使用权限!
+    default: op
+  yum.load:
+    description: 载入插件使用权限!
+    default: op
+  yum.reload:
+    description: 重载插件使用权限!
+    default: op
+  yum.repo:
+    description: 插件仓库使用权限!
+    default: op
+  yum.unload:
+    description: 卸载插件使用权限!
+    default: op
+  yum.update:
+    description: 更新插件使用权限!
+    default: op
+  yum.updateall:
+    description: 更新所有插件使用权限!
+    default: op
+  yum.upgrade:
+    description: 升级插件使用权限!
+    default: op
   yum.reload:
     description: 重新载入插件!
     default: op
