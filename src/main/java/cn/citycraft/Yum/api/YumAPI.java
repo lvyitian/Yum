@@ -24,12 +24,18 @@ import cn.citycraft.Yum.manager.RepositoryManager;
 public class YumAPI {
 	private static DownloadManager download;
 
+	private static Plugin main;
+
 	private static PluginsManager plugman;
 
 	private static RepositoryManager repo;
 
-	protected static Plugin main;
-
+	/**
+	 * 初始化Yum管理中心
+	 *
+	 * @param plugin
+	 *            - 插件实体
+	 */
 	public YumAPI(final Plugin plugin) {
 		YumAPI.main = plugin;
 		plugman = new PluginsManager(main);
@@ -86,8 +92,9 @@ public class YumAPI {
 	 * @return 是否安装成功
 	 */
 	public static boolean install(final CommandSender sender, final String pluginname, final String url) {
-		if (download.run(sender, url, new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar"))) {
-			return plugman.load(sender, pluginname);
+		final File pluginFile = new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar");
+		if (download.run(sender, url, pluginFile)) {
+			return plugman.load(sender, pluginFile);
 		}
 		return false;
 	}
@@ -143,18 +150,18 @@ public class YumAPI {
 	 * @param pluginname
 	 *            - 插件名称
 	 */
-	public static void load(final String pluginname) {
-		plugman.load(pluginname);
+	public static void load(final File pluginFile) {
+		plugman.load(pluginFile);
 	}
 
 	/**
-	 * 卸载插件
+	 * 载入插件
 	 *
-	 * @param plugin
-	 *            - 插件实体
+	 * @param pluginname
+	 *            - 插件名称
 	 */
-	public static void reload(final Plugin plugin) {
-		plugman.unload(plugin);
+	public static void load(final String pluginname) {
+		plugman.load(pluginname);
 	}
 
 	/**
@@ -163,8 +170,18 @@ public class YumAPI {
 	 * @param plugin
 	 *            - 插件实体
 	 */
-	public static void unload(final Plugin plugin) {
+	public static void reload(final Plugin plugin) {
 		plugman.reload(plugin);
+	}
+
+	/**
+	 * 卸载插件
+	 *
+	 * @param plugin
+	 *            - 插件实体
+	 */
+	public static void unload(final Plugin plugin) {
+		plugman.unload(plugin);
 	}
 
 	/**

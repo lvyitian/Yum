@@ -263,12 +263,49 @@ public class PluginsManager {
 	 *
 	 * @param sender
 	 *            - 命令发送者
+	 * @param pluginFile
+	 *            - 插件文件
+	 * @return 是否成功
+	 */
+	public boolean load(final CommandSender sender, final File pluginFile) {
+		Plugin target = null;
+		final String name = pluginFile.getName();
+		try {
+			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
+		} catch (final InvalidDescriptionException e) {
+			sender.sendMessage("§4异常: §c" + e.getMessage());
+			sender.sendMessage("§c插件: " + name + " 的 plugin.yml 文件存在错误!");
+			return false;
+		} catch (final UnsupportedClassVersionError e) {
+			sender.sendMessage("§4异常: §c" + e.getMessage());
+			sender.sendMessage("§c服务器或JAVA的版本低于插件: " + name + " 所需要的版本!!");
+			return false;
+		} catch (final InvalidPluginException e) {
+			sender.sendMessage("§4异常: §c" + e.getMessage());
+			sender.sendMessage("§c文件: " + name + " 不是一个可载入的插件!");
+			return false;
+		} catch (final UnknownDependencyException e) {
+			sender.sendMessage("§4异常: §c服务器未安装必须依赖: " + e.getMessage());
+			sender.sendMessage("§c插件: " + name + " 载入失败 缺少部分依赖项目!");
+			return false;
+		}
+
+		target.onLoad();
+		Bukkit.getPluginManager().enablePlugin(target);
+		sender.sendMessage("§6载入: §a插件 " + name + " 已成功载入到服务器!");
+		return true;
+	}
+
+	/**
+	 * 载入插件
+	 *
+	 * @param sender
+	 *            - 命令发送者
 	 * @param name
 	 *            - 插件名称
 	 * @return 是否成功
 	 */
 	public boolean load(CommandSender sender, final String name) {
-		Plugin target = null;
 		String filename = null;
 		if (sender == null) {
 			sender = Bukkit.getConsoleSender();
@@ -304,31 +341,18 @@ public class PluginsManager {
 				return false;
 			}
 		}
+		return load(sender, pluginFile);
+	}
 
-		try {
-			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
-		} catch (final InvalidDescriptionException e) {
-			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 的 plugin.yml 文件存在错误!");
-			return false;
-		} catch (final UnsupportedClassVersionError e) {
-			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c服务器或JAVA的版本低于插件: " + name + " 所需要的版本!!");
-			return false;
-		} catch (final InvalidPluginException e) {
-			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c文件: " + name + " 不是一个可载入的插件!");
-			return false;
-		} catch (final UnknownDependencyException e) {
-			sender.sendMessage("§4异常: §c服务器未安装必须依赖: " + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 载入失败 缺少部分依赖项目!");
-			return false;
-		}
-
-		target.onLoad();
-		Bukkit.getPluginManager().enablePlugin(target);
-		sender.sendMessage("§6载入: §a插件 " + name + " 已成功载入到服务器!");
-		return true;
+	/**
+	 * 载入插件
+	 *
+	 * @param pluginFile
+	 *            - 插件名称
+	 * @return 是否成功
+	 */
+	public boolean load(final File pluginFile) {
+		return load(Bukkit.getConsoleSender(), pluginFile);
 	}
 
 	/**
