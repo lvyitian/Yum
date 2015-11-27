@@ -226,7 +226,7 @@ public class YumAPI {
 		final Map<Plugin, String> updatelist = UpdatePlugin.getList();
 		if (updatelist.size() > 0) {
 			for (final Entry<Plugin, String> updateplugin : UpdatePlugin.getList().entrySet()) {
-				updatefromyum(sender, updateplugin.getKey(), updateplugin.getValue());
+				updatefromyum(sender, updateplugin.getKey(), null);
 			}
 			UpdatePlugin.getList().clear();
 			sender.sendMessage("§6更新: §c已下载所有需要插件的插件到 到update文件夹 重启后自动更新(或使用/yum upgrade直接升级)!");
