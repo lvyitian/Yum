@@ -223,12 +223,12 @@ public class YumAPI {
 	 *            - 命令发送者
 	 */
 	public static void updateall(final CommandSender sender) {
-		final Map<Plugin, String> updatelist = UpdatePlugin.getList();
+		final Map<String, Plugin> updatelist = UpdatePlugin.getUpdateList();
 		if (updatelist.size() > 0) {
-			for (final Entry<Plugin, String> updateplugin : UpdatePlugin.getList().entrySet()) {
-				updatefromyum(sender, updateplugin.getKey(), null);
+			for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
+				updatefromyum(sender, updateplugin.getValue(), null);
 			}
-			UpdatePlugin.getList().clear();
+			UpdatePlugin.clearList();
 			sender.sendMessage("§6更新: §c已下载所有需要插件的插件到 到update文件夹 重启后自动更新(或使用/yum upgrade直接升级)!");
 		} else {
 			sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");

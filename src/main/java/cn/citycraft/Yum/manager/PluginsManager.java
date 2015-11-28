@@ -274,7 +274,7 @@ public class PluginsManager {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (final InvalidDescriptionException e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 的 plugin.yml 文件存在错误!");
+			sender.sendMessage("§4插件: §c" + name + " 的 plugin.yml 文件存在错误!");
 			return false;
 		} catch (final UnsupportedClassVersionError e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
@@ -282,17 +282,17 @@ public class PluginsManager {
 			return false;
 		} catch (final InvalidPluginException e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
-			sender.sendMessage("§c文件: " + name + " 不是一个可载入的插件!");
+			sender.sendMessage("§4文件: §c" + name + " 不是一个可载入的插件!");
 			return false;
 		} catch (final UnknownDependencyException e) {
 			sender.sendMessage("§4异常: §c服务器未安装必须依赖: " + e.getMessage());
-			sender.sendMessage("§c插件: " + name + " 载入失败 缺少部分依赖项目!");
+			sender.sendMessage("§4插件: §c" + name + " 载入失败 缺少部分依赖项目!");
 			return false;
 		}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
-		sender.sendMessage("§6载入: §a插件 " + name + " 已成功载入到服务器!");
+		sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion() + " 已成功载入到服务器!");
 		return true;
 	}
 
@@ -464,7 +464,7 @@ public class PluginsManager {
 		Map<String, Plugin> lookupNames = null;
 		Map<String, Command> knownCommands = null;
 		if (pluginManager == null) {
-			sender.sendMessage("§4异常: §c插件管理类为Null!");
+			sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
 			return false;
 		}
 		try {
@@ -487,10 +487,12 @@ public class PluginsManager {
 			sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 " + name + " 卸载失败!");
 			return false;
 		}
+		String pluginVersion = "";
 		for (final Plugin next : pluginManager.getPlugins()) {
 			if (next.getName().equals(name)) {
 				pluginManager.disablePlugin(next);
 				if ((plugins != null) && (plugins.contains(next))) {
+					pluginVersion = next.getDescription().getVersion();
 					plugins.remove(next);
 					sender.sendMessage("§6卸载: §a从服务器插件列表删除 " + name + " 的实例!");
 				}
@@ -521,7 +523,7 @@ public class PluginsManager {
 				System.gc();
 			}
 		}
-		sender.sendMessage("§6卸载: §a插件 " + name + " 已成功卸载!");
+		sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " 已成功卸载!");
 		return true;
 	}
 
