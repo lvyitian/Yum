@@ -24,6 +24,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
+import org.bukkit.util.FileUtil;
 
 import com.google.common.base.Joiner;
 
@@ -523,8 +524,12 @@ public class PluginsManager {
 				System.gc();
 			}
 		}
-		sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " §a已成功卸载!");
-		return true;
+		if (!pluginVersion.isEmpty()) {
+			sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " §a已成功卸载!");
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -582,10 +587,16 @@ public class PluginsManager {
 				}
 				result = true;
 				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
-				reload(sender, name);
+				if (!unload(plugin)) {
+					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
+				}
+				load(name);
 			} catch (final InvalidDescriptionException e) {
 				sender.sendMessage("§4异常: §c" + e.getMessage());
 				sender.sendMessage("§4文件: §c" + file.getName() + " 的plugin.yml文件存在错误!");
+			}
+			if (file.exists()) {
+				file.delete();
 			}
 		}
 		sender.sendMessage("§6升级: §a所有插件升级完毕!");
