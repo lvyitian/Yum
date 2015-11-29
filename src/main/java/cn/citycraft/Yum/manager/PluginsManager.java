@@ -587,7 +587,7 @@ public class PluginsManager {
 				}
 				result = true;
 				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
-				if (!unload(plugin)) {
+				if (plugin != null && !unload(plugin)) {
 					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
 				}
 				load(name);
