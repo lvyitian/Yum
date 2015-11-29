@@ -2,9 +2,11 @@ package cn.citycraft.Yum.manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -177,7 +179,10 @@ public class PluginsManager {
 			@SuppressWarnings("resource")
 			final URLClassLoader ucl = (URLClassLoader) cl;
 			final URL url = ucl.getURLs()[0];
-			file = new File(url.getFile());
+			try {
+				file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+			} catch (final UnsupportedEncodingException e) {
+			}
 		}
 		return file;
 	}
