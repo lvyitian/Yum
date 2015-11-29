@@ -587,10 +587,10 @@ public class PluginsManager {
 				}
 				result = true;
 				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
-				if (plugin != null && !unload(plugin)) {
+				if (!unload(sender, name)) {
 					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
 				}
-				load(name);
+				load(sender, name);
 			} catch (final InvalidDescriptionException e) {
 				sender.sendMessage("§4异常: §c" + e.getMessage());
 				sender.sendMessage("§4文件: §c" + file.getName() + " 的plugin.yml文件存在错误!");
