@@ -8,10 +8,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,10 +40,22 @@ import cn.citycraft.PluginHelper.utils.StringUtil;
  * @author 蒋天蓓 2015年8月21日下午7:03:26
  */
 public class PluginsManager {
-	Plugin main;
+	private final Set<String> ignoreList = new HashSet<>();
+	private final Plugin main;
 
 	public PluginsManager(final Plugin plugin) {
 		this.main = plugin;
+	}
+
+	/**
+	 * 添加到忽略列表
+	 *
+	 * @param name
+	 *            - 插件名称
+	 * @return 是否成功
+	 */
+	public boolean addIgnore(final String name) {
+		return ignoreList.add(name);
 	}
 
 	/**
@@ -256,7 +270,7 @@ public class PluginsManager {
 	 * @return 是否
 	 */
 	public boolean isIgnored(final String plugin) {
-		for (final String name : new ArrayList<String>()) {
+		for (final String name : ignoreList) {
 			if (name.equalsIgnoreCase(plugin)) {
 				return true;
 			}
@@ -289,13 +303,13 @@ public class PluginsManager {
 		} catch (final InvalidPluginException e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage());
 			sender.sendMessage("§4文件: §c" + name + " 不是一个可载入的插件!");
+			sender.sendMessage("§4注意: §cMOD服重载插件3次以上需重启服务器");
 			return false;
 		} catch (final UnknownDependencyException e) {
 			sender.sendMessage("§4异常: §c服务器未安装必须依赖: " + e.getMessage());
 			sender.sendMessage("§4插件: §c" + name + " 载入失败 缺少部分依赖项目!");
 			return false;
 		}
-
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
 		sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion() + " §a已成功载入到服务器!");
@@ -435,6 +449,17 @@ public class PluginsManager {
 				reload(sender, plugin);
 			}
 		}
+	}
+
+	/**
+	 * 从忽略列表移除
+	 *
+	 * @param name
+	 *            - 插件名称
+	 * @return 是否成功
+	 */
+	public boolean removeIgnore(final String name) {
+		return ignoreList.remove(name);
 	}
 
 	/**
