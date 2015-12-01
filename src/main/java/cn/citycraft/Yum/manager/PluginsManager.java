@@ -616,9 +616,11 @@ public class PluginsManager {
 					continue;
 				}
 				result = true;
-				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
 				if (!unload(sender, name)) {
+					sender.sendMessage("§6升级: §d开始安装 §b" + name + " §d插件!");
 					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
+				} else {
+					sender.sendMessage("§6升级: §a开始升级 §b" + name + " §a插件!");
 				}
 				load(sender, name);
 			} catch (final InvalidDescriptionException e) {
