@@ -19,7 +19,7 @@ public class CommandUpdateAll extends BaseCommand {
 	Yum main;
 
 	public CommandUpdateAll(final Yum main) {
-		super();
+		super("ua");
 		this.main = main;
 		setDescription("更新所有可更新插件");
 	}

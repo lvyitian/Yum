@@ -20,7 +20,7 @@ public class CommandUpdate extends BaseCommand {
 	Yum main;
 
 	public CommandUpdate(final Yum main) {
-		super();
+		super("u");
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("更新插件");

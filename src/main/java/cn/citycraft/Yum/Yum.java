@@ -21,7 +21,6 @@ public class Yum extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		YumAPI.getRepo().cacheToJson(config);
-		config.save();
 	}
 
 	@Override
