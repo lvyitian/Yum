@@ -197,7 +197,8 @@ public class YumAPI {
 	 */
 	public static boolean update(final CommandSender sender, final Plugin plugin, final URL url) {
 		if (download.run(sender, url, new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
-			sender.sendMessage("§6更新: §a已下载插件 " + plugin.getName() + " 到update文件夹 重启后自动更新(或使用upgrade直接升级)!");
+			sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
+			sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 			return true;
 		}
 		return false;
@@ -228,10 +229,12 @@ public class YumAPI {
 			final Map<String, Plugin> updatelist = UpdatePlugin.getUpdateList();
 			if (updatelist.size() > 0) {
 				for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
+					sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getKey() + "!");
 					updatefromyum(sender, updateplugin.getValue(), null);
 				}
 				UpdatePlugin.clearList();
-				sender.sendMessage("§6更新: §c已下载所有需要插件的插件到 到update文件夹 重启后自动更新(或使用/yum upgrade直接升级)!");
+				sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
+				sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 			} else {
 				sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
 			}
@@ -240,10 +243,12 @@ public class YumAPI {
 				final Map<Plugin, String> updatelist = UpdatePlugin.getList();
 				if (updatelist.size() > 0) {
 					for (final Entry<Plugin, String> updateplugin : UpdatePlugin.getList().entrySet()) {
+						sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getKey().getName() + "!");
 						updatefromyum(sender, updateplugin.getKey(), null);
 					}
 					UpdatePlugin.getList().clear();
-					sender.sendMessage("§6更新: §c已下载所有需要插件的插件到 到update文件夹 重启后自动更新(或使用/yum upgrade直接升级)!");
+					sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
+					sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 				} else {
 					sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
 				}
@@ -282,7 +287,8 @@ public class YumAPI {
 		final PluginInfo pi = repo.getPlugin(plugin.getName());
 		if (pi != null) {
 			if (download.run(sender, pi.getMavenUrl(sender, version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
-				sender.sendMessage("§6更新: §a已下载插件 " + plugin.getName() + " 到update文件夹 重启后自动更新(或使用upgrade直接升级)!");
+				sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
+				sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 				return true;
 			}
 		} else {
