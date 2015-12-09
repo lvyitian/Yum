@@ -104,7 +104,7 @@ public class DownloadManager {
 			final int fileLength = url.openConnection().getContentLength();
 			if (fileLength < 0) {
 				sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
-				sender.sendMessage("§6文件: §c " + file.getName() + " 下载失败!");
+				sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
 				return false;
 			}
 			sender.sendMessage("§6文件长度: §3" + fileLength);

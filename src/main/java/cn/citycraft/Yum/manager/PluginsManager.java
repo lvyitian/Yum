@@ -544,7 +544,7 @@ public class PluginsManager {
 							}
 						}
 					}
-					sender.sendMessage("§6卸载: §a注销插件 " + name + " 的所有命令!");
+					sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
 				}
 				final ClassLoader cl = next.getClass().getClassLoader();
 				try {
@@ -602,9 +602,9 @@ public class PluginsManager {
 			updateDirectory = directory;
 		}
 		try {
-			sender.sendMessage("§6升级: §b从 " + updateDirectory.getCanonicalPath() + " 文件夹检索插件插件!");
+			sender.sendMessage("§6升级: §b从 §d" + updateDirectory.getCanonicalPath() + " §b文件夹检索插件插件!");
 		} catch (SecurityException | IOException e1) {
-			sender.sendMessage("§4异常: §c文件夹 " + updateDirectory.getName() + " 权限不足或IO错误!");
+			sender.sendMessage("§4异常: §c文件夹 §d" + updateDirectory.getName() + " §c权限不足或IO错误!");
 			return false;
 		}
 		for (final File file : updateDirectory.listFiles()) {
@@ -616,9 +616,11 @@ public class PluginsManager {
 					continue;
 				}
 				result = true;
-				sender.sendMessage("§6升级: §a开始升级 " + name + " 插件!");
 				if (!unload(sender, name)) {
+					sender.sendMessage("§6升级: §d开始安装 §b" + name + " §d插件!");
 					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
+				} else {
+					sender.sendMessage("§6升级: §a开始升级 §b" + name + " §a插件!");
 				}
 				load(sender, name);
 			} catch (final InvalidDescriptionException e) {
@@ -648,7 +650,7 @@ public class PluginsManager {
 	 * @return 是否成功
 	 */
 	public boolean upgrade(final File directory) {
-		Bukkit.getConsoleSender().sendMessage("§6升级: §a开始升级 " + directory.getName() + " 目录下的所有插件!");
+		Bukkit.getConsoleSender().sendMessage("§6升级: §a开始升级 §d" + directory.getName() + " §a目录下的所有插件!");
 		return upgrade(Bukkit.getConsoleSender(), directory, null);
 	}
 }

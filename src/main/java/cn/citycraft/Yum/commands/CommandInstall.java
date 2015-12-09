@@ -29,7 +29,7 @@ public class CommandInstall extends BaseCommand {
 	 * @param name
 	 */
 	public CommandInstall(final Yum main) {
-		super();
+		super("i");
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("安装插件");

@@ -6,17 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cn.citycraft.PluginHelper.jsonresult.JsonResult;
+import cn.citycraft.PluginHelper.jsonresult.JsonHandler;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
 
 public class RepoCache {
-	protected static JsonResult jr = JsonResult.newJsonResult();
 	Map<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
 	Map<String, Repositories> repos = new HashMap<String, Repositories>();
 
 	public static RepoCache fromJson(final String json) {
-		return jr.fromJson(json, RepoCache.class);
+		return JsonHandler.fromJson(json, RepoCache.class);
 	}
 
 	public void addPlugins(final String name, final PluginInfo info) {
@@ -53,7 +52,7 @@ public class RepoCache {
 		if (json == null || json.isEmpty()) {
 			return null;
 		}
-		final Repositories reposes = jr.fromJson(json, Repositories.class);
+		final Repositories reposes = JsonHandler.fromJson(json, Repositories.class);
 		if (reposes == null || reposes.repos.isEmpty()) {
 			return null;
 		}
@@ -74,6 +73,6 @@ public class RepoCache {
 
 	@Override
 	public String toString() {
-		return jr.toJson(this);
+		return JsonHandler.toJson(this);
 	}
 }

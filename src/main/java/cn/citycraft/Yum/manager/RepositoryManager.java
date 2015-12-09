@@ -15,7 +15,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.gson.JsonSyntaxException;
 
-import cn.citycraft.PluginHelper.jsonresult.JsonResult;
+import cn.citycraft.PluginHelper.config.FileConfig;
+import cn.citycraft.PluginHelper.jsonresult.JsonHandler;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
@@ -29,7 +30,6 @@ import cn.citycraft.Yum.manager.RepoSerialization.Repository;
  * @author 蒋天蓓
  */
 public class RepositoryManager {
-	JsonResult jr = JsonResult.newJsonResult();
 	org.bukkit.plugin.Plugin main;
 	RepoCache repocache;
 
@@ -60,8 +60,9 @@ public class RepositoryManager {
 		return updateRepositories(sender, repo);
 	}
 
-	public void cacheToJson(final FileConfiguration config) {
+	public void cacheToJson(final FileConfig config) {
 		config.set("reposcache", repocache.toString());
+		config.save();
 	}
 
 	public void clean() {
@@ -161,14 +162,14 @@ public class RepositoryManager {
 
 	public PackageInfo jsonToPackage(final String json) {
 		try {
-			return jr.fromJson(json, PackageInfo.class);
+			return JsonHandler.fromJson(json, PackageInfo.class);
 		} catch (final JsonSyntaxException e) {
 			return null;
 		}
 	}
 
 	public Repositories jsonToRepositories(final String json) {
-		return jr.fromJson(json, Repositories.class);
+		return JsonHandler.fromJson(json, Repositories.class);
 	}
 
 	public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
