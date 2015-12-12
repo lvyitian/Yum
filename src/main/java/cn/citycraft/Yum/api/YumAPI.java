@@ -139,7 +139,7 @@ public class YumAPI {
 	public static boolean installfromyum(final CommandSender sender, final String pluginname, final String version) {
 		final PluginInfo pi = repo.getPlugin(pluginname);
 		if (pi != null) {
-			return install(sender, pi.name, pi.getMavenUrl(sender, version));
+			return install(sender, pi.name, pi.getUrl(sender, version));
 		}
 		return false;
 	}
@@ -286,7 +286,7 @@ public class YumAPI {
 	public static boolean updatefromyum(final CommandSender sender, final Plugin plugin, final String version) {
 		final PluginInfo pi = repo.getPlugin(plugin.getName());
 		if (pi != null) {
-			if (download.run(sender, pi.getMavenUrl(sender, version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
+			if (download.run(sender, pi.getUrl(sender, version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
 				sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
 				sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 				return true;

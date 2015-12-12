@@ -23,6 +23,7 @@ import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
 import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
 import cn.citycraft.Yum.manager.RepoSerialization.Repository;
+import cn.citycraft.Yum.manager.RepoSerialization.URLType;
 
 /**
  * 仓库管理类
@@ -178,8 +179,9 @@ public class RepositoryManager {
 			pi.name = StringUtil.getNotNull(plugin.name, plugin.artifactId);
 			pi.branch = StringUtil.getNotNull(plugin.branch, "master");
 			pi.pom = StringUtil.getNotNull(plugin.pom, pkg.pom);
+			pi.url = StringUtil.getNotNull(plugin.url, pkg.url);
+			pi.type = URLType.valueOf(StringUtil.getNotNull(StringUtil.getNotNull(plugin.type, pkg.type), URLType.Maven.name()));
 			pi.plugin = plugin;
-			pi.url = pkg.url;
 			pi.repo = pkg.name;
 			repocache.getPlugins().put(plugin.groupId + "." + plugin.artifactId, pi);
 		}
