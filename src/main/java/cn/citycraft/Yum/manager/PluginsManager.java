@@ -557,9 +557,8 @@ public class PluginsManager {
 		if (!pluginVersion.isEmpty()) {
 			sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " §a已成功卸载!");
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**

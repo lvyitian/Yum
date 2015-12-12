@@ -2,6 +2,7 @@ package cn.citycraft.Yum.manager;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.utils.IOUtil;
@@ -9,6 +10,8 @@ import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
 
 public class PluginInfo {
+	public static final String NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
 	public String branch;
 	public String name;
 	public Plugin plugin;
@@ -27,7 +30,7 @@ public class PluginInfo {
 
 	/**
 	 * 获取Maven仓库指定插件的下载地址
-	 * 
+	 *
 	 * @param sender
 	 *            - 命令发送者
 	 * @param version
@@ -39,8 +42,8 @@ public class PluginInfo {
 		if (ver == null) {
 			if (tags != null) {
 				for (final TagInfo tagInfo : tags) {
-					if (tagInfo.tag.equalsIgnoreCase("1.7.10")) {
-						sender.sendMessage("§6版本: §b从Tag标签中获取最新版本...");
+					if (tagInfo.tag.equalsIgnoreCase(NMSVersion)) {
+						sender.sendMessage("§6版本: §b从Tag标签中获取 §e" + NMSVersion + " §b的最新版本...");
 						ver = tagInfo.version;
 						break;
 					}
@@ -50,13 +53,13 @@ public class PluginInfo {
 				sender.sendMessage("§6版本: §b尝试从在线POM文件获取最新版本...");
 				ver = IOUtil.getXMLTag(pom, "version", plugin.version);
 				if (ver != null) {
-					sender.sendMessage("§6版本: §a成功获取到最新版本 " + ver + " ...");
+					sender.sendMessage("§6版本: §a成功获取到最新版本 §e" + ver + " §a...");
 				}
 			}
 		}
 		if (ver == null) {
 			ver = plugin.version;
-			sender.sendMessage("§6版本: §a使用缓存的版本 " + ver + " ...");
+			sender.sendMessage("§6版本: §a使用缓存的版本 §e" + ver + " §a...");
 		}
 		return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar",
 				plugin.groupId.replace(".", "/"),
