@@ -1,10 +1,9 @@
 package cn.citycraft.Yum.manager;
 
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
+import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
@@ -19,7 +18,6 @@ public class PluginInfo {
 	public String pom;
 	public URLType type;
 	public String repo;
-	public List<TagInfo> tags;
 	public String url;
 
 	/**
@@ -87,11 +85,15 @@ public class PluginInfo {
 	public String getUrl(final CommandSender sender, final String version) {
 		String ver = version;
 		if (ver == null) {
-			if (tags != null) {
-				for (final TagInfo tagInfo : tags) {
+			if (plugin.tags != null) {
+				PluginHelperLogger.getLogger().debug("发现存在TAG标签 开始检索: " + NMSVersion);
+				for (final TagInfo tagInfo : plugin.tags) {
 					if (tagInfo.tag.equalsIgnoreCase(NMSVersion)) {
 						sender.sendMessage("§6版本: §b从Tag标签中获取 §e" + NMSVersion + " §b的最新版本...");
 						ver = tagInfo.version;
+						if (tagInfo.type == URLType.DirectUrl) {
+							return tagInfo.url;
+						}
 						break;
 					}
 				}

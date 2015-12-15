@@ -32,7 +32,6 @@ public class RepoCache {
 		}
 		repos.put(repo, reposes);
 		return reposes;
-
 	}
 
 	public List<String> getAllRepoInfo() {

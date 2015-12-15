@@ -18,7 +18,7 @@ public class RepoSerialization {
 		public List<Plugin> plugins = new ArrayList<>();
 		public String pom;
 		public String url;
-		public String type;
+		public URLType type;
 	}
 
 	public class Plugin {
@@ -31,7 +31,7 @@ public class RepoSerialization {
 		public String pom;
 		public List<TagInfo> tags;
 		public String version;
-		public String type;
+		public URLType type;
 	}
 
 	public class Repositories {
@@ -41,13 +41,14 @@ public class RepoSerialization {
 
 	public class Repository {
 		public String id;
-		public String type;
+		public URLType type;
 		public String url;
 	}
 
 	public class TagInfo {
 		public String tag;
 		public String version;
+		public URLType type;
 		public String url;
 	}
 

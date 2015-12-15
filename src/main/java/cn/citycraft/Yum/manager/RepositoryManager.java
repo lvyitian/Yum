@@ -23,6 +23,7 @@ import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
 import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
 import cn.citycraft.Yum.manager.RepoSerialization.Repository;
+import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
 import cn.citycraft.Yum.manager.RepoSerialization.URLType;
 
 /**
@@ -92,9 +93,16 @@ public class RepositoryManager {
 
 	public List<String> getAllPluginsInfo() {
 		final List<String> li = new ArrayList<String>();
+		li.add("§d仓库名称 §a插件名称 §e插件描述");
 		for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
 			final Plugin plugin = pi.getValue().plugin;
 			li.add(String.format("§d%s §a%s §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.description));
+			if (plugin.tags != null) {
+				li.add("§dTag标签  §a版本 §e类型 §c地址");
+				for (final TagInfo tag : plugin.tags) {
+					li.add(String.format("  §d%s §a%s §e%s §6- §c%s", tag.tag, tag.version, tag.type != null ? tag.type : URLType.Maven, tag.url != null ? tag.url : "未定义"));
+				}
+			}
 		}
 		return li;
 	}
@@ -180,7 +188,8 @@ public class RepositoryManager {
 			pi.branch = StringUtil.getNotNull(plugin.branch, "master");
 			pi.pom = StringUtil.getNotNull(plugin.pom, pkg.pom);
 			pi.url = StringUtil.getNotNull(plugin.url, pkg.url);
-			pi.type = URLType.valueOf(StringUtil.getNotNull(StringUtil.getNotNull(plugin.type, pkg.type), URLType.Maven.name()));
+			pi.type = plugin.type != null ? plugin.type : pkg.type;
+			pi.type = pi.type != null ? pi.type : URLType.Maven;
 			pi.plugin = plugin;
 			pi.repo = pkg.name;
 			repocache.getPlugins().put(plugin.groupId + "." + plugin.artifactId, pi);
