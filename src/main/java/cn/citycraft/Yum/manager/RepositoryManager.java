@@ -93,14 +93,16 @@ public class RepositoryManager {
 
 	public List<String> getAllPluginsInfo() {
 		final List<String> li = new ArrayList<String>();
-		li.add("§d仓库名称 §a插件名称 §e插件描述");
+		li.add("§d仓库名称  §a插件名称  §e插件描述");
 		for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
 			final Plugin plugin = pi.getValue().plugin;
 			li.add(String.format("§d%s §a%s §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.description));
 			if (plugin.tags != null) {
-				li.add("§dTag标签  §a版本 §e类型 §c地址");
-				for (final TagInfo tag : plugin.tags) {
-					li.add(String.format("  §d%s §a%s §e%s §6- §c%s", tag.tag, tag.version, tag.type != null ? tag.type : URLType.Maven, tag.url != null ? tag.url : "未定义"));
+				li.add(" §b┗Tags  §c标签    §a版本    §e类型");
+				final List<TagInfo> taglist = plugin.tags;
+				for (int i = 0; i < taglist.size(); i++) {
+					final TagInfo tag = taglist.get(i);
+					li.add("    §b" + (i == taglist.size() - 1 ? "┗ " : "┣ ") + String.format("§c%s  §a%s  §e%s", tag.tag, tag.version, tag.type != null ? tag.type : URLType.Maven));
 				}
 			}
 		}
