@@ -19,9 +19,11 @@ import cn.citycraft.Yum.Yum;
  * @author 蒋天蓓 2015年8月12日下午2:04:05
  */
 public class CommandRm extends BaseCommand {
+	Yum plugin;
 
 	public CommandRm(final Yum main) {
 		super();
+		plugin = main;
 		setMinimumArguments(1);
 		setDescription("删除文件夹(服务器JAR为根目录)");
 		setPossibleArguments("<文件相对目录>");
@@ -38,9 +40,11 @@ public class CommandRm extends BaseCommand {
 				sendMessage(sender, "§d路径 §e" + file.getAbsolutePath() + " §c是一个文件 请使用file delete!");
 				return;
 			}
-			if (file.getAbsolutePath().toLowerCase().endsWith("plugins") || file.getAbsolutePath().toLowerCase().endsWith("world")) {
-				sendMessage(sender, "§d路径 §e" + file.getAbsolutePath() + " §c不允许被删除!");
-				return;
+			for (final String name : plugin.config.getStringList("blacklist")) {
+				if (file.getAbsolutePath().toLowerCase().endsWith(name)) {
+					sendMessage(sender, "§d路径 §e" + file.getAbsolutePath() + " §c不允许被删除!");
+					return;
+				}
 			}
 			if (file.listFiles().length != 0 && !(args.length > 1 && args[1].equalsIgnoreCase("-rf"))) {
 				sendMessage(sender, "§d目录 §e" + file.getAbsolutePath() + " §c不为空!");
