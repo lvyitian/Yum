@@ -34,7 +34,7 @@ public class CommandList extends BaseCommand {
 	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
 		sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
 		for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			sender.sendMessage("§6 - " + YumAPI.getPlugman().getFormattedName(plugin, true));
+			sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
 		}
 	};
 }

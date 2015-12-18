@@ -2,6 +2,8 @@ package cn.citycraft.Yum.api;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,7 +36,7 @@ public class YumAPI {
 	 * 初始化Yum管理中心
 	 *
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 */
 	public YumAPI(final Plugin plugin) {
 		YumAPI.main = plugin;
@@ -47,7 +49,7 @@ public class YumAPI {
 	 * 删除插件
 	 *
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 */
 	public static void delete(final Plugin plugin) {
 		plugman.deletePlugin(plugin);
@@ -84,11 +86,11 @@ public class YumAPI {
 	 * 安装新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 * @param version
-	 *            - 插件版本
+	 *            插件版本
 	 * @return 是否安装成功
 	 */
 	public static boolean install(final CommandSender sender, final String pluginname, final String url) {
@@ -103,9 +105,9 @@ public class YumAPI {
 	 * 安装新插件
 	 *
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 * @param version
-	 *            - 插件版本
+	 *            插件版本
 	 * @return 是否安装成功
 	 */
 	public static boolean install(final String pluginname, final String url) {
@@ -116,9 +118,9 @@ public class YumAPI {
 	 * 安装新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 * @return 是否安装成功
 	 */
 	public static boolean installfromyum(final CommandSender sender, final String pluginname) {
@@ -129,11 +131,11 @@ public class YumAPI {
 	 * 安装新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 * @param version
-	 *            - 插件版本
+	 *            插件版本
 	 * @return 是否安装成功
 	 */
 	public static boolean installfromyum(final CommandSender sender, final String pluginname, final String version) {
@@ -148,7 +150,7 @@ public class YumAPI {
 	 * 载入插件
 	 *
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 */
 	public static void load(final File pluginFile) {
 		plugman.load(pluginFile);
@@ -158,7 +160,7 @@ public class YumAPI {
 	 * 载入插件
 	 *
 	 * @param pluginname
-	 *            - 插件名称
+	 *            插件名称
 	 */
 	public static void load(final String pluginname) {
 		plugman.load(pluginname);
@@ -168,7 +170,7 @@ public class YumAPI {
 	 * 重载插件
 	 *
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 */
 	public static void reload(final Plugin plugin) {
 		plugman.reload(plugin);
@@ -178,7 +180,7 @@ public class YumAPI {
 	 * 卸载插件
 	 *
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 */
 	public static void unload(final Plugin plugin) {
 		plugman.unload(plugin);
@@ -188,11 +190,11 @@ public class YumAPI {
 	 * 更新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 * @param url
-	 *            - 新插件的下载地址
+	 *            新插件的下载地址
 	 * @return 是否更新成功
 	 */
 	public static boolean update(final CommandSender sender, final Plugin plugin, final URL url) {
@@ -208,9 +210,9 @@ public class YumAPI {
 	 * 更新插件
 	 *
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 * @param url
-	 *            - 新插件的下载地址
+	 *            新插件的下载地址
 	 * @return 是否更新成功
 	 */
 	public static boolean update(final Plugin plugin, final URL url) {
@@ -221,41 +223,35 @@ public class YumAPI {
 	 * 更新支持Yum的插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 */
 	public static void updateall(final CommandSender sender) {
+		final List<Plugin> ulist = new ArrayList<>();
 		try {
-
-			final Map<String, Plugin> updatelist = UpdatePlugin.getUpdateList();
-			if (updatelist.size() > 0) {
-				for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
-					sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getKey() + "!");
-					updatefromyum(sender, updateplugin.getValue(), null);
-				}
-				UpdatePlugin.clearList();
-				sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
-				sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
-			} else {
-				sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
+			for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
+				ulist.add(updateplugin.getValue());
 			}
+			UpdatePlugin.clearList();
 		} catch (final Exception | Error e) {
 			try {
 				final Map<Plugin, String> updatelist = UpdatePlugin.getList();
-				if (updatelist.size() > 0) {
-					for (final Entry<Plugin, String> updateplugin : UpdatePlugin.getList().entrySet()) {
-						sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getKey().getName() + "!");
-						updatefromyum(sender, updateplugin.getKey(), null);
-					}
-					UpdatePlugin.getList().clear();
-					sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
-					sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
-				} else {
-					sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
-				}
+				ulist.addAll(updatelist.keySet());
+				UpdatePlugin.getList().clear();
 			} catch (final Exception | Error e2) {
 				sender.sendMessage("§4错误: §c无法检索全体更新列表!");
 				sender.sendMessage("§4异常: §c" + e2.getMessage());
 			}
+		}
+		if (ulist.size() > 0) {
+			for (final Plugin updateplugin : ulist) {
+				sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
+				updatefromyum(sender, updateplugin, null, true);
+			}
+			UpdatePlugin.getList().clear();
+			sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
+			sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
+		} else {
+			sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
 		}
 	}
 
@@ -263,9 +259,9 @@ public class YumAPI {
 	 * 更新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 * @return 是否更新成功
 	 */
 	public static boolean updatefromyum(final CommandSender sender, final Plugin plugin) {
@@ -276,19 +272,38 @@ public class YumAPI {
 	 * 从Yum内部更新插件
 	 *
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 * @param version
-	 *            - 插件版本(null则自动获取)
+	 *            插件版本(null则自动获取)
 	 * @return
 	 */
 	public static boolean updatefromyum(final CommandSender sender, final Plugin plugin, final String version) {
+		return updatefromyum(sender, plugin, version, false);
+	}
+
+	/**
+	 * 从Yum内部更新插件
+	 *
+	 * @param sender
+	 *            命令发送者
+	 * @param plugin
+	 *            插件实体
+	 * @param version
+	 *            插件版本(null则自动获取)
+	 * @param oneKeyUpdate
+	 *            是否一键更新
+	 * @return
+	 */
+	public static boolean updatefromyum(final CommandSender sender, final Plugin plugin, final String version, final boolean oneKeyUpdate) {
 		final PluginInfo pi = repo.getPlugin(plugin.getName());
 		if (pi != null) {
 			if (download.run(sender, pi.getUrl(sender, version), new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
-				sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
-				sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
+				if (!oneKeyUpdate) {
+					sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
+					sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
+				}
 				return true;
 			}
 		} else {
@@ -311,9 +326,9 @@ public class YumAPI {
 
 	/**
 	 * @param sender
-	 *            - 命令发送者
+	 *            命令发送者
 	 * @param plugin
-	 *            - 插件实体
+	 *            插件实体
 	 */
 	public static void upgrade(final CommandSender sender, final Plugin plugin) {
 		plugman.upgrade(sender, plugin);

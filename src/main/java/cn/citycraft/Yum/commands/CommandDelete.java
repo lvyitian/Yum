@@ -22,7 +22,7 @@ public class CommandDelete extends BaseCommand {
 	Yum main;
 
 	public CommandDelete(final Yum main) {
-		super("d");
+		super("del");
 		this.main = main;
 		setMinimumArguments(1);
 		setDescription("删除插件");

@@ -9,6 +9,7 @@ import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
 import cn.citycraft.Yum.api.YumAPI;
 import cn.citycraft.Yum.commands.YumCommand;
+import cn.citycraft.Yum.file.commands.FileCommand;
 
 /**
  * MC插件仓库
@@ -25,8 +26,9 @@ public class Yum extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		new YumCommand(this);
 		new YumAPI(this);
+		new YumCommand(this);
+		new FileCommand(this);
 		YumAPI.getRepo().jsonToCache(config);
 		YumAPI.updaterepo();
 		new VersionChecker(this);

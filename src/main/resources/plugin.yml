@@ -10,6 +10,11 @@ commands:
     usage: §6使用§a/yum help§6查看帮助!
     permission: yum.use
     permission-message: §c你没有 <permission> 的权限来执行此命令!
+  file:
+    description: MC文件管理命令
+    usage: §6使用§a/yum help§6查看帮助!
+    permission: yum.use
+    permission-message: §c你没有 <permission> 的权限来执行此命令!
 permissions:
   yum.use:
     description: 插件管理系统使用权限!
