@@ -9,6 +9,7 @@ public class FileCommand {
 		cmdhandler.setAllCommandOnlyConsole(yum.config.getBoolean("onlyFileCommandConsole", true));
 		cmdhandler.registerCommand(new CommandDownLoad(yum));
 		cmdhandler.registerCommand(new CommandDelete(yum));
+		cmdhandler.registerCommand(new CommandRename(yum));
 		cmdhandler.registerCommand(new CommandRm(yum));
 		cmdhandler.registerCommand(new CommandLs(yum));
 	}

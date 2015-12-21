@@ -45,8 +45,6 @@ public class CommandDownLoad extends BaseCommand {
 		} else {
 			file = new File(Bukkit.getUpdateFolderFile(), dl.getFileName(urlstr));
 		}
-		if (args.length == 1) {
-			dl.run(sender, urlstr, file);
-		}
+		dl.run(sender, urlstr, file);
 	}
 }

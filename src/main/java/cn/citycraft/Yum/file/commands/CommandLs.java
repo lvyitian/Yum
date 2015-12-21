@@ -20,7 +20,7 @@ import cn.citycraft.Yum.Yum;
 public class CommandLs extends BaseCommand {
 
 	public CommandLs(final Yum main) {
-		super();
+		super("l");
 		setDescription("列出当前目录(服务器JAR为根目录)");
 		setPossibleArguments("<相对目录>");
 	}
