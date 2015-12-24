@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.9</version>
+	<version>1.9.1</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;c添加File文件操作命令...</update.description>
+		<update.description>&amp;c修复一键更新产生的报错...</update.description>
 		<env.BUILD_NUMBER>Debug</env.BUILD_NUMBER>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

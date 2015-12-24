@@ -247,7 +247,6 @@ public class YumAPI {
 				sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
 				updatefromyum(sender, updateplugin, null, true);
 			}
-			UpdatePlugin.getList().clear();
 			sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
 			sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
 		} else {
