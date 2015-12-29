@@ -12,6 +12,7 @@ public class YumCommand {
 		cmdhandler.registerCommand(new CommandUpdate(yum));
 		cmdhandler.registerCommand(new CommandUpdateAll(yum));
 		cmdhandler.registerCommand(new CommandDelete(yum));
+		cmdhandler.registerCommand(new CommandFullDelete(yum));
 		cmdhandler.registerCommand(new CommandInfo(yum));
 		cmdhandler.registerCommand(new CommandRepo(yum));
 		cmdhandler.registerCommand(new CommandReload(yum));

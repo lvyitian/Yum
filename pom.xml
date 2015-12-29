@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.9.5</version>
+	<version>1.9.5.1</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;e添加yum info指令查看插件权限和注册命令...</update.description>
+		<update.description>&amp;e添加fdel命令删除插件和数据文件...</update.description>
 		<env.BUILD_NUMBER>Debug</env.BUILD_NUMBER>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

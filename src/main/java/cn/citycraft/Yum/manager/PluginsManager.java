@@ -28,10 +28,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
-import org.bukkit.util.FileUtil;
 
 import com.google.common.base.Joiner;
 
+import cn.citycraft.PluginHelper.utils.FileUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 
 /**
@@ -126,6 +126,19 @@ public class PluginsManager {
 				enable(plugin);
 			}
 		}
+	}
+
+	/**
+	 * 删除插件(包括数据)
+	 *
+	 * @param sender
+	 *            - 命令发送者
+	 * @param plugin
+	 *            - 插件
+	 * @return 是否成功
+	 */
+	public boolean fullDeletePlugin(final CommandSender sender, final Plugin plugin) {
+		return unload(sender, plugin) && getPluginFile(plugin).delete() && FileUtil.deleteDir(sender, plugin.getDataFolder());
 	}
 
 	/**
@@ -617,7 +630,7 @@ public class PluginsManager {
 				result = true;
 				if (!unload(sender, name)) {
 					sender.sendMessage("§6升级: §d开始安装 §b" + name + " §d插件!");
-					FileUtil.copy(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
+					FileUtil.copyFile(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
 				} else {
 					sender.sendMessage("§6升级: §a开始升级 §b" + name + " §a插件!");
 				}
