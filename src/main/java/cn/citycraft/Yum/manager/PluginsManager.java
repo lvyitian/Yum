@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -507,6 +509,7 @@ public class PluginsManager {
 		List<Plugin> plugins = null;
 		Map<String, Plugin> lookupNames = null;
 		Map<String, Command> knownCommands = null;
+		Map<Pattern, PluginLoader> fileAssociations = null;
 		if (pluginManager == null) {
 			sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
 			return false;
@@ -524,9 +527,13 @@ public class PluginsManager {
 			commandMapField.setAccessible(true);
 			commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
 
-			final Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+			final Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
 			knownCommandsField.setAccessible(true);
 			knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+
+			final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
+			fileAssociationsField.setAccessible(true);
+			fileAssociations = (Map<Pattern, PluginLoader>) fileAssociationsField.get(pluginManager);
 		} catch (final Exception e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 §b" + name + " §c卸载失败!");
 			return false;
@@ -563,6 +570,16 @@ public class PluginsManager {
 				try {
 					((URLClassLoader) cl).close();
 				} catch (final IOException ex) {
+				}
+				if (fileAssociations != null) {
+					for (final Iterator<Entry<Pattern, PluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
+						final Entry<Pattern, PluginLoader> entry = filter.next();
+						final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
+						if (match.find()) {
+							filter.remove();
+							sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类加载器!");
+						}
+					}
 				}
 				System.gc();
 			}
