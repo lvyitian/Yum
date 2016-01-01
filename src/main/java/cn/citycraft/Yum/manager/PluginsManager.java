@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -325,6 +323,10 @@ public class PluginsManager {
 			sender.sendMessage("§4插件: §c" + name + " 载入失败 缺少部分依赖项目!");
 			return false;
 		}
+		if (target == null) {
+			sender.sendMessage("§4异常: §c服务器类加载器载入插件失败!");
+			return false;
+		}
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
 		sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion() + " §a已成功载入到服务器!");
@@ -509,7 +511,8 @@ public class PluginsManager {
 		List<Plugin> plugins = null;
 		Map<String, Plugin> lookupNames = null;
 		Map<String, Command> knownCommands = null;
-		Map<Pattern, PluginLoader> fileAssociations = null;
+		// ###移除类加载器后会导致插件无法载入###
+		// Map<Pattern, PluginLoader> fileAssociations = null;
 		if (pluginManager == null) {
 			sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
 			return false;
@@ -531,9 +534,10 @@ public class PluginsManager {
 			knownCommandsField.setAccessible(true);
 			knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
-			final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
-			fileAssociationsField.setAccessible(true);
-			fileAssociations = (Map<Pattern, PluginLoader>) fileAssociationsField.get(pluginManager);
+			// ###移除类加载器后会导致插件无法载入###
+			// final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
+			// fileAssociationsField.setAccessible(true);
+			// fileAssociations = (Map<Pattern, PluginLoader>) fileAssociationsField.get(pluginManager);
 		} catch (final Exception e) {
 			sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 §b" + name + " §c卸载失败!");
 			return false;
@@ -571,16 +575,17 @@ public class PluginsManager {
 					((URLClassLoader) cl).close();
 				} catch (final IOException ex) {
 				}
-				if (fileAssociations != null) {
-					for (final Iterator<Entry<Pattern, PluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
-						final Entry<Pattern, PluginLoader> entry = filter.next();
-						final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
-						if (match.find()) {
-							filter.remove();
-							sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类加载器!");
-						}
-					}
-				}
+				// ###移除类加载器后会导致插件无法载入###
+				// if (fileAssociations != null) {
+				// for (final Iterator<Entry<Pattern, PluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
+				// final Entry<Pattern, PluginLoader> entry = filter.next();
+				// final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
+				// if (match.find()) {
+				// filter.remove();
+				// sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类加载器!");
+				// }
+				// }
+				// }
 				System.gc();
 			}
 		}

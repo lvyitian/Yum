@@ -13,8 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.google.gson.JsonSyntaxException;
-
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandler;
 import cn.citycraft.PluginHelper.utils.IOUtil;
@@ -174,7 +172,7 @@ public class RepositoryManager {
 	public PackageInfo jsonToPackage(final String json) {
 		try {
 			return JsonHandler.fromJson(json, PackageInfo.class);
-		} catch (final JsonSyntaxException e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}
