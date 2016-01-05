@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cn.citycraft.PluginHelper.jsonresult.JsonHandler;
+import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
 
@@ -15,7 +15,7 @@ public class RepoCache {
 	Map<String, Repositories> repos = new HashMap<String, Repositories>();
 
 	public static RepoCache fromJson(final String json) {
-		return JsonHandler.fromJson(json, RepoCache.class);
+		return JsonHandle.fromJson(json, RepoCache.class);
 	}
 
 	public void addPlugins(final String name, final PluginInfo info) {
@@ -51,7 +51,7 @@ public class RepoCache {
 		if (json == null || json.isEmpty()) {
 			return null;
 		}
-		final Repositories reposes = JsonHandler.fromJson(json, Repositories.class);
+		final Repositories reposes = JsonHandle.fromJson(json, Repositories.class);
 		if (reposes == null || reposes.repos.isEmpty()) {
 			return null;
 		}
@@ -72,6 +72,6 @@ public class RepoCache {
 
 	@Override
 	public String toString() {
-		return JsonHandler.toJson(this);
+		return JsonHandle.toJson(this);
 	}
 }

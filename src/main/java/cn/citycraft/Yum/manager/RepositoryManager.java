@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import cn.citycraft.PluginHelper.config.FileConfig;
-import cn.citycraft.PluginHelper.jsonresult.JsonHandler;
+import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
@@ -171,14 +171,14 @@ public class RepositoryManager {
 
 	public PackageInfo jsonToPackage(final String json) {
 		try {
-			return JsonHandler.fromJson(json, PackageInfo.class);
+			return JsonHandle.fromJson(json, PackageInfo.class);
 		} catch (final Exception e) {
 			return null;
 		}
 	}
 
 	public Repositories jsonToRepositories(final String json) {
-		return JsonHandler.fromJson(json, Repositories.class);
+		return JsonHandle.fromJson(json, Repositories.class);
 	}
 
 	public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
