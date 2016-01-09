@@ -142,7 +142,7 @@ public class DownloadManager {
             } catch (final Exception e) {
                 pVer = "";
             }
-            sender.sendMessage("§6" + (pVer.isEmpty() ? "文件" : "插件") + ": §b" + file.getName() + (pVer.isEmpty() ? "" : " 版本 §e" + pVer) + " §a下载完成!");
+            sender.sendMessage("§6" + (pVer.isEmpty() ? "文件" : "插件") + ": §b" + file.getName() + (pVer.isEmpty() ? "" : " §a版本 §e" + pVer) + " §a下载完成!");
             return true;
         } catch (final Exception ex) {
             sender.sendMessage("§6异常: §c" + ex.getMessage());
