@@ -14,29 +14,24 @@ import cn.citycraft.Yum.file.commands.FileCommand;
 /**
  * MC插件仓库
  *
- * @author 蒋天蓓 2015年8月21日下午5:14:39
+ * @author 喵♂呜
+ * @since 2015年8月21日下午5:14:39
  */
 public class Yum extends JavaPlugin {
-	public FileConfig config;
+    public FileConfig config;
 
-	@Override
-	public void onDisable() {
-		YumAPI.getRepo().cacheToJson(config);
-	}
+    @Override
+    public void onEnable() {
+        new YumAPI(this);
+        new YumCommand(this);
+        new FileCommand(this);
+        new VersionChecker(this);
+        YumAPI.updaterepo();
+    }
 
-	@Override
-	public void onEnable() {
-		new YumAPI(this);
-		new YumCommand(this);
-		new FileCommand(this);
-		YumAPI.getRepo().jsonToCache(config);
-		YumAPI.updaterepo();
-		new VersionChecker(this);
-	}
-
-	@Override
-	public void onLoad() {
-		config = new FileConfig(this);
-	}
+    @Override
+    public void onLoad() {
+        config = new FileConfig(this);
+    }
 
 }

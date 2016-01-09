@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.9.6</version>
+	<version>1.9.7</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -55,7 +55,7 @@
 	</build>
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;c修复没有Gson的服务端仓库管理出错的问题...</update.description>
+		<update.description>&amp;c去除离线缓存 修复版本更新模块...</update.description>
 		<env.BUILD_NUMBER>Debug</env.BUILD_NUMBER>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

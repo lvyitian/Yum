@@ -16,25 +16,26 @@ import cn.citycraft.Yum.api.YumAPI;
 /**
  * 插件查看命令类
  *
- * @author 蒋天蓓 2015年8月12日下午2:04:05
+ * @author 喵♂呜
+ * @since 2015年8月12日下午2:04:05
  */
 public class CommandList extends BaseCommand {
-	Yum main;
+    Yum main;
 
-	/**
-	 * @param name
-	 */
-	public CommandList(final Yum main) {
-		super("l");
-		this.main = main;
-		setDescription("列出已安装插件列表");
-	}
+    /**
+     * @param name
+     */
+    public CommandList(final Yum main) {
+        super("l");
+        this.main = main;
+        setDescription("列出已安装插件列表");
+    }
 
-	@Override
-	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
-		sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
-		for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
-		}
-	};
+    @Override
+    public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
+        sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
+        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
+        }
+    };
 }

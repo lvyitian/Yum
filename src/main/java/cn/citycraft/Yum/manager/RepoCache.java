@@ -6,72 +6,77 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
 
 public class RepoCache {
-	Map<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
-	Map<String, Repositories> repos = new HashMap<String, Repositories>();
+    PluginHelperLogger logger = PluginHelperLogger.getLogger();
+    Map<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
+    Map<String, Repositories> repos = new HashMap<String, Repositories>();
 
-	public static RepoCache fromJson(final String json) {
-		return JsonHandle.fromJson(json, RepoCache.class);
-	}
+    public static RepoCache fromJson(final String json) {
+        return JsonHandle.fromJson(json, RepoCache.class);
+    }
 
-	public void addPlugins(final String name, final PluginInfo info) {
-		plugins.put(name, info);
-	}
+    public void addPlugins(final String name, final PluginInfo info) {
+        plugins.put(name, info);
+    }
 
-	public Repositories addRepo(final String repo) {
-		if (repos.containsKey(repo) || repo.isEmpty()) {
-			return null;
-		}
-		final Repositories reposes = getRepo(repo);
-		if (reposes == null) {
-			return null;
-		}
-		repos.put(repo, reposes);
-		return reposes;
-	}
+    public Repositories addRepo(final String repo) {
+        if (repos.containsKey(repo) || repo.isEmpty()) {
+            logger.debug("源地址为空或已存在 " + repo);
+            return null;
+        }
+        final Repositories reposes = getRepo(repo);
+        if (reposes == null) {
+            return null;
+        }
+        repos.put(repo, reposes);
+        return reposes;
+    }
 
-	public List<String> getAllRepoInfo() {
-		final List<String> repoinfo = new ArrayList<String>();
-		for (final Entry<String, Repositories> repo : repos.entrySet()) {
-			repoinfo.add(String.format("§d仓库: §e%s §6- §3%s", repo.getValue().name, repo.getKey()));
-		}
-		return repoinfo;
-	}
+    public List<String> getAllRepoInfo() {
+        final List<String> repoinfo = new ArrayList<String>();
+        for (final Entry<String, Repositories> repo : repos.entrySet()) {
+            repoinfo.add(String.format("§d仓库: §e%s §6- §3%s", repo.getValue().name, repo.getKey()));
+        }
+        return repoinfo;
+    }
 
-	public Map<String, PluginInfo> getPlugins() {
-		return plugins;
-	}
+    public Map<String, PluginInfo> getPlugins() {
+        return plugins;
+    }
 
-	public Repositories getRepo(final String repo) {
-		final String json = IOUtil.getData(repo);
-		if (json == null || json.isEmpty()) {
-			return null;
-		}
-		final Repositories reposes = JsonHandle.fromJson(json, Repositories.class);
-		if (reposes == null || reposes.repos.isEmpty()) {
-			return null;
-		}
-		return reposes;
-	}
+    public Repositories getRepo(final String repo) {
+        final String json = IOUtil.getData(repo);
+        if (json == null || json.isEmpty()) {
+            logger.debug("源地址获取数据为空 " + repo);
+            return null;
+        }
+        final Repositories reposes = JsonHandle.fromJson(json, Repositories.class);
+        if (reposes == null || reposes.repos.isEmpty()) {
+            logger.debug("源地址解析Json为空 " + repo);
+            return null;
+        }
+        return reposes;
+    }
 
-	public Map<String, Repositories> getRepos() {
-		return repos;
-	}
+    public Map<String, Repositories> getRepos() {
+        return repos;
+    }
 
-	public boolean removeRepo(final String repo) {
-		if (repo.isEmpty() || !repos.containsKey(repo)) {
-			return false;
-		}
-		repos.remove(repo);
-		return true;
-	}
+    public boolean removeRepo(final String repo) {
+        if (repo.isEmpty() || !repos.containsKey(repo)) {
+            return false;
+        }
+        repos.remove(repo);
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return JsonHandle.toJson(this);
-	}
+    @Override
+    public String toString() {
+        return JsonHandle.toJson(this);
+    }
 }

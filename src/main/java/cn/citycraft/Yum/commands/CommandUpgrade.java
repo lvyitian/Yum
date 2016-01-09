@@ -14,39 +14,40 @@ import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.api.YumAPI;
 
 /**
- * @author 蒋天蓓 2015年8月12日下午2:04:05
+ * @author 喵♂呜
+ * @since 2015年8月12日下午2:04:05
  */
 public class CommandUpgrade extends BaseCommand {
-	Yum main;
+    Yum main;
 
-	/**
-	 * @param name
-	 */
-	public CommandUpgrade(final Yum main) {
-		super("ug");
-		this.main = main;
-		setDescription("升级插件");
-		setPossibleArguments("[插件名称]");
-	}
+    /**
+     * @param name
+     */
+    public CommandUpgrade(final Yum main) {
+        super("ug");
+        this.main = main;
+        setDescription("升级插件");
+        setPossibleArguments("[插件名称]");
+    }
 
-	@Override
-	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
-		Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-			@Override
-			public void run() {
-				if (args.length == 0) {
-					YumAPI.getPlugman().upgrade(sender);
-				} else {
-					final String pluginname = args[0];
-					final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-					sender.sendMessage("§a开始升级插件: " + pluginname);
-					if (plugin != null) {
-						YumAPI.upgrade(sender, plugin);
-					} else {
-						sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
-					}
-				}
-			}
-		});
-	};
+    @Override
+    public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
+        Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+            @Override
+            public void run() {
+                if (args.length == 0) {
+                    YumAPI.getPlugman().upgrade(sender);
+                } else {
+                    final String pluginname = args[0];
+                    final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+                    sender.sendMessage("§a开始升级插件: " + pluginname);
+                    if (plugin != null) {
+                        YumAPI.upgrade(sender, plugin);
+                    } else {
+                        sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
+                    }
+                }
+            }
+        });
+    };
 }

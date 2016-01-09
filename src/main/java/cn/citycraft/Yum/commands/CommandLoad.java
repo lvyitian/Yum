@@ -16,30 +16,31 @@ import cn.citycraft.Yum.api.YumAPI;
 /**
  * 插件删除命令类
  *
- * @author 蒋天蓓 2015年8月12日下午2:04:05
+ * @author 喵♂呜
+ * @since 2015年8月12日下午2:04:05
  */
 public class CommandLoad extends BaseCommand {
-	Yum main;
+    Yum main;
 
-	/**
-	 * @param name
-	 */
-	public CommandLoad(final Yum main) {
-		super();
-		this.main = main;
-		setMinimumArguments(1);
-		setDescription("载入插件");
-		setPossibleArguments("<插件名称>");
-	}
+    /**
+     * @param name
+     */
+    public CommandLoad(final Yum main) {
+        super();
+        this.main = main;
+        setMinimumArguments(1);
+        setDescription("载入插件");
+        setPossibleArguments("<插件名称>");
+    }
 
-	@Override
-	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
-		final String pluginname = args[0];
-		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin == null) {
-			YumAPI.getPlugman().load(sender, pluginname);
-		} else {
-			sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
-		}
-	};
+    @Override
+    public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
+        final String pluginname = args[0];
+        final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+        if (plugin == null) {
+            YumAPI.getPlugman().load(sender, pluginname);
+        } else {
+            sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
+        }
+    };
 }

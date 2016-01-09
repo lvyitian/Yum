@@ -20,47 +20,48 @@ import cn.citycraft.Yum.api.YumAPI;
 /**
  * 插件安装命令类
  *
- * @author 蒋天蓓 2015年8月12日下午2:04:05
+ * @author 喵♂呜
+ * @since 2015年8月12日下午2:04:05
  */
 public class CommandInstall extends BaseCommand {
-	Yum main;
+    Yum main;
 
-	/**
-	 * @param name
-	 */
-	public CommandInstall(final Yum main) {
-		super("i");
-		this.main = main;
-		setMinimumArguments(1);
-		setDescription("安装插件");
-		setPossibleArguments("<插件名称>");
-	}
+    /**
+     * @param name
+     */
+    public CommandInstall(final Yum main) {
+        super("i");
+        this.main = main;
+        setMinimumArguments(1);
+        setDescription("安装插件");
+        setPossibleArguments("<插件名称>");
+    }
 
-	@Override
-	public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
-		final String pluginname = args[0];
-		final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-		if (plugin == null) {
-			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-				@Override
-				public void run() {
-					if (args.length < 2) {
-						YumAPI.installfromyum(sender, pluginname);
-					} else {
-						YumAPI.installfromyum(sender, pluginname, args[1]);
-					}
-				}
-			});
-		} else {
-			sender.sendMessage("§c插件" + pluginname + "已安装在服务器 需要更新请使用yum update " + pluginname + "!");
-		}
-	}
+    @Override
+    public void execute(final CommandSender sender, final Command command, final String label, final String[] args) throws CommandException {
+        final String pluginname = args[0];
+        final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+        if (plugin == null) {
+            Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+                @Override
+                public void run() {
+                    if (args.length < 2) {
+                        YumAPI.installfromyum(sender, pluginname);
+                    } else {
+                        YumAPI.installfromyum(sender, pluginname, args[1]);
+                    }
+                }
+            });
+        } else {
+            sender.sendMessage("§c插件" + pluginname + "已安装在服务器 需要更新请使用yum update " + pluginname + "!");
+        }
+    }
 
-	@Override
-	public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
-		if (args[0].equalsIgnoreCase("install")) {
-			return StringUtil.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
-		}
-		return null;
-	}
+    @Override
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (args[0].equalsIgnoreCase("install")) {
+            return StringUtil.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
+        }
+        return null;
+    }
 }
