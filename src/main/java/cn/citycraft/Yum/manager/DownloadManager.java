@@ -138,7 +138,7 @@ public class DownloadManager {
             String pVer = null;
             try {
                 final PluginDescriptionFile desc = plugin.getPluginLoader().getPluginDescription(file);
-                pVer = desc.getVersion();
+                pVer = desc.getVersion().substring(0, 15);
             } catch (final Exception e) {
                 pVer = "";
             }

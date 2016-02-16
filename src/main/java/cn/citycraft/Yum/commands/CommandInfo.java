@@ -47,7 +47,7 @@ public class CommandInfo extends BaseCommand {
         if (plugin != null) {
             final PluginDescriptionFile desc = plugin.getDescription();
             sender.sendMessage("§6插件名称: §3" + plugin.getName());
-            sender.sendMessage("§6插件版本: §3" + desc.getVersion());
+            sender.sendMessage("§6插件版本: §3" + desc.getVersion().substring(0, 15));
             sender.sendMessage("§6插件作者: §3" + StringUtils.join(desc.getAuthors(), " "));
             sender.sendMessage("§6插件描述: §3" + (desc.getDescription() == null ? "无" : desc.getDescription()));
             sender.sendMessage("§6插件依赖: §3" + (desc.getDepend().isEmpty() ? "无" : ""));

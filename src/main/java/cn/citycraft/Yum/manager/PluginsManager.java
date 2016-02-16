@@ -166,7 +166,7 @@ public class PluginsManager {
         final ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
         String pluginName = color + plugin.getName();
         if (includeVersions) {
-            pluginName = pluginName + " (" + plugin.getDescription().getVersion() + ")";
+            pluginName = pluginName + " (" + plugin.getDescription().getVersion().substring(0, 15) + ")";
         }
         return pluginName;
     }
@@ -233,7 +233,7 @@ public class PluginsManager {
     public String getPluginVersion(final String name) {
         final Plugin plugin = getPluginByName(name);
         if ((plugin != null) && (plugin.getDescription() != null)) {
-            return plugin.getDescription().getVersion();
+            return plugin.getDescription().getVersion().substring(0, 15);
         }
         return null;
     }
@@ -330,7 +330,7 @@ public class PluginsManager {
         }
         target.onLoad();
         Bukkit.getPluginManager().enablePlugin(target);
-        sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion() + " §a已成功载入到服务器!");
+        sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion().substring(0, 15) + " §a已成功载入到服务器!");
         return true;
     }
 
@@ -548,7 +548,7 @@ public class PluginsManager {
             if (next.getName().equals(name)) {
                 pluginManager.disablePlugin(next);
                 if ((plugins != null) && (plugins.contains(next))) {
-                    pluginVersion = next.getDescription().getVersion();
+                    pluginVersion = next.getDescription().getVersion().substring(0, 15);
                     plugins.remove(next);
                     sender.sendMessage("§6卸载: §a从服务器插件列表删除 §b" + name + " §a的实例!");
                 }
