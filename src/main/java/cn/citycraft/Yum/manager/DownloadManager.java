@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import net.minecraft.util.org.apache.commons.lang3.StringUtils;
+
 /**
  * 下载管理类
  *
@@ -138,7 +140,7 @@ public class DownloadManager {
             String pVer = null;
             try {
                 final PluginDescriptionFile desc = plugin.getPluginLoader().getPluginDescription(file);
-                pVer = desc.getVersion().substring(0, 15);
+                pVer = StringUtils.substring(desc.getVersion(), 0, 15);
             } catch (final Exception e) {
                 pVer = "";
             }

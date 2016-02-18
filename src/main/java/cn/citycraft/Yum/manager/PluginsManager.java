@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -43,6 +44,10 @@ import cn.citycraft.PluginHelper.utils.StringUtil;
 public class PluginsManager {
     private final Set<String> ignoreList = new HashSet<>();
     private final Plugin main;
+
+    public static String getVersion(final Plugin plugin) {
+        return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
+    }
 
     public PluginsManager(final Plugin plugin) {
         this.main = plugin;
@@ -166,7 +171,7 @@ public class PluginsManager {
         final ChatColor color = plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED;
         String pluginName = color + plugin.getName();
         if (includeVersions) {
-            pluginName = pluginName + " (" + plugin.getDescription().getVersion().substring(0, 15) + ")";
+            pluginName = pluginName + " (" + getVersion(plugin) + ")";
         }
         return pluginName;
     }
@@ -233,7 +238,7 @@ public class PluginsManager {
     public String getPluginVersion(final String name) {
         final Plugin plugin = getPluginByName(name);
         if ((plugin != null) && (plugin.getDescription() != null)) {
-            return plugin.getDescription().getVersion().substring(0, 15);
+            return getVersion(plugin);
         }
         return null;
     }
@@ -330,7 +335,7 @@ public class PluginsManager {
         }
         target.onLoad();
         Bukkit.getPluginManager().enablePlugin(target);
-        sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + target.getDescription().getVersion().substring(0, 15) + " §a已成功载入到服务器!");
+        sender.sendMessage("§6载入: §a插件 §b" + target.getName() + " §a版本 §d" + getVersion(target) + " §a已成功载入到服务器!");
         return true;
     }
 
@@ -548,7 +553,7 @@ public class PluginsManager {
             if (next.getName().equals(name)) {
                 pluginManager.disablePlugin(next);
                 if ((plugins != null) && (plugins.contains(next))) {
-                    pluginVersion = next.getDescription().getVersion().substring(0, 15);
+                    pluginVersion = getVersion(next);
                     plugins.remove(next);
                     sender.sendMessage("§6卸载: §a从服务器插件列表删除 §b" + name + " §a的实例!");
                 }

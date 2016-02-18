@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.api.YumAPI;
+import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 
 /**
  * 插件删除命令类
@@ -35,7 +36,7 @@ public class CommandFullDelete extends BaseCommand {
         final String pluginname = args[0];
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin != null) {
-            final String version = plugin.getDescription().getVersion().substring(0, 15);
+            final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (YumAPI.getPlugman().fullDeletePlugin(sender, plugin)) {
                 sender.sendMessage("§c删除: §a插件 §6" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
             } else {
