@@ -56,7 +56,7 @@
 	<properties>
 		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
 		<update.description>&amp;c去除离线缓存 修复版本更新模块...</update.description>
-		<env.BUILD_NUMBER>Debug</env.BUILD_NUMBER>
+		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
