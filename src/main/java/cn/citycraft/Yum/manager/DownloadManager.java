@@ -6,12 +6,11 @@ import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 
 /**
  * 下载管理类

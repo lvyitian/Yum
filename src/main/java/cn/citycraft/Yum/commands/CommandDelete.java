@@ -3,6 +3,7 @@
  */
 package cn.citycraft.Yum.commands;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -12,7 +13,6 @@ import org.bukkit.plugin.Plugin;
 import cn.citycraft.PluginHelper.commands.BaseCommand;
 import cn.citycraft.Yum.Yum;
 import cn.citycraft.Yum.api.YumAPI;
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 
 /**
  * 插件删除命令类
