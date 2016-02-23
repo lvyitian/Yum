@@ -69,7 +69,7 @@ public class FileCommand implements HandlerCommands {
         dl.run(e.getSender(), urlstr, file);
     }
 
-    @HandlerCommand(name = "ls", aliases = { "l" }, minimumArguments = 1, description = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")
+    @HandlerCommand(name = "ls", aliases = { "l" }, description = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")
     public void ls(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
