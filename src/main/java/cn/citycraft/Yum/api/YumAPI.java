@@ -25,11 +25,8 @@ import cn.citycraft.Yum.manager.RepositoryManager;
  */
 public class YumAPI {
     private static DownloadManager download;
-
     private static Plugin main;
-
     private static PluginsManager plugman;
-
     private static RepositoryManager repo;
 
     /**
@@ -80,6 +77,26 @@ public class YumAPI {
      */
     public static RepositoryManager getRepo() {
         return repo;
+    }
+
+    public static List<Plugin> getUpdateList(final CommandSender sender) {
+        final List<Plugin> ulist = new ArrayList<>();
+        try {
+            for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
+                ulist.add(updateplugin.getValue());
+            }
+            UpdatePlugin.clearList();
+        } catch (final Exception | Error e) {
+            try {
+                final Map<Plugin, String> updatelist = UpdatePlugin.getList();
+                ulist.addAll(updatelist.keySet());
+                UpdatePlugin.getList().clear();
+            } catch (final Exception | Error e2) {
+                sender.sendMessage("§4错误: §c无法检索全体更新列表!");
+                sender.sendMessage("§4异常: §c" + e2.getMessage());
+            }
+        }
+        return ulist;
     }
 
     /**
@@ -226,32 +243,40 @@ public class YumAPI {
      *            命令发送者
      */
     public static void updateall(final CommandSender sender) {
-        final List<Plugin> ulist = new ArrayList<>();
-        try {
-            for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
-                ulist.add(updateplugin.getValue());
+        main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
+            @Override
+            public void run() {
+                final List<Plugin> ulist = getUpdateList(sender);
+                if (ulist.size() > 0) {
+                    for (final Plugin updateplugin : ulist) {
+                        sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
+                        updatefromyum(sender, updateplugin, null, true);
+                    }
+                    sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
+                    sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
+                } else {
+                    sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
+                }
             }
-            UpdatePlugin.clearList();
-        } catch (final Exception | Error e) {
-            try {
-                final Map<Plugin, String> updatelist = UpdatePlugin.getList();
-                ulist.addAll(updatelist.keySet());
-                UpdatePlugin.getList().clear();
-            } catch (final Exception | Error e2) {
-                sender.sendMessage("§4错误: §c无法检索全体更新列表!");
-                sender.sendMessage("§4异常: §c" + e2.getMessage());
+        });
+    }
+
+    /**
+     * 检查是否有可更新插件
+     *
+     * @param sender
+     *            命令发送者
+     */
+    public static void updatecheck(final CommandSender sender) {
+        main.getServer().getScheduler().runTaskLaterAsynchronously(main, new Runnable() {
+            @Override
+            public void run() {
+                final List<Plugin> ulist = getUpdateList(sender);
+                if (ulist.size() > 0) {
+                    sender.sendMessage("§6[§bYum§6]§e自动更新: §a发现" + ulist.size() + " 个可更新插件 请使用 §b/yum ua §a更新所有插件!");
+                }
             }
-        }
-        if (ulist.size() > 0) {
-            for (final Plugin updateplugin : ulist) {
-                sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
-                updatefromyum(sender, updateplugin, null, true);
-            }
-            sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
-            sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
-        } else {
-            sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
-        }
+        }, 100);
     }
 
     /**
@@ -300,7 +325,6 @@ public class YumAPI {
         if (pi != null) {
             final File pFile = new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName());
             if (download.run(sender, pi.getUrl(sender, version), pFile)) {
-
                 if (!oneKeyUpdate) {
                     sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
                     sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
@@ -316,11 +340,11 @@ public class YumAPI {
     /**
      * 更新Yum源数据
      */
-    public static void updaterepo() {
+    public static void updaterepo(final CommandSender sender) {
         main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
             @Override
             public void run() {
-                repo.updateRepositories(Bukkit.getConsoleSender());
+                repo.updateRepositories(sender);
             }
         });
     }

@@ -3,13 +3,14 @@
  */
 package cn.citycraft.Yum;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
 import cn.citycraft.Yum.api.YumAPI;
+import cn.citycraft.Yum.commands.FileCommand;
 import cn.citycraft.Yum.commands.YumCommand;
-import cn.citycraft.Yum.file.commands.FileCommand;
 
 /**
  * MC插件仓库
@@ -26,12 +27,12 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new FileCommand(this);
         new VersionChecker(this);
-        YumAPI.updaterepo();
+        YumAPI.updaterepo(Bukkit.getConsoleSender());
+        YumAPI.updatecheck(Bukkit.getConsoleSender());
     }
 
     @Override
     public void onLoad() {
         config = new FileConfig(this);
     }
-
 }

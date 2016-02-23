@@ -3,6 +3,7 @@
  */
 package cn.citycraft.Yum.manager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @since 2015年8月31日下午7:41:53
  */
 public class RepoSerialization {
-    public class PackageInfo {
+    public class PackageInfo implements Serializable {
         public String name;
         public List<Plugin> plugins = new ArrayList<>();
         public String pom;
@@ -21,7 +22,7 @@ public class RepoSerialization {
         public URLType type;
     }
 
-    public class Plugin {
+    public class Plugin implements Serializable {
         public String artifactId;
         public String branch;
         public String description;
@@ -34,18 +35,18 @@ public class RepoSerialization {
         public URLType type;
     }
 
-    public class Repositories {
+    public class Repositories implements Serializable {
         public String name;
         public List<Repository> repos;
     }
 
-    public class Repository {
+    public class Repository implements Serializable {
         public String id;
         public URLType type;
         public String url;
     }
 
-    public class TagInfo {
+    public class TagInfo implements Serializable {
         public String tag;
         public String version;
         public URLType type;

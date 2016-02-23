@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.citycraft</groupId>
 	<artifactId>Yum</artifactId>
-	<version>1.9.7</version>
+	<version>2.0</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -54,8 +54,9 @@
 		</plugins>
 	</build>
 	<properties>
-		<jenkins.url>http://ci.citycraft.cn:8080</jenkins.url>
-		<update.description>&amp;c去除离线缓存 修复版本更新模块...</update.description>
+		<jenkins.url>http://hs.yumc.pw:8080</jenkins.url>
+		<update.description>&amp;a全新 2.0 版本 震撼发布...</update.description>
+		<update.changes>&amp;a精简大量代码...;&amp;a服务器启动后自动检查可更新插件...;&amp;a优化检测流程...</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

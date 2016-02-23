@@ -1,5 +1,7 @@
 package cn.citycraft.Yum.manager;
 
+import java.io.Serializable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -9,7 +11,7 @@ import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
 import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
 import cn.citycraft.Yum.manager.RepoSerialization.URLType;
 
-public class PluginInfo {
+public class PluginInfo implements Serializable {
     public static final String NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
     public String branch;
