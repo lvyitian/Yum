@@ -273,7 +273,7 @@ public class YumAPI {
             public void run() {
                 final List<Plugin> ulist = getUpdateList(sender);
                 if (ulist.size() > 0) {
-                    sender.sendMessage("§6[§bYum§6]§e自动更新: §a发现" + ulist.size() + " 个可更新插件 请使用 §b/yum ua §a更新所有插件!");
+                    sender.sendMessage("§6[§bYum§6]§e自动更新: §a发现 §e" + ulist.size() + " §a个可更新插件 请使用 §b/yum ua §a更新所有插件!");
                 }
             }
         }, 100);
