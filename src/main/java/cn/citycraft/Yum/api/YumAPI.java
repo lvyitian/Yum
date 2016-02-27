@@ -276,7 +276,7 @@ public class YumAPI {
                     sender.sendMessage("§6[§bYum§6]§e自动更新: §a发现 §e" + ulist.size() + " §a个可更新插件 请使用 §b/yum ua §a更新所有插件!");
                 }
             }
-        }, 100);
+        }, 60);
     }
 
     /**
