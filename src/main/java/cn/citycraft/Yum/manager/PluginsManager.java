@@ -45,12 +45,12 @@ public class PluginsManager {
     private final Set<String> ignoreList = new HashSet<>();
     private final Plugin main;
 
-    public static String getVersion(final Plugin plugin) {
-        return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
-    }
-
     public PluginsManager(final Plugin plugin) {
         this.main = plugin;
+    }
+
+    public static String getVersion(final Plugin plugin) {
+        return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
     }
 
     /**
@@ -655,12 +655,20 @@ public class PluginsManager {
                 if (plugin != null && !name.equals(plugin.getName())) {
                     continue;
                 }
+                final Plugin oldplugin = Bukkit.getPluginManager().getPlugin(name);
                 result = true;
+                File dest = null;
                 if (!unload(sender, name)) {
                     sender.sendMessage("§6升级: §d开始安装 §b" + name + " §d插件!");
-                    FileUtil.copyFile(file, new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName()));
+                    dest = new File(Bukkit.getUpdateFolderFile().getParentFile(), File.separatorChar + file.getName());
                 } else {
+                    if (oldplugin != null) {
+                        dest = new File(Bukkit.getUpdateFolderFile(), File.separatorChar + getPluginFile(oldplugin).getName());
+                    }
                     sender.sendMessage("§6升级: §a开始升级 §b" + name + " §a插件!");
+                }
+                if (dest != null) {
+                    file.renameTo(dest);
                 }
                 load(sender, name);
             } catch (final InvalidDescriptionException e) {
