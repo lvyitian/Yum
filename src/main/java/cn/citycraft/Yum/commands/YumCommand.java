@@ -265,7 +265,6 @@ public class YumCommand implements HandlerCommands {
     public void update(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
-        final String pluginname = args[0];
         switch (args.length) {
         case 0:
             repo.updateRepositories(sender);
@@ -273,6 +272,7 @@ public class YumCommand implements HandlerCommands {
             break;
         case 1:
         case 2:
+            final String pluginname = args[0];
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
             sender.sendMessage("§a开始更新插件: " + pluginname);
             if (plugin != null) {
