@@ -40,6 +40,7 @@ public class YumAPI {
         plugman = new PluginsManager(main);
         download = new DownloadManager(main);
         repo = new RepositoryManager(main);
+        plugman.addIgnore(main.getConfig().getStringList("ignorelist"));
     }
 
     /**

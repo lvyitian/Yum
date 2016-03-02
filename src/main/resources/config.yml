@@ -1,4 +1,4 @@
-Version: 1.2
+Version: 2.0
 #是否只允许控制台执行插件命令
 onlyCommandConsole: false
 #是否只允许控制台执行插件文件命令
@@ -7,3 +7,9 @@ onlyFileCommandConsole: true
 blacklist:
 - 'plugins'
 - 'worlds'
+#全体重载忽略列表(##请不要删除原有插件##)
+ignorelist: 
+- 'Yum'
+- 'Vault'
+- 'iConomy'
+- 'GroupManager'

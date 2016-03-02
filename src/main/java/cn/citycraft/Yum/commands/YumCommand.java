@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -100,7 +101,12 @@ public class YumCommand implements HandlerCommands, Listener {
             final Map<String, Map<String, Object>> clist = desc.getCommands();
             if (clist != null) {
                 sender.sendMessage("§6插件注册命令: §3" + (clist.isEmpty() ? "无" : ""));
-                StringUtil.sendStringArray(sender, clist.keySet(), "§6 - §a");
+                for (final Entry<String, Map<String, Object>> entry : clist.entrySet()) {
+                    sender.sendMessage("§6 - §a" + entry.getKey());
+                    sendEntry(sender, "§6   描述: §a", entry.getValue(), "description");
+                    sendEntry(sender, "§6   权限: §a", entry.getValue(), "permission");
+                    sendEntry(sender, "§6   用法: §a", entry.getValue(), "usage");
+                }
             }
             final List<Permission> plist = desc.getPermissions();
             if (plist != null) {
@@ -258,6 +264,25 @@ public class YumCommand implements HandlerCommands, Listener {
                 }
             }
         });
+    }
+
+    /**
+     * 发生实体消息
+     *
+     * @param sender
+     *            命令发送者
+     * @param prefix
+     *            实体前缀
+     * @param map
+     *            实体
+     * @param key
+     *            实体Key
+     */
+    public void sendEntry(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
+        final Object value = map.get(key);
+        if (value != null) {
+            sender.sendMessage(prefix + (String) value);
+        }
     }
 
     @HandlerCommand(name = "unload", minimumArguments = 1, description = "卸载插件", possibleArguments = "<插件名称>")

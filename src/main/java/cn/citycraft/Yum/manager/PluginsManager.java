@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,17 @@ public class PluginsManager {
 
     public static String getVersion(final Plugin plugin) {
         return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
+    }
+
+    /**
+     * 添加到忽略列表
+     *
+     * @param name
+     *            - 插件名称
+     * @return 是否成功
+     */
+    public boolean addIgnore(final Collection<? extends String> name) {
+        return ignoreList.addAll(name);
     }
 
     /**
@@ -458,18 +470,25 @@ public class PluginsManager {
     public void reloadAll() {
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (!isIgnored(plugin)) {
-                reload(plugin);
+                unload(plugin);
             }
         }
+        Bukkit.getPluginManager().loadPlugins(Bukkit.getUpdateFolderFile().getParentFile());
     }
 
     /**
      * 重载所有插件
      */
     public void reloadAll(final CommandSender sender) {
-        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        final Plugin[] plist = Bukkit.getPluginManager().getPlugins();
+        for (final Plugin plugin : plist) {
             if (!isIgnored(plugin)) {
-                reload(sender, plugin);
+                unload(sender, plugin);
+            }
+        }
+        for (final Plugin plugin : plist) {
+            if (!isIgnored(plugin)) {
+                load(sender, plugin.getName());
             }
         }
     }
