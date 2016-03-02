@@ -6,6 +6,7 @@ package cn.citycraft.Yum;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
 import cn.citycraft.Yum.api.YumAPI;
@@ -34,5 +35,7 @@ public class Yum extends JavaPlugin {
     @Override
     public void onLoad() {
         config = new FileConfig(this);
+        // 初始化更新列
+        UpdatePlugin.getUpdateList();
     }
 }

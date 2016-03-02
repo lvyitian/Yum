@@ -8,6 +8,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -30,7 +33,7 @@ import cn.citycraft.Yum.manager.RepositoryManager;
  * @since 2016年1月9日 上午10:02:24
  * @author 喵♂呜
  */
-public class YumCommand implements HandlerCommands {
+public class YumCommand implements HandlerCommands, Listener {
     Yum main;
     RepositoryManager repo;
     PluginsManager plugman;
@@ -39,6 +42,7 @@ public class YumCommand implements HandlerCommands {
         main = yum;
         repo = YumAPI.getRepo();
         plugman = YumAPI.getPlugman();
+        Bukkit.getPluginManager().registerEvents(this, yum);
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "yum");
         cmdhandler.setAllCommandOnlyConsole(yum.config.getBoolean("onlyCommandConsole", false));
         cmdhandler.registerCommands(this);
@@ -174,6 +178,13 @@ public class YumCommand implements HandlerCommands {
         }
     }
 
+    @EventHandler
+    public void onAdminJoin(final PlayerJoinEvent e) {
+        if (e.getPlayer().isOp()) {
+            YumAPI.updatecheck(e.getPlayer());
+        }
+    }
+
     @HandlerCommand(name = "reload", aliases = { "re" }, minimumArguments = 1, description = "重载插件", possibleArguments = "<插件名称|all|*>")
     public void reload(final InvokeCommandEvent e) {
         final CommandSender sender = e.getSender();
@@ -297,12 +308,10 @@ public class YumCommand implements HandlerCommands {
 
     @HandlerCommand(name = "updateall", aliases = { "ua" }, description = "更新所有可更新插件")
     public void updateall(final InvokeCommandEvent e) {
-        final CommandSender sender = e.getSender();
-        sender.sendMessage("§d开始更新服务器可更新插件");
         Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
             @Override
             public void run() {
-                YumAPI.updateall(sender);
+                YumAPI.updateall(e.getSender());
             }
         });
     }
