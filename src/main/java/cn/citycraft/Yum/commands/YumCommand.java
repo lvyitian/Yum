@@ -57,12 +57,12 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (plugman.deletePlugin(sender, plugin)) {
-                sender.sendMessage("§c删除: §a插件 §6" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
+                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
             } else {
-                sender.sendMessage("§c删除: §c插件 " + pluginname + " 卸载或删除时发生错误 删除失败!");
+                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
             }
         } else {
-            sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+            sender.sendMessage(pnf(pluginname));
         }
     }
 
@@ -74,12 +74,12 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (plugman.fullDeletePlugin(sender, plugin)) {
-                sender.sendMessage("§c删除: §a插件 §6" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
+                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
             } else {
-                sender.sendMessage("§c删除: §c插件 " + pluginname + " 卸载或删除时发生错误 删除失败!");
+                sender.sendMessage("§c删除: §c插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
             }
         } else {
-            sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+            sender.sendMessage(pnf(pluginname));
         }
     }
 
@@ -117,7 +117,7 @@ public class YumCommand implements HandlerCommands, Listener {
             }
             sender.sendMessage("§6插件物理路径: §3" + plugman.getPluginFile(plugin).getAbsolutePath());
         } else {
-            sender.sendMessage("§4错误: §c插件 " + pluginname + " 不存在或已卸载!");
+            sender.sendMessage(pnf(pluginname));
         }
     }
 
@@ -139,7 +139,7 @@ public class YumCommand implements HandlerCommands, Listener {
                 }
             });
         } else {
-            sender.sendMessage("§c插件" + pluginname + "已安装在服务器 需要更新请使用yum update " + pluginname + "!");
+            sender.sendMessage("§4错误: §c插件 §b" + pluginname + " §c已安装在服务器 需要更新请使用 §b/yum update " + pluginname + "!");
         }
     }
 
@@ -180,7 +180,7 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin == null) {
             plugman.load(sender, pluginname);
         } else {
-            sender.sendMessage("§c错误: 插件 " + pluginname + " 已加载到服务器!");
+            sender.sendMessage("§c错误: §b插件 " + pluginname + " §c已加载到服务器!");
         }
     }
 
@@ -203,7 +203,7 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             plugman.reload(sender, plugin);
         } else {
-            sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+            sender.sendMessage(pnf(pluginname));
         }
     }
 
@@ -293,7 +293,7 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             plugman.unload(sender, plugin);
         } else {
-            sender.sendMessage("§c插件 " + pluginname + " 不存在或已卸载!");
+            sender.sendMessage(pnf(pluginname));
         }
     }
 
@@ -323,7 +323,7 @@ public class YumCommand implements HandlerCommands, Listener {
                     }
                 });
             } else {
-                sender.sendMessage("§c插件" + pluginname + "未安装或已卸载 需要安装请使用/yum install " + pluginname + "!");
+                sender.sendMessage("§c插件" + pluginname + "未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
             }
             break;
         default:
@@ -353,15 +353,19 @@ public class YumCommand implements HandlerCommands, Listener {
                 } else {
                     final String pluginname = args[0];
                     final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-                    sender.sendMessage("§a开始升级插件: " + pluginname);
+                    sender.sendMessage("§a开始升级插件: §b" + pluginname);
                     if (plugin != null) {
                         YumAPI.upgrade(sender, plugin);
                     } else {
-                        sender.sendMessage("§c插件未安装或已卸载 需要安装请使用yum install " + pluginname + "!");
+                        sender.sendMessage("§c错误: §b插件 " + pluginname + " §c未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
                     }
                 }
             }
         });
+    }
+
+    private String pnf(final String pname) {
+        return String.format("§4错误: §c插件 §b %s §c不存在或已卸载!", pname);
     }
 
 }
