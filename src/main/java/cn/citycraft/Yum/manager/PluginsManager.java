@@ -660,10 +660,19 @@ public class PluginsManager {
         } else {
             updateDirectory = directory;
         }
+        if (updateDirectory == null) {
+            sender.sendMessage("§4异常: §c文件夹 §d服务器更新文件夹 §c未找到或IO错误!");
+            return false;
+        }
         try {
             sender.sendMessage("§6升级: §b从 §d" + updateDirectory.getCanonicalPath() + " §b文件夹检索插件插件!");
         } catch (SecurityException | IOException e1) {
             sender.sendMessage("§4异常: §c文件夹 §d" + updateDirectory.getName() + " §c权限不足或IO错误!");
+            return false;
+        }
+        final File[] plugins = updateDirectory.listFiles();
+        if (plugins.length == 0) {
+            sender.sendMessage("§6升级: §d更新文件夹未找到插件!");
             return false;
         }
         for (final File file : updateDirectory.listFiles()) {
