@@ -59,7 +59,8 @@
 		<update.changes>
 			&amp;b2.0.3 &amp;6- &amp;a重载所有插件时忽略部分已注册服务插件...;
 			&amp;b2.0.2 &amp;6- &amp;c修复检查可更新插件功能导致全局更新失效问题...;
-			&amp;b      &amp;6- &amp;d新增全局更新限制 无法同时进行 防止错误...;
+			&amp;b &amp;6-
+			&amp;d新增全局更新限制 无法同时进行 防止错误...;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,7 +74,18 @@
 			<id>citycraft-repo</id>
 			<url>${jenkins.url}/plugin/repository/everything/</url>
 		</repository>
+		<repository>
+			<id>yumc-repo</id>
+			<url>http://repo.yumc.pw/content/groups/public/</url>
+		</repository>
 	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>jtb</id>
+			<name>YUMC</name>
+			<url>http://repo.yumc.pw/content/repositories/yumcenter/</url>
+		</repository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
