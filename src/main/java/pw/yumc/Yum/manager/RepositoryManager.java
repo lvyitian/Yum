@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.citycraft.Yum.manager;
+package pw.yumc.Yum.manager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,12 +16,12 @@ import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
-import cn.citycraft.Yum.manager.RepoSerialization.PackageInfo;
-import cn.citycraft.Yum.manager.RepoSerialization.Plugin;
-import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
-import cn.citycraft.Yum.manager.RepoSerialization.Repository;
-import cn.citycraft.Yum.manager.RepoSerialization.TagInfo;
-import cn.citycraft.Yum.manager.RepoSerialization.URLType;
+import pw.yumc.Yum.manager.RepoSerialization.PackageInfo;
+import pw.yumc.Yum.manager.RepoSerialization.Plugin;
+import pw.yumc.Yum.manager.RepoSerialization.Repositories;
+import pw.yumc.Yum.manager.RepoSerialization.Repository;
+import pw.yumc.Yum.manager.RepoSerialization.TagInfo;
+import pw.yumc.Yum.manager.RepoSerialization.URLType;
 
 /**
  * 仓库管理类

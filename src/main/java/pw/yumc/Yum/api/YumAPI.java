@@ -1,4 +1,4 @@
-package cn.citycraft.Yum.api;
+package pw.yumc.Yum.api;
 
 import java.io.File;
 import java.net.URL;
@@ -11,10 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
-import cn.citycraft.Yum.manager.DownloadManager;
-import cn.citycraft.Yum.manager.PluginInfo;
-import cn.citycraft.Yum.manager.PluginsManager;
-import cn.citycraft.Yum.manager.RepositoryManager;
+import pw.yumc.Yum.manager.DownloadManager;
+import pw.yumc.Yum.manager.PluginInfo;
+import pw.yumc.Yum.manager.PluginsManager;
+import pw.yumc.Yum.manager.RepositoryManager;
 
 /**
  * Yum管理中心

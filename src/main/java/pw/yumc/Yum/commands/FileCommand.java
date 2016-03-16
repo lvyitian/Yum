@@ -1,4 +1,4 @@
-package cn.citycraft.Yum.commands;
+package pw.yumc.Yum.commands;
 
 import java.io.File;
 
@@ -10,9 +10,9 @@ import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.FileUtil;
-import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.api.YumAPI;
-import cn.citycraft.Yum.manager.DownloadManager;
+import pw.yumc.Yum.Yum;
+import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.Yum.manager.DownloadManager;
 
 /**
  * File命令基类

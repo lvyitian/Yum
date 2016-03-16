@@ -1,4 +1,4 @@
-package cn.citycraft.Yum.manager;
+package pw.yumc.Yum.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.utils.IOUtil;
-import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
+import pw.yumc.Yum.manager.RepoSerialization.Repositories;
 
 public class RepoCache implements Serializable {
     PluginHelperLogger logger = PluginHelperLogger.getLogger();

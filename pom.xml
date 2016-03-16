@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cn.citycraft</groupId>
+	<groupId>pw.yumc</groupId>
 	<artifactId>Yum</artifactId>
 	<version>2.0.3</version>
 	<name>Yum</name>
@@ -53,14 +53,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://ci.yumc.pw/job/${project.artifactId}}/</url>
+	</ciManagement>
 	<properties>
-		<jenkins.url>http://hs.yumc.pw:8080</jenkins.url>
 		<update.description>&amp;a全新 2.0 版本 震撼发布...</update.description>
 		<update.changes>
 			&amp;b2.0.3 &amp;6- &amp;a重载所有插件时忽略部分已注册服务插件...;
 			&amp;b2.0.2 &amp;6- &amp;c修复检查可更新插件功能导致全局更新失效问题...;
-			&amp;b &amp;6-
-			&amp;d新增全局更新限制 无法同时进行 防止错误...;
+			&amp;b      &amp;6- &amp;d新增全局更新限制 无法同时进行 防止错误...;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -69,10 +71,6 @@
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>citycraft-repo</id>
-			<url>${jenkins.url}/plugin/repository/everything/</url>
 		</repository>
 		<repository>
 			<id>yumc-repo</id>

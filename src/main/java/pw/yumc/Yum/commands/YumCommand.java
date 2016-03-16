@@ -1,4 +1,4 @@
-package cn.citycraft.Yum.commands;
+package pw.yumc.Yum.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +22,11 @@ import cn.citycraft.PluginHelper.commands.HandlerTabComplete;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
-import cn.citycraft.Yum.Yum;
-import cn.citycraft.Yum.api.YumAPI;
-import cn.citycraft.Yum.manager.PluginsManager;
-import cn.citycraft.Yum.manager.RepoSerialization.Repositories;
-import cn.citycraft.Yum.manager.RepositoryManager;
+import pw.yumc.Yum.Yum;
+import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.Yum.manager.PluginsManager;
+import pw.yumc.Yum.manager.RepositoryManager;
+import pw.yumc.Yum.manager.RepoSerialization.Repositories;
 
 /**
  * Yum命令基类

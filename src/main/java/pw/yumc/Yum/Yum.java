@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.citycraft.Yum;
+package pw.yumc.Yum;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,9 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
-import cn.citycraft.Yum.api.YumAPI;
-import cn.citycraft.Yum.commands.FileCommand;
-import cn.citycraft.Yum.commands.YumCommand;
+import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.Yum.commands.FileCommand;
+import pw.yumc.Yum.commands.YumCommand;
 
 /**
  * MC插件仓库

@@ -3,7 +3,7 @@ description: ${project.description}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
 version: ${project.version}-git-${env.GIT_COMMIT}
 author: 喵♂呜
-website: ${jenkins.url}/job/${project.artifactId}/
+website: ${ciManagement.url}
 commands:
   yum:
     description: MC插件仓库
