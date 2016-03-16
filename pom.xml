@@ -55,7 +55,7 @@
 	</build>
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>http://ci.yumc.pw/job/${project.artifactId}}/</url>
+		<url>http://ci.yumc.pw/job/${project.artifactId}/</url>
 	</ciManagement>
 	<properties>
 		<update.description>&amp;a全新 2.0 版本 震撼发布...</update.description>
