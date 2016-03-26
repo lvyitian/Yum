@@ -28,6 +28,7 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new FileCommand(this);
         new VersionChecker(this);
+        // new NetworkManager(this).setDebug(true).register();
         YumAPI.updaterepo(Bukkit.getConsoleSender());
         YumAPI.updatecheck(Bukkit.getConsoleSender());
     }
