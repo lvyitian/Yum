@@ -12,6 +12,7 @@ import cn.citycraft.PluginHelper.utils.VersionChecker;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.YumCommand;
+import pw.yumc.Yum.manager.NetworkManager;
 
 /**
  * MC插件仓库
@@ -21,6 +22,12 @@ import pw.yumc.Yum.commands.YumCommand;
  */
 public class Yum extends JavaPlugin {
     public FileConfig config;
+    NetworkManager netmgr;
+
+    @Override
+    public void onDisable() {
+        netmgr.unregister();
+    }
 
     @Override
     public void onEnable() {
@@ -28,7 +35,8 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new FileCommand(this);
         new VersionChecker(this);
-        // new NetworkManager(this).setDebug(true).register();
+        netmgr = new NetworkManager(this);
+        netmgr.setDebug(true).register();
         YumAPI.updaterepo(Bukkit.getConsoleSender());
         YumAPI.updatecheck(Bukkit.getConsoleSender());
     }
