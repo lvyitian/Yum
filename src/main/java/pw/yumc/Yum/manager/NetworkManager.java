@@ -74,14 +74,15 @@ public class NetworkManager {
                 final Plugin plugin = this.getRequestingPlugin();
                 final String urlinfo = uri.toString();
                 if (!urlinfo.startsWith("socket") && !urlinfo.toLowerCase().contains("yumc") && !urlinfo.toLowerCase().contains("pom.xml")) {
-                    final String str = debug ? "[NetDebug] 插件 %s 尝试访问 %s 请注意服务器网络安全!" : "[NetManager] 插件 %s 尝试在主线程访问 %s 可能会导致服务器卡顿或无响应!";
+                    final String str = debug ? "§6[§bNetDebug§6] §c插件 §6%s §c尝试访问 §e%s §c请注意服务器网络安全!" : "§6[§bNetManager§6] §c插件 §6%s §c尝试在主线程访问 §e%s §4可能会导致服务器卡顿或无响应!";
                     if (plugin == null) {
-                        main.getLogger().warning(String.format(str, "未知(请查看堆栈)", urlinfo));
+                        Bukkit.getConsoleSender().sendMessage(String.format(str, "未知(请查看堆栈)", urlinfo));
                         Thread.dumpStack();
                     } else if (!plugin.getName().equalsIgnoreCase("Yum")) {
-                        main.getLogger().warning(String.format(str, plugin.getName(), urlinfo));
+                        Bukkit.getConsoleSender().sendMessage(String.format(str, plugin.getName(), urlinfo));
                         if (!allowPrimaryThread) {
-                            throwException(new IOException("[NetManager] 已阻止插件 " + plugin.getName() + " 在主线程访问网络!"));
+                            Bukkit.getConsoleSender().sendMessage("§6[§bNetManager§6] §4已阻止插件 §b" + plugin.getName() + " §4在主线程访问网络!");
+                            throwException(new IOException("Yum 已开启网络防护 不允许在主线程访问网络!"));
                         }
                     }
                 }

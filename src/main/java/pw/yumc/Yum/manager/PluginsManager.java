@@ -46,12 +46,12 @@ public class PluginsManager {
     private final Set<String> ignoreList = new HashSet<>();
     private final Plugin main;
 
-    public PluginsManager(final Plugin plugin) {
-        this.main = plugin;
-    }
-
     public static String getVersion(final Plugin plugin) {
         return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
+    }
+
+    public PluginsManager(final Plugin plugin) {
+        this.main = plugin;
     }
 
     /**
@@ -582,35 +582,22 @@ public class PluginsManager {
                     sender.sendMessage("§6卸载: §a从插件查找列表删除 §b" + name + " §a的实例!");
                 }
 
-                if (commandMap != null) {
-                    for (final Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
-                        final Map.Entry<String, Command> entry = it.next();
-                        if ((entry.getValue() instanceof PluginCommand)) {
-                            final PluginCommand command = (PluginCommand) entry.getValue();
-                            if (command.getPlugin() == next) {
-                                command.unregister(commandMap);
-                                it.remove();
-                            }
+                for (final Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
+                    final Map.Entry<String, Command> entry = it.next();
+                    if ((entry.getValue() instanceof PluginCommand)) {
+                        final PluginCommand command = (PluginCommand) entry.getValue();
+                        if (command.getPlugin() == next) {
+                            command.unregister(commandMap);
+                            it.remove();
                         }
                     }
-                    sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
                 }
+                sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
                 final ClassLoader cl = next.getClass().getClassLoader();
                 try {
                     ((URLClassLoader) cl).close();
                 } catch (final IOException ex) {
                 }
-                // ###移除类加载器后会导致插件无法载入###
-                // if (fileAssociations != null) {
-                // for (final Iterator<Entry<Pattern, PluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
-                // final Entry<Pattern, PluginLoader> entry = filter.next();
-                // final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
-                // if (match.find()) {
-                // filter.remove();
-                // sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类加载器!");
-                // }
-                // }
-                // }
                 System.gc();
             }
         }
