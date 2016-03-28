@@ -1,4 +1,4 @@
-Version: 2.0
+Version: 2.1
 #是否只允许控制台执行插件命令
 onlyCommandConsole: false
 #是否只允许控制台执行插件文件命令
@@ -13,3 +13,8 @@ ignorelist:
 - 'Vault'
 - 'iConomy'
 - 'GroupManager'
+- 'PermissionsEx'
+#网络调试模式
+NetworkDebug: false
+#是否允许插件主线程访问网络
+AllowPrimaryThread: false

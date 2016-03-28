@@ -25,6 +25,11 @@ public class Yum extends JavaPlugin {
     NetworkManager netmgr;
 
     @Override
+    public FileConfig getConfig() {
+        return config;
+    }
+
+    @Override
     public void onDisable() {
         netmgr.unregister();
     }
@@ -35,8 +40,6 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new FileCommand(this);
         new VersionChecker(this);
-        netmgr = new NetworkManager(this);
-        netmgr.setDebug(true).register();
         YumAPI.updaterepo(Bukkit.getConsoleSender());
         YumAPI.updatecheck(Bukkit.getConsoleSender());
     }
@@ -46,5 +49,7 @@ public class Yum extends JavaPlugin {
         config = new FileConfig(this);
         // 初始化更新列
         UpdatePlugin.getUpdateList();
+        // 启用网络注入
+        netmgr = new NetworkManager().register(this);
     }
 }
