@@ -31,7 +31,7 @@ public class NetworkManager {
     }
 
     public NetworkManager register(final Yum plugin) {
-        plugin.getLogger().info("注入网络代理 将托管服务器网络!");
+        Bukkit.getConsoleSender().sendMessage("§6[§bYum-网络管理§6] §a注入网络管理系统 将托管服务器网络!");
         ProxySelector.setDefault(new YumProxySelector(ProxySelector.getDefault(), plugin));
         return this;
     }
@@ -46,13 +46,11 @@ public class NetworkManager {
     class YumProxySelector extends ProxySelector {
         private final boolean debug;
         private final boolean allowPrimaryThread;
-        private final Yum main;
         private final FileConfig config;
         private final ProxySelector defaultSelector;
         private final HashMap<ClassLoader, Plugin> pluginMap = new HashMap<>();
 
         public YumProxySelector(final ProxySelector defaultSelector, final Yum plugin) {
-            this.main = plugin;
             this.config = plugin.getConfig();
             this.defaultSelector = defaultSelector;
             this.debug = config.getBoolean("NetworkDebug");
@@ -74,15 +72,15 @@ public class NetworkManager {
                 final Plugin plugin = this.getRequestingPlugin();
                 final String urlinfo = uri.toString();
                 if (!urlinfo.startsWith("socket") && !urlinfo.toLowerCase().contains("yumc") && !urlinfo.toLowerCase().contains("pom.xml")) {
-                    final String str = debug ? "§6[§bNetDebug§6] §c插件 §6%s §c尝试访问 §e%s §c请注意服务器网络安全!" : "§6[§bNetManager§6] §c插件 §6%s §c尝试在主线程访问 §e%s §4可能会导致服务器卡顿或无响应!";
+                    final String str = debug ? "§6[§bYum-网络监控§6] §c插件 §6%s §c尝试访问 §e%s §c请注意服务器网络安全!" : "§6[§bYum-网络管理§6] §c插件 §6%s §c尝试在主线程访问 §e%s §4可能会导致服务器卡顿或无响应!";
                     if (plugin == null) {
                         Bukkit.getConsoleSender().sendMessage(String.format(str, "未知(请查看堆栈)", urlinfo));
                         Thread.dumpStack();
                     } else if (!plugin.getName().equalsIgnoreCase("Yum")) {
                         Bukkit.getConsoleSender().sendMessage(String.format(str, plugin.getName(), urlinfo));
                         if (!allowPrimaryThread) {
-                            Bukkit.getConsoleSender().sendMessage("§6[§bNetManager§6] §4已阻止插件 §b" + plugin.getName() + " §4在主线程访问网络!");
-                            throwException(new IOException("Yum 已开启网络防护 不允许在主线程访问网络!"));
+                            Bukkit.getConsoleSender().sendMessage("§6[§bYum-网络管理§6] §4已阻止插件 §b" + plugin.getName() + " §4在主线程访问网络!");
+                            throwException(new IOException("[Yum-网络管理] 已开启网络防护 不允许在主线程访问网络!"));
                         }
                     }
                 }
