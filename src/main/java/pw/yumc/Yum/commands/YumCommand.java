@@ -25,8 +25,8 @@ import cn.citycraft.PluginHelper.utils.StringUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.manager.PluginsManager;
-import pw.yumc.Yum.manager.RepositoryManager;
 import pw.yumc.Yum.manager.RepoSerialization.Repositories;
+import pw.yumc.Yum.manager.RepositoryManager;
 
 /**
  * Yum命令基类
@@ -180,7 +180,7 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin == null) {
             plugman.load(sender, pluginname);
         } else {
-            sender.sendMessage("§c错误: §b插件 " + pluginname + " §c已加载到服务器!");
+            sender.sendMessage("§c错误: §a插件 §b" + pluginname + " §c已加载到服务器!");
         }
     }
 

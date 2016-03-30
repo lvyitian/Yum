@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.config.FileConfig;
+import cn.citycraft.PluginHelper.kit.ExceptionKit;
 import pw.yumc.Yum.Yum;
 
 /**
@@ -21,14 +22,6 @@ import pw.yumc.Yum.Yum;
  * @author 喵♂呜
  */
 public class NetworkManager {
-    public static void throwException(final Throwable exception) {
-        NetworkManager.<RuntimeException> throwException0(exception);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void throwException0(final Throwable exception) throws T {
-        throw (T) exception;
-    }
 
     public NetworkManager register(final Yum plugin) {
         Bukkit.getConsoleSender().sendMessage("§6[§bYum-网络管理§6] §a注入网络管理系统 将托管服务器网络!");
@@ -80,7 +73,7 @@ public class NetworkManager {
                         Bukkit.getConsoleSender().sendMessage(String.format(str, plugin.getName(), urlinfo));
                         if (!allowPrimaryThread) {
                             Bukkit.getConsoleSender().sendMessage("§6[§bYum-网络管理§6] §4已阻止插件 §b" + plugin.getName() + " §4在主线程访问网络!");
-                            throwException(new IOException("[Yum-网络管理] 已开启网络防护 不允许在主线程访问网络!"));
+                            ExceptionKit.throwException(new IOException("[Yum-网络管理] 已开启网络防护 不允许在主线程访问网络!"));
                         }
                     }
                 }
