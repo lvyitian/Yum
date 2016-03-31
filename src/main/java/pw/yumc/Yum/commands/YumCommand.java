@@ -45,7 +45,7 @@ public class YumCommand implements HandlerCommands, Listener {
         plugman = YumAPI.getPlugman();
         Bukkit.getPluginManager().registerEvents(this, yum);
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "yum");
-        cmdhandler.setAllCommandOnlyConsole(yum.config.getBoolean("onlyCommandConsole", false));
+        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyCommandConsole", false));
         cmdhandler.registerCommands(this);
     }
 

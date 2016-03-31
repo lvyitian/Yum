@@ -28,7 +28,7 @@ public class FileCommand implements HandlerCommands {
         plugin = yum;
         dl = YumAPI.getDownload();
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "file");
-        cmdhandler.setAllCommandOnlyConsole(yum.config.getBoolean("onlyFileCommandConsole", true));
+        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
         cmdhandler.registerCommands(this);
     }
 
@@ -131,7 +131,7 @@ public class FileCommand implements HandlerCommands {
                 sender.sendMessage("§d路径 §e" + file.getAbsolutePath() + " §c是一个文件 请使用file delete!");
                 return;
             }
-            for (final String name : plugin.config.getStringList("blacklist")) {
+            for (final String name : plugin.getConfig().getStringList("blacklist")) {
                 if (file.getAbsolutePath().toLowerCase().endsWith(name)) {
                     sender.sendMessage("§d路径 §e" + file.getAbsolutePath() + " §c不允许被删除!");
                     return;

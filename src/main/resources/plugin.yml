@@ -2,6 +2,7 @@ name: ${project.artifactId}
 description: ${project.description}
 main: ${project.groupId}.${project.artifactId}.${project.artifactId}
 version: ${project.version}-git-${env.GIT_COMMIT}
+load: STARTUP
 author: 喵♂呜
 website: ${ciManagement.url}
 commands:
@@ -21,6 +22,12 @@ commands:
     description: MC文件管理命令
     aliases: [f]
     usage: §6使用§a/file help§6查看帮助!
+    permission: file.use
+    permission-message: §c你没有 <permission> 的权限来执行此命令!
+  security:
+    description: MC安全管理命令
+    aliases: [f]
+    usage: §6使用§a/security help§6查看帮助!
     permission: file.use
     permission-message: §c你没有 <permission> 的权限来执行此命令!
 permissions:

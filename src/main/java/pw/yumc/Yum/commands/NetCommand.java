@@ -7,9 +7,10 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import pw.yumc.Yum.Yum;
 
 public class NetCommand implements HandlerCommands {
+
     public NetCommand(final Yum yum) {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "net");
-        cmdhandler.setAllCommandOnlyConsole(yum.config.getBoolean("onlyNetCommandConsole", false));
+        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyNetCommandConsole", false));
         cmdhandler.registerCommands(this);
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.google.common.base.Joiner;
 
@@ -536,8 +538,7 @@ public class PluginsManager {
         List<Plugin> plugins = null;
         Map<String, Plugin> lookupNames = null;
         Map<String, Command> knownCommands = null;
-        // ###移除类加载器后会导致插件无法载入###
-        // Map<Pattern, PluginLoader> fileAssociations = null;
+        final Map<Pattern, JavaPluginLoader> fileAssociations = null;
         if (pluginManager == null) {
             sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
             return false;
@@ -558,11 +559,11 @@ public class PluginsManager {
             final Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
             knownCommandsField.setAccessible(true);
             knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-
-            // ###移除类加载器后会导致插件无法载入###
+            // XXX 暂时用不到
             // final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
             // fileAssociationsField.setAccessible(true);
-            // fileAssociations = (Map<Pattern, PluginLoader>) fileAssociationsField.get(pluginManager);
+            // fileAssociations = (Map<Pattern, JavaPluginLoader>) fileAssociationsField.get(pluginManager);
+
         } catch (final Exception e) {
             sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 §b" + name + " §c卸载失败!");
             return false;
@@ -592,16 +593,39 @@ public class PluginsManager {
                         }
                     }
                 }
+                // try {
+                // if (fileAssociations != null) {
+                // // XXX 不能移除 会导致无法加载
+                // for (final Iterator<Entry<Pattern, JavaPluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
+                // final Entry<Pattern, JavaPluginLoader> entry = filter.next();
+                // final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
+                // if (match.find()) {
+                // final JavaPluginLoader pluginLoader = entry.getValue();
+                // final Field loadersField = pluginLoader.getClass().getDeclaredField("loaders");
+                // loadersField.setAccessible(true);
+                // final Map<String, URLClassLoader> loaders = (Map<String, URLClassLoader>) loadersField.get(pluginLoader);
+                // // XXX 不能移除 会导致无法调用其他插件
+                // loaders.clear();
+                // sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类实例缓存!");
+                // }
+                // }
+                // }
+                // } catch (final Exception e) {
+                // e.printStackTrace();
+                // }
                 sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
                 final ClassLoader cl = next.getClass().getClassLoader();
                 try {
                     ((URLClassLoader) cl).close();
                 } catch (final IOException ex) {
+                    ex.printStackTrace();
                 }
                 System.gc();
             }
         }
-        if (!pluginVersion.isEmpty()) {
+        if (!pluginVersion.isEmpty())
+
+        {
             sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " §a已成功卸载!");
             return true;
         }
