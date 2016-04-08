@@ -24,9 +24,9 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
-import pw.yumc.Yum.manager.PluginsManager;
-import pw.yumc.Yum.manager.RepositoryManager;
-import pw.yumc.Yum.manager.module.RepoSerialization.Repositories;
+import pw.yumc.Yum.managers.PluginsManager;
+import pw.yumc.Yum.managers.RepositoryManager;
+import pw.yumc.Yum.models.RepoSerialization.Repositories;
 
 /**
  * Yum命令基类

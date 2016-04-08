@@ -12,7 +12,7 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
-import pw.yumc.Yum.manager.DownloadManager;
+import pw.yumc.Yum.managers.DownloadManager;
 
 /**
  * File命令基类
