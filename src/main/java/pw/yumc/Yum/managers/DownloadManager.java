@@ -1,4 +1,4 @@
-package pw.yumc.Yum.manager;
+package pw.yumc.Yum.managers;
 
 import java.io.BufferedInputStream;
 import java.io.File;
