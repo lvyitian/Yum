@@ -1,7 +1,7 @@
 /**
  *
  */
-package pw.yumc.Yum.manager;
+package pw.yumc.Yum.manager.module;
 
 import java.io.Serializable;
 import java.util.ArrayList;

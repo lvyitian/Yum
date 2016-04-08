@@ -1,4 +1,4 @@
-package pw.yumc.Yum.manager;
+package pw.yumc.Yum.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -14,11 +14,11 @@ import pw.yumc.injected.event.SetOpEvent;
  * @since 2016年3月31日 下午3:01:22
  * @author 喵♂呜
  */
-public class SecurityManager implements Listener {
+public class SecurityListener implements Listener {
     public String warn = "§6[§bYum §a安全系统§6] §c插件 §e%s §c已设置玩家 §a%s §c为OP §4请注意服务器安全!";
     public String prevent = "§6[§bYum §a安全系统§6] §c黑名单插件 §e%s §c尝试设置玩家 §a%s §c为OP §a安全系统已成功拦截!";
 
-    public SecurityManager(final Yum yum) {
+    public SecurityListener(final Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
 

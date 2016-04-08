@@ -1,4 +1,4 @@
-package pw.yumc.Yum.manager;
+package pw.yumc.Yum.manager.module;
 
 import java.io.Serializable;
 
@@ -7,9 +7,9 @@ import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.utils.IOUtil;
-import pw.yumc.Yum.manager.RepoSerialization.Plugin;
-import pw.yumc.Yum.manager.RepoSerialization.TagInfo;
-import pw.yumc.Yum.manager.RepoSerialization.URLType;
+import pw.yumc.Yum.manager.module.RepoSerialization.Plugin;
+import pw.yumc.Yum.manager.module.RepoSerialization.TagInfo;
+import pw.yumc.Yum.manager.module.RepoSerialization.URLType;
 
 public class PluginInfo implements Serializable {
     public static final String NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];

@@ -14,14 +14,16 @@ import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
-import cn.citycraft.PluginHelper.utils.IOUtil;
-import cn.citycraft.PluginHelper.utils.StringUtil;
-import pw.yumc.Yum.manager.RepoSerialization.PackageInfo;
-import pw.yumc.Yum.manager.RepoSerialization.Plugin;
-import pw.yumc.Yum.manager.RepoSerialization.Repositories;
-import pw.yumc.Yum.manager.RepoSerialization.Repository;
-import pw.yumc.Yum.manager.RepoSerialization.TagInfo;
-import pw.yumc.Yum.manager.RepoSerialization.URLType;
+import cn.citycraft.PluginHelper.kit.HttpKit;
+import cn.citycraft.PluginHelper.kit.StrKit;
+import pw.yumc.Yum.manager.module.PluginInfo;
+import pw.yumc.Yum.manager.module.RepoCache;
+import pw.yumc.Yum.manager.module.RepoSerialization.PackageInfo;
+import pw.yumc.Yum.manager.module.RepoSerialization.Plugin;
+import pw.yumc.Yum.manager.module.RepoSerialization.Repositories;
+import pw.yumc.Yum.manager.module.RepoSerialization.Repository;
+import pw.yumc.Yum.manager.module.RepoSerialization.TagInfo;
+import pw.yumc.Yum.manager.module.RepoSerialization.URLType;
 
 /**
  * 仓库管理类
@@ -40,7 +42,7 @@ public class RepositoryManager {
     }
 
     public boolean addPackage(final CommandSender sender, final String urlstring) {
-        final String json = IOUtil.getData(urlstring);
+        final String json = HttpKit.get(urlstring);
         if (json == null || json.isEmpty()) {
             return false;
         }
@@ -135,7 +137,7 @@ public class RepositoryManager {
     }
 
     public Repositories getRepoCache(final String urlstring) {
-        return repocache.repos.get(handerRepoUrl(urlstring));
+        return repocache.getRepos().get(handerRepoUrl(urlstring));
     }
 
     public Map<String, Repositories> getRepos() {
@@ -168,10 +170,10 @@ public class RepositoryManager {
     public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
         for (final Plugin plugin : pkg.plugins) {
             final PluginInfo pi = new PluginInfo();
-            pi.name = StringUtil.getNotNull(plugin.name, plugin.artifactId);
-            pi.branch = StringUtil.getNotNull(plugin.branch, "master");
-            pi.pom = StringUtil.getNotNull(plugin.pom, pkg.pom);
-            pi.url = StringUtil.getNotNull(plugin.url, pkg.url);
+            pi.name = StrKit.getNotNull(plugin.name, plugin.artifactId);
+            pi.branch = StrKit.getNotNull(plugin.branch, "master");
+            pi.pom = StrKit.getNotNull(plugin.pom, pkg.pom);
+            pi.url = StrKit.getNotNull(plugin.url, pkg.url);
             pi.type = plugin.type != null ? plugin.type : pkg.type;
             pi.type = pi.type != null ? pi.type : URLType.Maven;
             pi.plugin = plugin;

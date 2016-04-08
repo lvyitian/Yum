@@ -12,9 +12,9 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
 import pw.yumc.Yum.manager.DownloadManager;
-import pw.yumc.Yum.manager.PluginInfo;
 import pw.yumc.Yum.manager.PluginsManager;
 import pw.yumc.Yum.manager.RepositoryManager;
+import pw.yumc.Yum.manager.module.PluginInfo;
 
 /**
  * Yum管理中心

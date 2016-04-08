@@ -13,8 +13,8 @@ import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.commands.YumCommand;
+import pw.yumc.Yum.listeners.SecurityListener;
 import pw.yumc.Yum.manager.NetworkManager;
-import pw.yumc.Yum.manager.SecurityManager;
 
 /**
  * MC插件仓库
@@ -42,7 +42,7 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new NetCommand(this);
         new FileCommand(this);
-        new SecurityManager(this);
+        new SecurityListener(this);
         new VersionChecker(this);
         YumAPI.updaterepo(Bukkit.getConsoleSender());
         YumAPI.updatecheck(Bukkit.getConsoleSender());
