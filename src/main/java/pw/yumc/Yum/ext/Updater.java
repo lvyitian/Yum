@@ -22,8 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.plugin.Plugin;
 
-import com.comphenix.protocol.error.ReportType;
-import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.common.base.Preconditions;
 
 /**
@@ -31,7 +29,6 @@ import com.google.common.base.Preconditions;
  */
 
 public abstract class Updater {
-    public static final ReportType REPORT_CANNOT_UPDATE_PLUGIN = new ReportType("Cannot update ProtocolLib.");
 
     protected Plugin plugin;
     protected String versionName;
@@ -181,19 +178,11 @@ public abstract class Updater {
                 remoteVersion = remoteVersion.substring(1);
             }
 
-            final MinecraftVersion parsedRemote = new MinecraftVersion(remoteVersion);
-            final MinecraftVersion parsedCurrent = new MinecraftVersion(plugin.getDescription().getVersion());
+            final String localVersion = plugin.getDescription().getVersion();
 
-            if (devBuild && parsedRemote.equals(parsedCurrent)) {
+            if (devBuild && remoteVersion.equals(localVersion)) {
                 // They're using a dev build and this version has been released
                 return !remoteVersion.contains("-BETA") && !remoteVersion.contains("-SNAPSHOT");
-            }
-
-            // The remote version has to be greater
-            if (parsedRemote.compareTo(parsedCurrent) <= 0) {
-                // We already have the latest version, or this build is tagged for no-update
-                this.result = BukkitUpdater.UpdateResult.NO_UPDATE;
-                return false;
             }
         }
         return true;

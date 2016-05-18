@@ -27,9 +27,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.error.Report;
-
 /**
  * Check dev.bukkit.org to find updates for a given plugin, and download the updates if needed.
  * <p/>
@@ -60,8 +57,13 @@ public class BukkitUpdater extends Updater {
 
     private static final int BYTE_SIZE = 1024; // Used for downloading files
 
+    // Update information
+    // private static final String BUKKIT_DEV_SLUG = "protocollib";
+    // private static final int BUKKIT_DEV_ID = 45564;
+
     private URL url; // Connecting to RSS
     private File file; // The plugin's file
+
     private Thread thread; // Updater thread
     private int id = -1; // Project's Curse ID
 
@@ -322,22 +324,21 @@ public class BukkitUpdater extends Updater {
                 destinationFilePath.getParentFile().mkdirs();
                 if (entry.isDirectory()) {
                     continue;
-                } else {
-                    final BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-                    int b;
-                    final byte buffer[] = new byte[BukkitUpdater.BYTE_SIZE];
-                    final FileOutputStream fos = new FileOutputStream(destinationFilePath);
-                    final BufferedOutputStream bos = new BufferedOutputStream(fos, BukkitUpdater.BYTE_SIZE);
-                    while ((b = bis.read(buffer, 0, BukkitUpdater.BYTE_SIZE)) != -1) {
-                        bos.write(buffer, 0, b);
-                    }
-                    bos.flush();
-                    bos.close();
-                    bis.close();
-                    final String name = destinationFilePath.getName();
-                    if (name.endsWith(".jar") && this.pluginFile(name)) {
-                        destinationFilePath.renameTo(new File(this.plugin.getDataFolder().getParent(), this.updateFolder + "/" + name));
-                    }
+                }
+                final BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
+                int b;
+                final byte buffer[] = new byte[BukkitUpdater.BYTE_SIZE];
+                final FileOutputStream fos = new FileOutputStream(destinationFilePath);
+                final BufferedOutputStream bos = new BufferedOutputStream(fos, BukkitUpdater.BYTE_SIZE);
+                while ((b = bis.read(buffer, 0, BukkitUpdater.BYTE_SIZE)) != -1) {
+                    bos.write(buffer, 0, b);
+                }
+                bos.flush();
+                bos.close();
+                bis.close();
+                final String name = destinationFilePath.getName();
+                if (name.endsWith(".jar") && this.pluginFile(name)) {
+                    destinationFilePath.renameTo(new File(this.plugin.getDataFolder().getParent(), this.updateFolder + "/" + name));
                 }
                 entry = null;
                 destinationFilePath = null;
@@ -399,8 +400,6 @@ public class BukkitUpdater extends Updater {
                 }
             } catch (final Exception e) {
                 // Any generic error will be handled here
-                ProtocolLibrary.getErrorReporter().reportDetailed(BukkitUpdater.this, Report.newBuilder(REPORT_CANNOT_UPDATE_PLUGIN).error(e).callerParam(this));
-
             } finally {
                 // Invoke the listeners on the main thread
                 for (final Runnable listener : listeners) {

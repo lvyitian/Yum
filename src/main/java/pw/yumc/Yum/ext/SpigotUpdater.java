@@ -24,8 +24,6 @@ import java.net.URL;
 
 import org.bukkit.plugin.Plugin;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.error.Report;
 import com.google.common.base.Charsets;
 import com.google.common.io.Closer;
 
@@ -83,7 +81,6 @@ public final class SpigotUpdater extends Updater {
     @Override
     public void start(final UpdateType type) {
         waitForThread();
-
         this.type = type;
         this.thread = new Thread(new SpigotUpdateRunnable());
         this.thread.start();
@@ -95,19 +92,12 @@ public final class SpigotUpdater extends Updater {
             try {
                 final String version = getSpigotVersion();
                 remoteVersion = version;
-
                 if (versionCheck(version)) {
                     result = UpdateResult.SPIGOT_UPDATE_AVAILABLE;
                 } else {
                     result = UpdateResult.NO_UPDATE;
                 }
             } catch (final Throwable ex) {
-                // if (ProtocolLibrary.getConfig().isDebug()) {
-                ProtocolLibrary.getErrorReporter().reportDetailed(SpigotUpdater.this, Report.newBuilder(REPORT_CANNOT_UPDATE_PLUGIN).error(ex).callerParam(this));
-                // } else {
-                // plugin.getLogger().log(Level.WARNING, "Failed to check for updates: " + ex);
-                // }
-                // ProtocolLibrary.disableUpdates();
             } finally {
                 // Invoke the listeners on the main thread
                 for (final Runnable listener : listeners) {
