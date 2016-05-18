@@ -74,12 +74,12 @@ public class YumCommand implements HandlerCommands, Listener {
         final CommandSender sender = e.getSender();
         try {
             final Class<?> clazz = Class.forName(classname);
-            final Field field = clazz.getClass().getDeclaredField("plugin");
+            final Field field = clazz.getClassLoader().getClass().getDeclaredField("plugin");
             field.setAccessible(true);
-            final Plugin plugin = (JavaPlugin) field.get(clazz);
+            final Plugin plugin = (JavaPlugin) field.get(clazz.getClassLoader());
             Bukkit.dispatchCommand(sender, "yum info " + plugin.getName());
         } catch (final ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e2) {
-            sender.sendMessage("§4错误: 无法找到类 " + classname + " 所对应的插件信息!");
+            sender.sendMessage("§4错误: 无法找到类 " + classname + " 所对应的插件信息 异常:" + e2.getClass().getSimpleName() + " " + e2.getMessage() + "!");
         }
     }
 
