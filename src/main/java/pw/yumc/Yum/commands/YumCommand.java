@@ -1,5 +1,6 @@
 package pw.yumc.Yum.commands;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +16,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.HandlerTabComplete;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
-import cn.citycraft.PluginHelper.utils.StringUtil;
+import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.managers.PluginsManager;
@@ -66,6 +68,21 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
+    @HandlerCommand(name = "find", aliases = { "f" }, minimumArguments = 1, possibleArguments = "<插件类名>", description = "通过类名查找插件")
+    public void find(final InvokeCommandEvent e) {
+        final String classname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        try {
+            final Class<?> clazz = Class.forName(classname);
+            final Field field = clazz.getClass().getDeclaredField("plugin");
+            field.setAccessible(true);
+            final Plugin plugin = (JavaPlugin) field.get(clazz);
+            Bukkit.dispatchCommand(sender, "yum info " + plugin.getName());
+        } catch (final ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e2) {
+            sender.sendMessage("§4错误: 无法找到类 " + classname + " 所对应的插件信息!");
+        }
+    }
+
     @HandlerCommand(name = "fulldelete", aliases = { "fdel" }, minimumArguments = 1, description = "删除插件以及数据文件夹", possibleArguments = "<插件名称>")
     public void fulldelete(final InvokeCommandEvent e) {
         final String pluginname = e.getArgs()[0];
@@ -95,9 +112,9 @@ public class YumCommand implements HandlerCommands, Listener {
             sender.sendMessage("§6插件作者: §3" + StringUtils.join(desc.getAuthors(), " "));
             sender.sendMessage("§6插件描述: §3" + (desc.getDescription() == null ? "无" : desc.getDescription()));
             sender.sendMessage("§6插件依赖: §3" + (desc.getDepend().isEmpty() ? "无" : ""));
-            StringUtil.sendStringArray(sender, desc.getDepend(), "§6 - §a");
+            StrKit.sendStringArray(sender, desc.getDepend(), "§6 - §a");
             sender.sendMessage("§6插件软依赖: §3" + (desc.getSoftDepend().isEmpty() ? "无" : ""));
-            StringUtil.sendStringArray(sender, desc.getSoftDepend(), "§6 - §a");
+            StrKit.sendStringArray(sender, desc.getSoftDepend(), "§6 - §a");
             final Map<String, Map<String, Object>> clist = desc.getCommands();
             if (clist != null) {
                 sender.sendMessage("§6插件注册命令: §3" + (clist.isEmpty() ? "无" : ""));
@@ -156,17 +173,17 @@ public class YumCommand implements HandlerCommands, Listener {
     public List<String> listtab(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         if (!args[0].equalsIgnoreCase("install") && !args[0].equalsIgnoreCase("repo")) {
-            return StringUtil.copyPartialMatches(args[1], plugman.getPluginNames(false), new ArrayList<String>());
+            return StrKit.copyPartialMatches(args[1], plugman.getPluginNames(false), new ArrayList<String>());
         }
         if (args[0].equalsIgnoreCase("install")) {
-            return StringUtil.copyPartialMatches(args[1], repo.getAllPluginName(), new ArrayList<String>());
+            return StrKit.copyPartialMatches(args[1], repo.getAllPluginName(), new ArrayList<String>());
         }
         if (args[0].equalsIgnoreCase("repo")) {
             if (args.length == 2) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
+                return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
             }
             if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
-                return StringUtil.copyPartialMatches(args[2], repo.getRepos().keySet(), new ArrayList<String>());
+                return StrKit.copyPartialMatches(args[2], repo.getRepos().keySet(), new ArrayList<String>());
             }
         }
         return null;
@@ -247,11 +264,11 @@ public class YumCommand implements HandlerCommands, Listener {
                     break;
                 case "list":
                     sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-                    StringUtil.sendStringArray(sender, repo.getAllPluginsInfo());
+                    StrKit.sendStringArray(sender, repo.getAllPluginsInfo());
                     break;
                 case "all":
                     sender.sendMessage("§6仓库: §b缓存的仓库信息如下 ");
-                    StringUtil.sendStringArray(sender, repo.getRepoCache().getAllRepoInfo());
+                    StrKit.sendStringArray(sender, repo.getRepoCache().getAllRepoInfo());
                     break;
                 case "clean":
                     repo.clean();
