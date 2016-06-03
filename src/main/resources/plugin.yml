@@ -26,9 +26,9 @@ commands:
     permission-message: §c你没有 <permission> 的权限来执行此命令!
   security:
     description: MC安全管理命令
-    aliases: [f]
+    aliases: [s]
     usage: §6使用§a/security help§6查看帮助!
-    permission: file.use
+    permission: security.use
     permission-message: §c你没有 <permission> 的权限来执行此命令!
 permissions:
   yum.use:

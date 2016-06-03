@@ -120,6 +120,7 @@ public class YumCommand implements HandlerCommands, Listener {
                 sender.sendMessage("§6插件注册命令: §3" + (clist.isEmpty() ? "无" : ""));
                 for (final Entry<String, Map<String, Object>> entry : clist.entrySet()) {
                     sender.sendMessage("§6 - §a" + entry.getKey());
+                    sendEntryList(sender, "§6   别名: §a", entry.getValue(), "aliases");
                     sendEntry(sender, "§6   描述: §a", entry.getValue(), "description");
                     sendEntry(sender, "§6   权限: §a", entry.getValue(), "permission");
                     sendEntry(sender, "§6   用法: §a", entry.getValue(), "usage");
@@ -172,19 +173,17 @@ public class YumCommand implements HandlerCommands, Listener {
     @HandlerTabComplete()
     public List<String> listtab(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
-        if (!args[0].equalsIgnoreCase("install") && !args[0].equalsIgnoreCase("repo")) {
-            return StrKit.copyPartialMatches(args[1], plugman.getPluginNames(false), new ArrayList<String>());
-        }
-        if (args[0].equalsIgnoreCase("install")) {
+        if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
             return StrKit.copyPartialMatches(args[1], repo.getAllPluginName(), new ArrayList<String>());
-        }
-        if (args[0].equalsIgnoreCase("repo")) {
+        } else if (args[0].equalsIgnoreCase("repo")) {
             if (args.length == 2) {
                 return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
             }
             if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
                 return StrKit.copyPartialMatches(args[2], repo.getRepos().keySet(), new ArrayList<String>());
             }
+        } else {
+            return StrKit.copyPartialMatches(args[1], plugman.getPluginNames(false), new ArrayList<String>());
         }
         return null;
     }
@@ -299,6 +298,28 @@ public class YumCommand implements HandlerCommands, Listener {
         final Object value = map.get(key);
         if (value != null) {
             sender.sendMessage(prefix + (String) value);
+        }
+    }
+
+    /**
+     * 发生实体消息
+     *
+     * @param sender
+     *            命令发送者
+     * @param prefix
+     *            实体前缀
+     * @param map
+     *            实体
+     * @param key
+     *            实体Key
+     */
+    @SuppressWarnings("unchecked")
+    public void sendEntryList(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
+        final List<String> values = (List<String>) map.get(key);
+        if (values != null) {
+            for (final String value : values) {
+                sender.sendMessage(prefix + value);
+            }
         }
     }
 
