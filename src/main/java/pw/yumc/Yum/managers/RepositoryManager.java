@@ -186,7 +186,7 @@ public class RepositoryManager {
     public boolean updateRepositories(final CommandSender sender) {
         repocache.getPlugins().clear();
         if (repocache.getRepos().isEmpty()) {
-            repocache.addRepo("https://coding.net/u/502647092/p/YumData/git/raw/master/yumcenter/repo.info");
+            repocache.addRepo("http://data.yumc.pw/yumcenter/repo.info");
         }
         final Iterator<Entry<String, Repositories>> keys = repocache.getRepos().entrySet().iterator();
         while (keys.hasNext()) {
