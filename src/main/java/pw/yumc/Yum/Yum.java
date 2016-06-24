@@ -18,6 +18,7 @@ import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.commands.YumCommand;
 import pw.yumc.Yum.listeners.PluginNetworkListener;
 import pw.yumc.Yum.listeners.SecurityListener;
+import pw.yumc.Yum.listeners.ThreadSafetyListener;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.NetworkManager;
 import pw.yumc.Yum.runnables.MainThreadCheckTask;
@@ -91,7 +92,7 @@ public class Yum extends JavaPlugin {
             new PluginNetworkListener(this);
             PluginKit.scp("§a网络管理系统已启用...");
         }
-        new
+        new ThreadSafetyListener(this);
     }
 
     /**
