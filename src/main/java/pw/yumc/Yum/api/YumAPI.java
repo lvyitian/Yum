@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
+import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.DownloadManager;
 import pw.yumc.Yum.managers.PluginsManager;
 import pw.yumc.Yum.managers.RepositoryManager;
@@ -28,20 +29,6 @@ public class YumAPI {
     private static PluginsManager plugman;
     private static RepositoryManager repo;
     private static boolean runlock = false;
-
-    /**
-     * 初始化Yum管理中心
-     *
-     * @param plugin
-     *            插件实体
-     */
-    public YumAPI(final Plugin plugin) {
-        YumAPI.main = plugin;
-        plugman = new PluginsManager(main);
-        download = new DownloadManager(main);
-        repo = new RepositoryManager(main);
-        plugman.addIgnore(main.getConfig().getStringList("ignorelist"));
-    }
 
     /**
      * 删除插件
@@ -365,5 +352,19 @@ public class YumAPI {
      */
     public static void upgrade(final CommandSender sender, final Plugin plugin) {
         plugman.upgrade(sender, plugin);
+    }
+
+    /**
+     * 初始化Yum管理中心
+     *
+     * @param plugin
+     *            插件实体
+     */
+    public YumAPI(final Plugin plugin) {
+        YumAPI.main = plugin;
+        plugman = new PluginsManager(main);
+        download = new DownloadManager(main);
+        repo = new RepositoryManager(main);
+        plugman.addIgnore(ConfigManager.i().getIgnoreList());
     }
 }

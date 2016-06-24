@@ -8,18 +8,15 @@ import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.kit.PKit;
 
 public class ConfigManager {
-    private static List<String> blackList;
-    private static List<String> ignoreList;
-
     private final static String ENABLE = "Enable";
     private final static String BLACK = "Black";
     private final static String IGNORE = "Ignore";
 
     private final static ConfigManager i = new ConfigManager(PKit.i());
 
-    private final FileConfig config;
-    private final FileConfig setop;
-    private final FileConfig network;
+    public final FileConfig config;
+    public final FileConfig setop;
+    public final FileConfig network;
 
     public static ConfigManager i() {
         return i;
@@ -32,11 +29,11 @@ public class ConfigManager {
     }
 
     public List<String> getBlackList() {
-        return blackList;
+        return config.getStringList("blacklist");
     }
 
     public List<String> getIgnoreList() {
-        return ignoreList;
+        return config.getStringList("ignorelist");
     }
 
     public List<String> getNetworkBlackList() {
