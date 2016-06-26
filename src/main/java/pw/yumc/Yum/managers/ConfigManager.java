@@ -53,11 +53,11 @@ public class ConfigManager {
     }
 
     public boolean isAllowPrimaryThread() {
-        return config.getBoolean("AllowPrimaryThread", false);
+        return network.getBoolean("AllowPrimaryThread", false);
     }
 
     public boolean isNetworkDebug() {
-        return config.getBoolean("NetworkDebug", false);
+        return network.getBoolean("NetworkDebug", false);
     }
 
     public boolean isNetworkEnable() {

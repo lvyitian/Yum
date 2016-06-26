@@ -55,7 +55,7 @@ public class NetworkManager {
             final PluginNetworkEvent pne = new PluginNetworkEvent(PluginKit.getOperatePlugin(), uri, Bukkit.isPrimaryThread());
             Bukkit.getPluginManager().callEvent(pne);
             if (pne.isCancelled()) {
-                ExceptionKit.throwException(new IOException("[Yum 网络防护] 已开启网络防护 不允许在主线程访问网络!"));
+                ExceptionKit.throwException(new IOException("[Yum 网络防护] 已开启网络防护 并被联网规则拦截!"));
             }
             return defaultSelector.select(uri);
         }

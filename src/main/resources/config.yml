@@ -1,14 +1,12 @@
-Version: 2.1
+#配置版本号 请勿修改!!!
+Version: 2.2
+
 #是否只允许控制台执行插件仓库命令
 onlyCommandConsole: false
 #是否只允许控制台执行插件网络管理命令
 onlyNetCommandConsole: false
 #是否只允许控制台执行插件文件管理命令
 onlyFileCommandConsole: true
-#网络调试模式
-NetworkDebug: false
-#是否允许插件主线程访问网络
-AllowPrimaryThread: false
 #禁止rm -rf的文件夹列表
 blacklist:
 - 'plugins'

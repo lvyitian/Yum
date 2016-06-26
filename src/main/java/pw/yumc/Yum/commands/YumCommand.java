@@ -26,6 +26,7 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.PluginsManager;
 import pw.yumc.Yum.managers.RepositoryManager;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
@@ -207,9 +208,13 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "reload", aliases = { "re" }, minimumArguments = 1, description = "重载插件", possibleArguments = "<插件名称|all|*>")
+    @HandlerCommand(name = "reload", aliases = { "re" }, description = "重载插件", possibleArguments = "<插件名称|all|*>")
     public void reload(final InvokeCommandEvent e) {
         final CommandSender sender = e.getSender();
+        if (e.getArgs().length == 0) {
+            ConfigManager.i().reload();
+            sender.sendMessage("§6重载: §a配置文件已重载!");
+        }
         final String pluginname = e.getArgs()[0];
         if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
             plugman.reloadAll(sender);

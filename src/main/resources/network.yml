@@ -1,3 +1,6 @@
+#配置版本号 请勿修改!!!
+Version: 1.0
+
 #是否开启
 Enable: true
 #黑名单列表
@@ -7,3 +10,6 @@ Black:
 #忽略检测列表
 Ignore:
 - Essentials
+#URL白名单网址
+WhiteKeyList: 
+- yum
