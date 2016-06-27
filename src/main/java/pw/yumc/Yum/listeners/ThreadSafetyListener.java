@@ -73,12 +73,10 @@ public class ThreadSafetyListener implements Listener {
         checkSafety(teleportEvent);
     }
 
-    @EventHandler
     public void onPluginDisable(final PluginDisableEvent pluginDisableEvent) {
         checkSafety(pluginDisableEvent);
     }
 
-    @EventHandler
     public void onPluginEnable(final PluginEnableEvent pluginEnableEvent) {
         checkSafety(pluginEnableEvent);
     }
@@ -88,7 +86,6 @@ public class ThreadSafetyListener implements Listener {
         checkSafety(worldLoadEvent);
     }
 
-    @EventHandler
     public void onWorldSave(final WorldSaveEvent worldSaveEvent) {
         checkSafety(worldSaveEvent);
     }

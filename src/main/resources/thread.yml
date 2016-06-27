@@ -1,0 +1,7 @@
+#配置版本号 请勿修改!!!
+Version: 1.0
+
+#是否开启线程安全检测
+ThreadSafe: true
+#是否开启主线程IO检测
+MainThreadCheck: true

@@ -14,16 +14,18 @@ public class PluginNetworkListener implements Listener {
     public String prefix = "§6[§bYum §a网络管理§6] ";
     public String warnMain = "§c插件 §6%s §c尝试在主线程访问网络 §4可能会导致服务器卡顿或无响应!";
     public String warn = "§c插件 §6%s §c尝试访问网络 §4请注意服务器网络安全!";
-    public String breaked = "§4已阻止黑名单插件 §b%s §4访问网络!";
-    public String url = "§4地址: %s";
+    public String breaked = "§c已阻止插件 §6%s §c访问网络!";
+    public String url = "§c地址: %s";
 
     public PluginNetworkListener(final Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
 
     public void breakNetwork(final PluginNetworkEvent e) {
-        PluginKit.sc(String.format(prefix + breaked, e.getPlugin().getName()));
-        PluginKit.sc(String.format(url, e.getUrl().toString()));
+        if (ConfigManager.i().isNetworkShowInfo()) {
+            PluginKit.sc(String.format(prefix + breaked, e.getPlugin().getName()));
+            PluginKit.sc(String.format(prefix + url, e.getUrl().toString()));
+        }
         e.setCancelled(true);
     }
 
@@ -39,7 +41,6 @@ public class PluginNetworkListener implements Listener {
             大神你好.isEmpty();
             return;
         }
-        final boolean isPrimaryThread = e.isPrimaryThread();
         if (plugin != null) {
             if (ConfigManager.i().getNetworkBlackList().contains(plugin.getName())) {
                 breakNetwork(e);
@@ -48,9 +49,14 @@ public class PluginNetworkListener implements Listener {
             if (ConfigManager.i().getNetworkIgnoreList().contains(plugin.getName())) {
                 return;
             }
-            PluginKit.sc(String.format(prefix + (isPrimaryThread ? warnMain : warn), plugin.getName(), urlinfo));
-            if (!ConfigManager.i().isAllowPrimaryThread() && isPrimaryThread) {
-                breakNetwork(e);
+            if (e.isPrimaryThread()) {
+                PluginKit.sc(String.format(prefix + warnMain, plugin.getName()));
+                if (!ConfigManager.i().isAllowPrimaryThread()) {
+                    breakNetwork(e);
+                }
+            } else {
+                PluginKit.sc(String.format(prefix + warn, plugin.getName()));
+                PluginKit.sc(String.format(prefix + url, urlinfo));
             }
         }
     }

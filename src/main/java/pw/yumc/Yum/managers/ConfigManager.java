@@ -17,6 +17,7 @@ public class ConfigManager {
     public final FileConfig config;
     public final FileConfig setop;
     public final FileConfig network;
+    public final FileConfig thread;
 
     public static ConfigManager i() {
         return i;
@@ -26,6 +27,7 @@ public class ConfigManager {
         config = new FileConfig(plugin);
         setop = new FileConfig(plugin, "setop.yml");
         network = new FileConfig(plugin, "network.yml");
+        thread = new FileConfig(plugin, "thread.yml");
     }
 
     public List<String> getBlackList() {
@@ -56,6 +58,10 @@ public class ConfigManager {
         return network.getBoolean("AllowPrimaryThread", false);
     }
 
+    public boolean isMainThreadCheck() {
+        return thread.getBoolean("MainThreadCheck", true);
+    }
+
     public boolean isNetworkDebug() {
         return network.getBoolean("NetworkDebug", false);
     }
@@ -64,12 +70,21 @@ public class ConfigManager {
         return network.getBoolean(ENABLE, true);
     }
 
+    public boolean isNetworkShowInfo() {
+        return network.getBoolean("ShowInfo", true);
+    }
+
     public boolean isSetOpEnable() {
         return setop.getBoolean(ENABLE, true);
+    }
+
+    public boolean isThreadSafe() {
+        return thread.getBoolean("ThreadSafe", true);
     }
 
     public void reload() {
         setop.reload();
         network.reload();
+        thread.reload();
     }
 }

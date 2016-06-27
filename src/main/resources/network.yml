@@ -1,8 +1,14 @@
 #配置版本号 请勿修改!!!
-Version: 1.0
+Version: 1.1
 
 #是否开启
 Enable: true
+#是否显示详细信息
+ShowInfo: true
+#网络调试模式
+NetworkDebug: false
+#是否允许插件主线程访问网络
+AllowPrimaryThread: false
 #黑名单列表
 Black:
 - BukkitInjectedTools
@@ -10,6 +16,3 @@ Black:
 #忽略检测列表
 Ignore:
 - Essentials
-#URL白名单网址
-WhiteKeyList: 
-- yum

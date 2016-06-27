@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
+import cn.citycraft.PluginHelper.kit.PKit;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.DownloadManager;
 import pw.yumc.Yum.managers.PluginsManager;
@@ -360,8 +361,8 @@ public class YumAPI {
      * @param plugin
      *            插件实体
      */
-    public YumAPI(final Plugin plugin) {
-        YumAPI.main = plugin;
+    public YumAPI() {
+        YumAPI.main = PKit.instance;
         plugman = new PluginsManager(main);
         download = new DownloadManager(main);
         repo = new RepositoryManager(main);

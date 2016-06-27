@@ -42,7 +42,7 @@ public class Yum extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        new YumAPI(this);
+        new YumAPI();
         initCommands();
         initListeners();
         initRunnable();
@@ -92,15 +92,21 @@ public class Yum extends JavaPlugin {
             new PluginNetworkListener(this);
             PluginKit.scp("§a网络管理系统已启用...");
         }
-        new ThreadSafetyListener(this);
+        if (ConfigManager.i().isThreadSafe()) {
+            new ThreadSafetyListener(this);
+            PluginKit.scp("§a线程管理系统已启用...");
+        }
     }
 
     /**
      * 初始化任务
      */
     private void initRunnable() {
-        final Timer task = new Timer();
-        PluginKit.scp("§a线程管理系统已启用...");
-        task.scheduleAtFixedRate(new MainThreadCheckTask(Thread.currentThread()), 0, 3000);
+        // 需要在主线程注册任务
+        if (ConfigManager.i().isMainThreadCheck() && Bukkit.isPrimaryThread()) {
+            final Timer task = new Timer();
+            PluginKit.scp("§aIO管理系统已启用...");
+            task.scheduleAtFixedRate(new MainThreadCheckTask(Thread.currentThread()), 0, 3000);
+        }
     }
 }

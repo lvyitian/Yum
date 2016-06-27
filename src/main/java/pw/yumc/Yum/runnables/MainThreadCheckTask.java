@@ -7,7 +7,8 @@ import java.util.logging.Level;
 import cn.citycraft.PluginHelper.kit.PKit;
 
 /**
- *
+ * 线程安全检查任务
+ * 
  * @since 2016年6月22日 下午4:57:32
  * @author 喵♂呜
  */
