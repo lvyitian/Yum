@@ -46,6 +46,10 @@ public class ConfigManager {
         return network.getStringList(IGNORE);
     }
 
+    public List<String> getNetworkWhiteURL() {
+        return network.getStringList("WhiteURL");
+    }
+
     public List<String> getSetOpBlackList() {
         return setop.getStringList(BLACK);
     }

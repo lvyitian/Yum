@@ -1,5 +1,5 @@
 #配置版本号 请勿修改!!!
-Version: 1.1
+Version: 1.2
 
 #是否开启
 Enable: true
@@ -16,3 +16,9 @@ Black:
 #忽略检测列表
 Ignore:
 - Essentials
+#白名单域名(例如: http://report.mcstats.org/plugin/Vault 只需要填写 report.mcstats.org 即可)
+WhiteURL:
+- mcstats.org
+- report.mcstats.org
+- www.spigotmc.org
+- dev.bukkit.org
