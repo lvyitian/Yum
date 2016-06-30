@@ -92,7 +92,7 @@ public class Yum extends JavaPlugin {
             new PluginNetworkListener(this);
             PluginKit.scp("§a网络管理系统已启用...");
         }
-        if (ConfigManager.i().isThreadSafe()) {
+        if (ConfigManager.i().isThreadSafe() && Bukkit.isPrimaryThread()) {
             new ThreadSafetyListener(this);
             PluginKit.scp("§a线程管理系统已启用...");
         }
