@@ -30,6 +30,8 @@ import pw.yumc.Yum.runnables.MainThreadCheckTask;
  * @since 2015年8月21日下午5:14:39
  */
 public class Yum extends JavaPlugin {
+    public static Thread mainThread = null;
+
     @Override
     public FileConfiguration getConfig() {
         return ConfigManager.i().config;
@@ -42,6 +44,9 @@ public class Yum extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (Bukkit.isPrimaryThread()) {
+            mainThread = Thread.currentThread();
+        }
         new YumAPI();
         initCommands();
         initListeners();
@@ -92,7 +97,7 @@ public class Yum extends JavaPlugin {
             new PluginNetworkListener(this);
             PluginKit.scp("§a网络管理系统已启用...");
         }
-        if (ConfigManager.i().isThreadSafe() && Bukkit.isPrimaryThread()) {
+        if (ConfigManager.i().isThreadSafe()) {
             new ThreadSafetyListener(this);
             PluginKit.scp("§a线程管理系统已启用...");
         }
@@ -103,10 +108,10 @@ public class Yum extends JavaPlugin {
      */
     private void initRunnable() {
         // 需要在主线程注册任务
-        if (ConfigManager.i().isMainThreadCheck() && Bukkit.isPrimaryThread()) {
+        if (ConfigManager.i().isMainThreadCheck() && mainThread != null) {
             final Timer task = new Timer();
             PluginKit.scp("§aIO管理系统已启用...");
-            task.scheduleAtFixedRate(new MainThreadCheckTask(Thread.currentThread()), 0, 3000);
+            task.scheduleAtFixedRate(new MainThreadCheckTask(mainThread), 0, 3000);
         }
     }
 }

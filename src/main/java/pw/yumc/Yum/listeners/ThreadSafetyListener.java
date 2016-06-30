@@ -27,8 +27,6 @@ import pw.yumc.Yum.Yum;
  */
 public class ThreadSafetyListener implements Listener {
 
-    private final Thread mainThread = Thread.currentThread();
-
     public ThreadSafetyListener(final Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
@@ -99,7 +97,7 @@ public class ThreadSafetyListener implements Listener {
     }
 
     private void checkSafety(final Event eventType) {
-        if (Thread.currentThread() != mainThread && !eventType.isAsynchronous()) {
+        if (Yum.mainThread != null && Thread.currentThread() != Yum.mainThread && !eventType.isAsynchronous()) {
             final String eventName = eventType.getEventName();
             throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName);
         }
