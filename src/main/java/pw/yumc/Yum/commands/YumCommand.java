@@ -214,6 +214,7 @@ public class YumCommand implements HandlerCommands, Listener {
         if (e.getArgs().length == 0) {
             ConfigManager.i().reload();
             sender.sendMessage("§6重载: §a配置文件已重载!");
+            return;
         }
         final String pluginname = e.getArgs()[0];
         if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
