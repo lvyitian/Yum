@@ -31,6 +31,7 @@ import pw.yumc.Yum.runnables.MainThreadCheckTask;
  */
 public class Yum extends JavaPlugin {
     public static Thread mainThread = null;
+    public static final Timer task = new Timer();
 
     @Override
     public FileConfiguration getConfig() {
@@ -40,6 +41,7 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
+        task.cancel();
     }
 
     @Override
@@ -109,7 +111,6 @@ public class Yum extends JavaPlugin {
     private void initRunnable() {
         // 需要在主线程注册任务
         if (ConfigManager.i().isMainThreadCheck() && mainThread != null) {
-            final Timer task = new Timer();
             PluginKit.scp("§aIO管理系统已启用...");
             task.scheduleAtFixedRate(new MainThreadCheckTask(mainThread), 0, 3000);
         }

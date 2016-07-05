@@ -10,8 +10,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -69,16 +67,6 @@ public class ThreadSafetyListener implements Listener {
     @EventHandler
     public void onPlayerTeleport(final PlayerTeleportEvent teleportEvent) {
         checkSafety(teleportEvent);
-    }
-
-    @EventHandler
-    public void onPluginDisable(final PluginDisableEvent pluginDisableEvent) {
-        checkSafety(pluginDisableEvent);
-    }
-
-    @EventHandler
-    public void onPluginEnable(final PluginEnableEvent pluginEnableEvent) {
-        checkSafety(pluginEnableEvent);
     }
 
     @EventHandler
