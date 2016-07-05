@@ -4,6 +4,7 @@
 package pw.yumc.Yum;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,7 +32,8 @@ import pw.yumc.Yum.runnables.MainThreadCheckTask;
  */
 public class Yum extends JavaPlugin {
     public static Thread mainThread = null;
-    public static final Timer task = new Timer();
+    public static Timer task = new Timer();
+    public static TimerTask tt;
 
     @Override
     public FileConfiguration getConfig() {
@@ -41,7 +43,7 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
-        task.cancel();
+        tt.cancel();
     }
 
     @Override
@@ -112,7 +114,7 @@ public class Yum extends JavaPlugin {
         // 需要在主线程注册任务
         if (ConfigManager.i().isMainThreadCheck() && mainThread != null) {
             PluginKit.scp("§aIO管理系统已启用...");
-            task.scheduleAtFixedRate(new MainThreadCheckTask(mainThread), 0, 3000);
+            task.scheduleAtFixedRate(tt = new MainThreadCheckTask(mainThread), 0, 5000);
         }
     }
 }

@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import org.bukkit.plugin.Plugin;
 
+import cn.citycraft.PluginHelper.kit.PKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 
 /**
@@ -14,11 +15,13 @@ import cn.citycraft.PluginHelper.kit.PluginKit;
  * @author 喵♂呜
  */
 public class MainThreadCheckTask extends TimerTask {
-    public String prefix = "§6[§bYum §a线程管理§6] ";
-    public String warnPNet = "§6插件 §b%s §c在主线程进行网络操作 §4服务器处于停止状态...";
-    public String warnPIO = "§6插件 §b%s §c在主线程进行IO操作 §4服务器处于停止状态...";
-    public String warnNet = "§c主线程存在网络操作 §4服务器处于停止状态...";
-    public String warnIO = "§c主线程存在IO操作 §4服务器处于停止状态...";
+    private final String prefix = "§6[§bYum §a线程管理§6] ";
+    private final String warnPNet = "§6插件 §b%s §c在主线程进行网络操作 §4服务器处于停止状态...";
+    private final String warnPIO = "§6插件 §b%s §c在主线程进行IO操作 §4服务器处于停止状态...";
+    private final String warnNet = "§c主线程存在网络操作 §4服务器处于停止状态...";
+    private final String warnIO = "§c主线程存在IO操作 §4服务器处于停止状态...";
+    private final String deliver = "§c服务器处于停止状态 已超过 %s 秒 激活心跳 防止线程关闭...";
+    private int stopTime = 0;
     private final Thread mainThread;
 
     public MainThreadCheckTask(final Thread mainThread) {
@@ -48,6 +51,7 @@ public class MainThreadCheckTask extends TimerTask {
                     } else {
                         PluginKit.sc(prefix + warnNet);
                     }
+                    tick();
                 }
                 // File (in) - java.io.FileInputStream.readBytes
                 // File (out) - java.io.FileOutputStream.writeBytes
@@ -58,6 +62,9 @@ public class MainThreadCheckTask extends TimerTask {
                     } else {
                         PluginKit.sc(prefix + warnIO);
                     }
+                    tick();
+                } else {
+                    stopTime = 0;
                 }
             }
         }
@@ -65,5 +72,13 @@ public class MainThreadCheckTask extends TimerTask {
 
     private boolean isElementEqual(final StackTraceElement traceElement, final String className, final String methodName) {
         return traceElement.getClassName().equals(className) && traceElement.getMethodName().equals(methodName);
+    }
+
+    private void tick() {
+        stopTime += 5;
+        if (stopTime >= 45) {
+            PluginKit.sc(String.format(prefix + deliver, stopTime));
+            PKit.tick();
+        }
     }
 }
