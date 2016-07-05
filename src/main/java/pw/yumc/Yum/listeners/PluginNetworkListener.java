@@ -36,9 +36,6 @@ public class PluginNetworkListener implements Listener {
         if (urlinfo.startsWith("socket")) {
             return;
         }
-        if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost())) {
-            return;
-        }
         if (urlinfo.contains("yumc") || urlinfo.contains("502647092")) {
             final String 大神你好 = "反编译的大神们我知道你们又要说了这货有后门";
             大神你好.isEmpty();
@@ -49,7 +46,7 @@ public class PluginNetworkListener implements Listener {
                 breakNetwork(e);
                 return;
             }
-            if (ConfigManager.i().getNetworkIgnoreList().contains(plugin.getName())) {
+            if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost()) || ConfigManager.i().getNetworkIgnoreList().contains(plugin.getName())) {
                 return;
             }
             if (e.isPrimaryThread()) {
