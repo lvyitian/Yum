@@ -66,6 +66,8 @@ public class MainThreadCheckTask extends TimerTask {
                 } else {
                     stopTime = 0;
                 }
+            } else {
+                stopTime = 0;
             }
         }
     }

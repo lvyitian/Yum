@@ -43,7 +43,6 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
-        tt.cancel();
     }
 
     @Override
@@ -114,6 +113,9 @@ public class Yum extends JavaPlugin {
         // 需要在主线程注册任务
         if (ConfigManager.i().isMainThreadCheck() && mainThread != null) {
             PluginKit.scp("§aIO管理系统已启用...");
+            if (tt != null) {
+                tt.cancel();
+            }
             task.scheduleAtFixedRate(tt = new MainThreadCheckTask(mainThread), 0, 5000);
         }
     }
