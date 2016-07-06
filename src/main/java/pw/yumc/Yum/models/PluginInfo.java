@@ -6,13 +6,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.PluginHelperLogger;
+import cn.citycraft.PluginHelper.kit.PKit;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Plugin;
 import pw.yumc.Yum.models.RepoSerialization.TagInfo;
 import pw.yumc.Yum.models.RepoSerialization.URLType;
 
 public class PluginInfo implements Serializable {
-    public static final String NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    public static String NMSVersion;
+
+    static {
+        try {
+            NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        } catch (final Exception e) {
+            PKit.i().getLogger().warning("服务器NMS解析失败: " + Bukkit.getServer().getClass().getPackage().getName());
+            NMSVersion = "NONMS";
+        }
+    }
 
     public String branch;
     public String name;
@@ -78,10 +88,7 @@ public class PluginInfo implements Serializable {
      * @return 更新地址
      */
     public String getMavenUrl(final String ver) {
-        return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar",
-                plugin.groupId.replace(".", "/"),
-                plugin.artifactId,
-                (ver == null || ver.isEmpty()) ? plugin.version : ver);
+        return String.format(url + (url.endsWith("/") ? "" : "/") + "%1$s/%2$s/%3$s/%2$s-%3$s.jar", plugin.groupId.replace(".", "/"), plugin.artifactId, (ver == null || ver.isEmpty()) ? plugin.version : ver);
     }
 
     public String getUrl(final CommandSender sender, final String version) {

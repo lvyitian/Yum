@@ -15,7 +15,9 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.plugin.Plugin;
 
+import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
 
 /**
@@ -87,7 +89,10 @@ public class ThreadSafetyListener implements Listener {
     private void checkSafety(final Event eventType) {
         if (Yum.mainThread != null && Thread.currentThread() != Yum.mainThread && !eventType.isAsynchronous()) {
             final String eventName = eventType.getEventName();
-            throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName);
+            final Plugin plugin = PluginKit.getOperatePlugin();
+            if (plugin != null) {
+                throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName + " 操作插件: " + plugin.getName());
+            }
         }
     }
 }

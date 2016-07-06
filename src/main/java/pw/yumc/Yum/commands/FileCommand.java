@@ -12,7 +12,6 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
-import pw.yumc.Yum.managers.DownloadManager;
 
 /**
  * File命令基类
@@ -22,11 +21,9 @@ import pw.yumc.Yum.managers.DownloadManager;
  */
 public class FileCommand implements HandlerCommands {
     Yum plugin;
-    DownloadManager dl;
 
     public FileCommand(final Yum yum) {
         plugin = yum;
-        dl = YumAPI.getDownload();
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "file");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
         cmdhandler.registerCommands(this);
@@ -64,9 +61,9 @@ public class FileCommand implements HandlerCommands {
         if (args.length == 2) {
             file = new File(args[1]);
         } else {
-            file = new File(Bukkit.getUpdateFolderFile(), dl.getFileName(urlstr));
+            file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(urlstr));
         }
-        dl.run(e.getSender(), urlstr, file);
+        YumAPI.getDownload().run(e.getSender(), urlstr, file);
     }
 
     @HandlerCommand(name = "ls", aliases = { "l" }, description = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")

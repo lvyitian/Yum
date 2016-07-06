@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.kit.PKit;
+import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.DownloadManager;
 import pw.yumc.Yum.managers.PluginsManager;
@@ -30,6 +31,20 @@ public class YumAPI {
     private static PluginsManager plugman;
     private static RepositoryManager repo;
     private static boolean runlock = false;
+
+    /**
+     * 初始化Yum管理中心
+     *
+     * @param plugin
+     *            插件实体
+     */
+    public YumAPI() {
+        YumAPI.main = PKit.instance;
+        plugman = new PluginsManager(main);
+        download = new DownloadManager(main);
+        repo = new RepositoryManager(main);
+        plugman.addIgnore(ConfigManager.i().getIgnoreList());
+    }
 
     /**
      * 删除插件
@@ -79,6 +94,18 @@ public class YumAPI {
             sender.sendMessage("§4异常: §c" + e.getMessage());
         }
         return ulist;
+    }
+
+    /**
+     * 注入性能监控器
+     *
+     * @param plugin
+     *            插件
+     */
+    public static void inject(final Plugin plugin) {
+        CommandInjector.inject(plugin);
+        // ListenerInjector.inject(plugin);
+        // TaskInjector.inject(plugin);
     }
 
     /**
@@ -176,6 +203,18 @@ public class YumAPI {
     }
 
     /**
+     * 取消注入
+     *
+     * @param plugin
+     *            插件
+     */
+    public static void uninject(final Plugin plugin) {
+        CommandInjector.uninject(plugin);
+        // ListenerInjector.uninject(plugin);
+        // TaskInjector.uninject(plugin);
+    }
+
+    /**
      * 卸载插件
      *
      * @param plugin
@@ -239,8 +278,9 @@ public class YumAPI {
                     sender.sendMessage("§d开始更新服务器可更新插件");
                     for (final Plugin updateplugin : ulist) {
                         sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
-                        if (!updatefromyum(sender, updateplugin, null, true))
+                        if (!updatefromyum(sender, updateplugin, null, true)) {
                             failed++;
+                        }
                     }
                     if (failed != 0) {
                         sender.sendMessage("§d一键更新: §c升级过程中 §4" + failed + " §c个插件更新失败!");
@@ -353,19 +393,5 @@ public class YumAPI {
      */
     public static void upgrade(final CommandSender sender, final Plugin plugin) {
         plugman.upgrade(sender, plugin);
-    }
-
-    /**
-     * 初始化Yum管理中心
-     *
-     * @param plugin
-     *            插件实体
-     */
-    public YumAPI() {
-        YumAPI.main = PKit.instance;
-        plugman = new PluginsManager(main);
-        download = new DownloadManager(main);
-        repo = new RepositoryManager(main);
-        plugman.addIgnore(ConfigManager.i().getIgnoreList());
     }
 }

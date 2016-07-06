@@ -27,8 +27,6 @@ import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.managers.ConfigManager;
-import pw.yumc.Yum.managers.PluginsManager;
-import pw.yumc.Yum.managers.RepositoryManager;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
 
 /**
@@ -39,13 +37,9 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
  */
 public class YumCommand implements HandlerCommands, Listener {
     Yum main;
-    RepositoryManager repo;
-    PluginsManager plugman;
 
     public YumCommand(final Yum yum) {
         main = yum;
-        repo = YumAPI.getRepo();
-        plugman = YumAPI.getPlugman();
         Bukkit.getPluginManager().registerEvents(this, yum);
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "yum");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyCommandConsole", false));
@@ -59,7 +53,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
-            if (plugman.deletePlugin(sender, plugin)) {
+            if (YumAPI.getPlugman().deletePlugin(sender, plugin)) {
                 sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
             } else {
                 sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
@@ -91,7 +85,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
-            if (plugman.fullDeletePlugin(sender, plugin)) {
+            if (YumAPI.getPlugman().fullDeletePlugin(sender, plugin)) {
                 sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
             } else {
                 sender.sendMessage("§c删除: §c插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
@@ -134,7 +128,7 @@ public class YumCommand implements HandlerCommands, Listener {
                     sender.sendMessage("§6 - §a" + perm.getName() + "§6 - §e" + (perm.getDescription().isEmpty() ? "无描述" : perm.getDescription()));
                 }
             }
-            sender.sendMessage("§6插件物理路径: §3" + plugman.getPluginFile(plugin).getAbsolutePath());
+            sender.sendMessage("§6插件物理路径: §3" + YumAPI.getPlugman().getPluginFile(plugin).getAbsolutePath());
         } else {
             sender.sendMessage(pnf(pluginname));
         }
@@ -167,7 +161,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final CommandSender sender = e.getSender();
         sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            sender.sendMessage("§6- " + plugman.getFormattedName(plugin, true));
+            sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
         }
     }
 
@@ -175,16 +169,16 @@ public class YumCommand implements HandlerCommands, Listener {
     public List<String> listtab(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
-            return StrKit.copyPartialMatches(args[1], repo.getAllPluginName(), new ArrayList<String>());
+            return StrKit.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
         } else if (args[0].equalsIgnoreCase("repo")) {
             if (args.length == 2) {
                 return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
             }
             if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
-                return StrKit.copyPartialMatches(args[2], repo.getRepos().keySet(), new ArrayList<String>());
+                return StrKit.copyPartialMatches(args[2], YumAPI.getRepo().getRepos().keySet(), new ArrayList<String>());
             }
         } else {
-            return StrKit.copyPartialMatches(args[1], plugman.getPluginNames(false), new ArrayList<String>());
+            return StrKit.copyPartialMatches(args[1], YumAPI.getPlugman().getPluginNames(false), new ArrayList<String>());
         }
         return null;
     }
@@ -195,7 +189,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final String pluginname = e.getArgs()[0];
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin == null) {
-            plugman.load(sender, pluginname);
+            YumAPI.getPlugman().load(sender, pluginname);
         } else {
             sender.sendMessage("§c错误: §a插件 §b" + pluginname + " §c已加载到服务器!");
         }
@@ -218,12 +212,12 @@ public class YumCommand implements HandlerCommands, Listener {
         }
         final String pluginname = e.getArgs()[0];
         if (pluginname.equalsIgnoreCase("all") || pluginname.equalsIgnoreCase("*")) {
-            plugman.reloadAll(sender);
+            YumAPI.getPlugman().reloadAll(sender);
             return;
         }
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin != null) {
-            plugman.reload(sender, plugin);
+            YumAPI.getPlugman().reload(sender, plugin);
         } else {
             sender.sendMessage(pnf(pluginname));
         }
@@ -240,8 +234,8 @@ public class YumCommand implements HandlerCommands, Listener {
                 switch (cmd) {
                 case "add":
                     if (args.length == 2) {
-                        if (repo.addRepositories(sender, args[1])) {
-                            final String reponame = repo.getRepoCache(args[1]).name;
+                        if (YumAPI.getRepo().addRepositories(sender, args[1])) {
+                            final String reponame = YumAPI.getRepo().getRepoCache(args[1]).name;
                             sender.sendMessage("§6仓库: §a源仓库 §e" + reponame + " §a的插件信息已缓存!");
                         } else {
                             sender.sendMessage("§6仓库: §c源地址未找到仓库信息或当前地址已缓存!");
@@ -252,9 +246,9 @@ public class YumCommand implements HandlerCommands, Listener {
                     break;
                 case "del":
                     if (args.length == 2) {
-                        final Repositories delrepo = repo.getRepoCache(args[1]);
+                        final Repositories delrepo = YumAPI.getRepo().getRepoCache(args[1]);
                         if (delrepo != null) {
-                            repo.delRepositories(sender, args[1]);
+                            YumAPI.getRepo().delRepositories(sender, args[1]);
                             sender.sendMessage("§6仓库: §a源仓库 §e" + delrepo.name + " §c已删除 §a请使用 §b/yum repo update §a更新缓存!");
                         } else {
                             sender.sendMessage("§6仓库: §c源地址未找到!");
@@ -264,23 +258,23 @@ public class YumCommand implements HandlerCommands, Listener {
                     }
                     break;
                 case "delall":
-                    repo.getRepoCache().getRepos().clear();
+                    YumAPI.getRepo().getRepoCache().getRepos().clear();
                     sender.sendMessage("§6仓库: §a缓存的仓库信息已清理!");
                     break;
                 case "list":
                     sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-                    StrKit.sendStringArray(sender, repo.getAllPluginsInfo());
+                    StrKit.sendStringArray(sender, YumAPI.getRepo().getAllPluginsInfo());
                     break;
                 case "all":
                     sender.sendMessage("§6仓库: §b缓存的仓库信息如下 ");
-                    StrKit.sendStringArray(sender, repo.getRepoCache().getAllRepoInfo());
+                    StrKit.sendStringArray(sender, YumAPI.getRepo().getRepoCache().getAllRepoInfo());
                     break;
                 case "clean":
-                    repo.clean();
+                    YumAPI.getRepo().clean();
                     sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
                     break;
                 case "update":
-                    repo.updateRepositories(sender);
+                    YumAPI.getRepo().updateRepositories(sender);
                     sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
                     break;
                 }
@@ -335,7 +329,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
         if (plugin != null) {
-            plugman.unload(sender, plugin);
+            YumAPI.getPlugman().unload(sender, plugin);
         } else {
             sender.sendMessage(pnf(pluginname));
         }
@@ -347,7 +341,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final CommandSender sender = e.getSender();
         switch (args.length) {
         case 0:
-            repo.updateRepositories(sender);
+            YumAPI.getRepo().updateRepositories(sender);
             sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
             break;
         case 1:
@@ -393,7 +387,7 @@ public class YumCommand implements HandlerCommands, Listener {
             @Override
             public void run() {
                 if (args.length == 0) {
-                    plugman.upgrade(sender);
+                    YumAPI.getPlugman().upgrade(sender);
                 } else {
                     final String pluginname = args[0];
                     final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);

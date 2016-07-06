@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
@@ -15,6 +16,7 @@ import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.utils.VersionChecker;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
+import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.commands.YumCommand;
 import pw.yumc.Yum.listeners.PluginNetworkListener;
@@ -43,6 +45,9 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
+        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            YumAPI.uninject(plugin);
+        }
     }
 
     @Override
@@ -54,6 +59,7 @@ public class Yum extends JavaPlugin {
         initCommands();
         initListeners();
         initRunnable();
+        initInject();
         new VersionChecker(this);
         YumAPI.updaterepo(Bukkit.getConsoleSender());
         YumAPI.updatecheck(Bukkit.getConsoleSender());
@@ -76,6 +82,14 @@ public class Yum extends JavaPlugin {
         new YumCommand(this);
         new NetCommand(this);
         new FileCommand(this);
+        new MonitorCommand(this);
+    }
+
+    private void initInject() {
+        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            YumAPI.inject(plugin);
+        }
+        PluginKit.scp("§a性能监控系统已启用...");
     }
 
     /**
