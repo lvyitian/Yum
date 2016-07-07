@@ -1,8 +1,6 @@
 package pw.yumc.Yum.commands;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.HandlerTabComplete;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.utils.StrKit;
@@ -44,6 +41,7 @@ public class YumCommand implements HandlerCommands, Listener {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "yum");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyCommandConsole", false));
         cmdhandler.registerCommands(this);
+        cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
     @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除插件", possibleArguments = "<插件名称>")
@@ -163,24 +161,6 @@ public class YumCommand implements HandlerCommands, Listener {
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
         }
-    }
-
-    @HandlerTabComplete()
-    public List<String> listtab(final InvokeCommandEvent e) {
-        final String[] args = e.getArgs();
-        if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
-            return StrKit.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
-        } else if (args[0].equalsIgnoreCase("repo")) {
-            if (args.length == 2) {
-                return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
-            }
-            if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
-                return StrKit.copyPartialMatches(args[2], YumAPI.getRepo().getRepos().keySet(), new ArrayList<String>());
-            }
-        } else {
-            return StrKit.copyPartialMatches(args[1], YumAPI.getPlugman().getPluginNames(false), new ArrayList<String>());
-        }
-        return null;
     }
 
     @HandlerCommand(name = "load", minimumArguments = 1, description = "载入插件", possibleArguments = "<插件名称>")

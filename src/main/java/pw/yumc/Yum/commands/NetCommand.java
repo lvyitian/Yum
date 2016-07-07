@@ -12,6 +12,7 @@ public class NetCommand implements HandlerCommands {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "net");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyNetCommandConsole", false));
         cmdhandler.registerCommands(this);
+        cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
     @HandlerCommand(name = "list", aliases = "l", permission = "", description = "列出联网的插件")

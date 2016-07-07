@@ -1,6 +1,5 @@
 package pw.yumc.Yum.commands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +18,10 @@ import org.bukkit.scheduler.BukkitTask;
 
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.HandlerTabComplete;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
-import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.TaskInjector;
 
@@ -42,6 +38,7 @@ public class MonitorCommand implements HandlerCommands {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
         cmdhandler.registerCommands(this);
+        cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
     @HandlerCommand(name = "a")
@@ -91,13 +88,7 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerTabComplete()
-    public List<String> listtab(final InvokeCommandEvent e) {
-        final String[] args = e.getArgs();
-        return StrKit.copyPartialMatches(args[1], YumAPI.getPlugman().getPluginNames(false), new ArrayList<String>());
-    }
-
-    @HandlerCommand(name = "task")
+    @HandlerCommand(name = "task", minimumArguments = 1, possibleArguments = "插件名称")
     public void task(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
