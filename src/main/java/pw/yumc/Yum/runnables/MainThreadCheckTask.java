@@ -5,8 +5,8 @@ import java.util.TimerTask;
 
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.PKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
+import cn.citycraft.PluginHelper.kit.ServerKit;
 
 /**
  * 线程安全检查任务
@@ -80,7 +80,7 @@ public class MainThreadCheckTask extends TimerTask {
         stopTime += 5;
         if (stopTime >= 45) {
             PluginKit.sc(String.format(prefix + deliver, stopTime));
-            PKit.tick();
+            ServerKit.tick();
         }
     }
 }
