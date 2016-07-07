@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 
 public class CommandInjector implements TabExecutor {
 
@@ -48,7 +47,6 @@ public class CommandInjector implements TabExecutor {
                 }
             }
         }
-        PluginKit.scp("§a注入命令性能监控到 " + toInjectPlugin.getName());
     }
 
     public static void uninject(final Plugin toUninject) {

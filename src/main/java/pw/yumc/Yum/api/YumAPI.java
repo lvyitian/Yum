@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.kit.PKit;
 import pw.yumc.Yum.inject.CommandInjector;
+import pw.yumc.Yum.inject.TaskInjector;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.DownloadManager;
 import pw.yumc.Yum.managers.PluginsManager;
@@ -105,7 +106,7 @@ public class YumAPI {
     public static void inject(final Plugin plugin) {
         CommandInjector.inject(plugin);
         // ListenerInjector.inject(plugin);
-        // TaskInjector.inject(plugin);
+        TaskInjector.inject(plugin);
     }
 
     /**
@@ -211,7 +212,7 @@ public class YumAPI {
     public static void uninject(final Plugin plugin) {
         CommandInjector.uninject(plugin);
         // ListenerInjector.uninject(plugin);
-        // TaskInjector.uninject(plugin);
+        TaskInjector.uninject(plugin);
     }
 
     /**

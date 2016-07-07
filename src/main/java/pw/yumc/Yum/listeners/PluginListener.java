@@ -7,6 +7,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
 import cn.citycraft.PluginHelper.kit.PKit;
+import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.api.YumAPI;
 
 /**
@@ -18,6 +19,7 @@ public class PluginListener implements Listener {
 
     public PluginListener() {
         Bukkit.getPluginManager().registerEvents(this, PKit.i());
+        PluginKit.scp("§a性能监控系统已启用...");
     }
 
     @EventHandler

@@ -35,8 +35,10 @@ public class ListenerInjector implements EventExecutor {
     public static void uninject(final Plugin plugin) {
         final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
         for (final RegisteredListener listener : listeners) {
-            final ListenerInjector executor = Reflect.on(listener).get("executor");
-            Reflect.on(listener).set("executor", executor.getOriginalExecutor());
+            final EventExecutor executor = Reflect.on(listener).get("executor");
+            if (executor instanceof ListenerInjector) {
+                Reflect.on(listener).set("executor", ((ListenerInjector) executor).getOriginalExecutor());
+            }
         }
     }
 

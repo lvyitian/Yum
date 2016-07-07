@@ -41,8 +41,10 @@ public class TaskInjector implements Runnable {
         for (final BukkitTask pendingTask : pendingTasks) {
             // we could ignore async tasks for now
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
-                final TaskInjector originalTask = Reflect.on(pendingTask).get("task");
-                Reflect.on(pendingTask).set("task", originalTask.getOriginalTask());
+                final Runnable originalTask = Reflect.on(pendingTask).get("task");
+                if (originalTask instanceof TaskInjector) {
+                    Reflect.on(pendingTask).set("task", ((TaskInjector) originalTask).getOriginalTask());
+                }
             }
         }
     }
