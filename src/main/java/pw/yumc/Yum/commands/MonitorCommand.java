@@ -16,6 +16,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
@@ -43,7 +44,6 @@ public class MonitorCommand implements HandlerCommands {
 
     public MonitorCommand(final Yum yum) {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
-        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
         cmdhandler.registerCommands(this);
         cmdhandler.registerCommands(PluginTabComplete.instence);
     }
@@ -91,7 +91,7 @@ public class MonitorCommand implements HandlerCommands {
     }
 
     @HandlerCommand(name = "event", minimumArguments = 1, possibleArguments = "插件名称")
-    public void event(final InvokeCommandEvent e) {
+    public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
@@ -102,8 +102,14 @@ public class MonitorCommand implements HandlerCommands {
         sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的事件能耗如下!");
         final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
         final Map<String, Long> eventTotalTime = new HashMap<>();
-        final Map<String, Long> eventCount = new HashMap<>();
+        final Map<String, Integer> eventCount = new HashMap<>();
         for (final RegisteredListener listener : listeners) {
+            if (listener instanceof TimedRegisteredListener) {
+                final TimedRegisteredListener trl = (TimedRegisteredListener) listener;
+                eventTotalTime.put(trl.getEventClass().newInstance().getEventName(), trl.getTotalTime());
+                eventCount.put(trl.getEventClass().newInstance().getEventName(), trl.getCount());
+                continue;
+            }
             final EventExecutor executor = Reflect.on(listener).get("executor");
             if (executor instanceof ListenerInjector) {
                 final ListenerInjector injected = (ListenerInjector) executor;

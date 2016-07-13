@@ -1,5 +1,6 @@
 package pw.yumc.Yum.inject;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ public class CommandInjector implements TabExecutor {
     private final TabCompleter originalCompleter;
 
     public long totalTime;
-    public long count;
+    public int count;
 
     public CommandInjector(final CommandExecutor originalCommandExecutor, final TabCompleter originalTabCompleter) {
         this.originalExecutor = originalCommandExecutor;
@@ -86,7 +87,6 @@ public class CommandInjector implements TabExecutor {
         // TODO add a more aggressive 10 ms cpu sample
         final boolean result = originalExecutor.onCommand(sender, command, label, args);
         final long end = System.nanoTime();
-
         totalTime += end - start;
         count++;
         return result;
@@ -94,6 +94,9 @@ public class CommandInjector implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
+        if (originalCompleter == null) {
+            return Collections.emptyList();
+        }
         final long start = System.nanoTime();
         // TODO add a more aggressive 10 ms cpu sample
         final List<String> result = originalCompleter.onTabComplete(sender, command, alias, args);

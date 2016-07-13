@@ -14,7 +14,7 @@ public class TaskInjector implements Runnable {
     private final Runnable originalTask;
 
     public long totalTime;
-    public long count;
+    public int count;
 
     public TaskInjector(final Runnable originalTask) {
         this.originalTask = originalTask;
@@ -62,7 +62,6 @@ public class TaskInjector implements Runnable {
         // TODO add a more aggressive 10 ms cpu sample
         originalTask.run();
         final long end = System.nanoTime();
-
         totalTime += end - start;
         count++;
     }

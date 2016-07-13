@@ -10,7 +10,6 @@ public class NetCommand implements HandlerCommands {
 
     public NetCommand(final Yum yum) {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "net");
-        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyNetCommandConsole", false));
         cmdhandler.registerCommands(this);
         cmdhandler.registerCommands(PluginTabComplete.instence);
     }
