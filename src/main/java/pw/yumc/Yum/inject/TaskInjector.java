@@ -29,6 +29,9 @@ public class TaskInjector implements Runnable {
             // we could ignore async tasks for now
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
                 final Runnable originalTask = Reflect.on(pendingTask).get("task");
+                if (originalTask instanceof TaskInjector) {
+                    return;
+                }
                 final TaskInjector taskInjector = new TaskInjector(originalTask);
                 Reflect.on(pendingTask).set("task", taskInjector);
             }
@@ -56,7 +59,7 @@ public class TaskInjector implements Runnable {
     @Override
     public void run() {
         final long start = System.nanoTime();
-        // todo add a more aggressive 10 ms cpu sample
+        // TODO add a more aggressive 10 ms cpu sample
         originalTask.run();
         final long end = System.nanoTime();
 

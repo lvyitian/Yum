@@ -83,7 +83,7 @@ public class CommandInjector implements TabExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         final long start = System.nanoTime();
-        // todo add a more aggressive 10 ms cpu sample
+        // TODO add a more aggressive 10 ms cpu sample
         final boolean result = originalExecutor.onCommand(sender, command, label, args);
         final long end = System.nanoTime();
 
@@ -95,7 +95,7 @@ public class CommandInjector implements TabExecutor {
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
         final long start = System.nanoTime();
-        // todo add a more aggressive 10 ms cpu sample
+        // TODO add a more aggressive 10 ms cpu sample
         final List<String> result = originalCompleter.onTabComplete(sender, command, alias, args);
         final long end = System.nanoTime();
 

@@ -23,6 +23,7 @@ import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
+import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
@@ -34,10 +35,13 @@ import pw.yumc.Yum.inject.TaskInjector;
  * @author 喵♂呜
  */
 public class MonitorCommand implements HandlerCommands {
-    Yum main;
+    private final String prefix = "§6[§bYum §a能耗监控§6] ";
+    private final String total = "§6总耗时: §a%.2f秒 ";
+    private final String count = "§6执行次数: §b%s次 ";
+    private final String avg = "§6平均耗时: §d%.5f秒!";
+    private final String p_n_f = prefix + "§c插件不存在!";
 
     public MonitorCommand(final Yum yum) {
-        main = yum;
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
         cmdhandler.registerCommands(this);
@@ -54,12 +58,12 @@ public class MonitorCommand implements HandlerCommands {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         if (Bukkit.getPluginManager().getPlugin(pname) == null) {
-            sender.sendMessage("§c插件不存在!");
+            sender.sendMessage(p_n_f);
             return;
         }
         final PluginManager pluginManager = Bukkit.getPluginManager();
         final SimpleCommandMap commandMap = Reflect.on(pluginManager).get("commandMap");
-        sender.sendMessage("§6插件 §b" + pname + " §6的命令能耗如下!");
+        sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的命令能耗如下!");
         final Map<String, Command> temp = new HashMap<>();
         for (final Command command : commandMap.getCommands()) {
             if (command instanceof PluginCommand) {
@@ -76,10 +80,10 @@ public class MonitorCommand implements HandlerCommands {
                 final CommandInjector injected = (CommandInjector) executor;
                 final StringBuffer str = new StringBuffer();
                 str.append("§6- §e" + command.getValue().getName() + " ");
-                str.append(String.format("§6总耗时: §a%.2f秒 ", injected.totalTime / 1000000.0));
-                str.append("§6执行次数: §b" + injected.count + "次 ");
+                str.append(String.format(total, injected.totalTime / 1000000.0));
+                str.append(String.format(count, injected.count));
                 if (injected.count != 0) {
-                    str.append(String.format("§6平均耗时: §d%.2f秒!", injected.totalTime / 1000000.0 / injected.count));
+                    str.append(String.format(avg, injected.totalTime / 1000000.0 / injected.count));
                 }
                 e.getSender().sendMessage(str.toString());
             }
@@ -92,24 +96,37 @@ public class MonitorCommand implements HandlerCommands {
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
         if (plugin == null) {
-            sender.sendMessage("§c插件不存在!");
+            sender.sendMessage(p_n_f);
             return;
         }
-        sender.sendMessage("§6插件 §b" + pname + " §6的事件能耗如下!");
+        sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的事件能耗如下!");
         final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
+        final Map<String, Long> eventTotalTime = new HashMap<>();
+        final Map<String, Long> eventCount = new HashMap<>();
         for (final RegisteredListener listener : listeners) {
             final EventExecutor executor = Reflect.on(listener).get("executor");
             if (executor instanceof ListenerInjector) {
                 final ListenerInjector injected = (ListenerInjector) executor;
-                final StringBuffer str = new StringBuffer();
-                str.append("§6- §e" + injected.getOriginalExecutor().getClass().getSimpleName() + " ");
-                str.append(String.format("§6总耗时: §a%.2f秒 ", injected.totalTime / 1000000.0));
-                str.append("§6执行次数: §b" + injected.count + "次 ");
-                if (injected.count != 0) {
-                    str.append(String.format("§6平均耗时: §d%.2f秒!", injected.totalTime / 1000000.0 / injected.count));
+                for (final String entry : injected.eventTotalTime.keySet()) {
+                    if (eventTotalTime.containsKey(entry)) {
+                        eventTotalTime.put(entry, eventTotalTime.get(entry) + injected.eventTotalTime.get(entry));
+                        eventCount.put(entry, eventCount.get(entry) + injected.eventCount.get(entry));
+                    } else {
+                        eventTotalTime.put(entry, injected.eventTotalTime.get(entry));
+                        eventCount.put(entry, injected.eventCount.get(entry));
+                    }
                 }
-                e.getSender().sendMessage(str.toString());
             }
+        }
+        for (final String event : eventTotalTime.keySet()) {
+            final StringBuffer str = new StringBuffer();
+            str.append("§6- §e" + event + " ");
+            str.append(String.format(total, eventTotalTime.get(event) / 1000000.0));
+            str.append(String.format(count, eventCount.get(event)));
+            if (eventCount.get(event) != 0) {
+                str.append(String.format(avg, eventTotalTime.get(event) / 1000000.0 / eventCount.get(event)));
+            }
+            e.getSender().sendMessage(str.toString());
         }
     }
 
@@ -119,23 +136,26 @@ public class MonitorCommand implements HandlerCommands {
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
         if (plugin == null) {
-            sender.sendMessage("§c插件不存在!");
+            sender.sendMessage(p_n_f);
             return;
         }
         final List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
-        sender.sendMessage("§6插件 §b" + pname + " §6的任务能耗如下!");
+        sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的任务能耗如下!");
         for (final BukkitTask pendingTask : pendingTasks) {
-            final Runnable task = Reflect.on(pendingTask).get("task");
-            if (task instanceof TaskInjector) {
-                final TaskInjector executor = (TaskInjector) task;
-                final StringBuffer str = new StringBuffer();
-                str.append("§6- §e" + executor.getOriginalTask().getClass().getSimpleName() + " ");
-                str.append(String.format("§6总耗时: §a%.2f秒 ", executor.totalTime / 1000000.0));
-                str.append("§6执行次数: §b" + executor.count + "次 ");
-                if (executor.count != 0) {
-                    str.append(String.format("§6平均耗时: §d%.2f秒!", executor.totalTime / 1000000.0 / executor.count));
+            if (pendingTask.getOwner().getName().equalsIgnoreCase(pname)) {
+                final Runnable task = Reflect.on(pendingTask).get("task");
+                if (task instanceof TaskInjector) {
+                    final TaskInjector executor = (TaskInjector) task;
+                    final StringBuffer str = new StringBuffer();
+                    final Class<? extends Runnable> taskName = executor.getOriginalTask().getClass();
+                    str.append("§6- §e" + (StrKit.isBlank(taskName.getSimpleName()) ? taskName.getName() : taskName.getSimpleName()) + " ");
+                    str.append(String.format(total, executor.totalTime / 1000000.0));
+                    str.append(String.format(count, executor.count));
+                    if (executor.count != 0) {
+                        str.append(String.format(avg, executor.totalTime / 1000000.0 / executor.count));
+                    }
+                    e.getSender().sendMessage(str.toString());
                 }
-                e.getSender().sendMessage(str.toString());
             }
         }
     }

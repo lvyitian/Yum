@@ -45,9 +45,7 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
-        // for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-        // YumAPI.uninject(plugin);
-        // }
+
     }
 
     @Override
@@ -60,8 +58,9 @@ public class Yum extends JavaPlugin {
         initListeners();
         initRunnable();
         new VersionChecker(this);
-        YumAPI.updaterepo(Bukkit.getConsoleSender());
-        YumAPI.updatecheck(Bukkit.getConsoleSender());
+        YumAPI.updateInject();
+        YumAPI.updateRepo(Bukkit.getConsoleSender());
+        YumAPI.updateCheck(Bukkit.getConsoleSender());
     }
 
     @Override

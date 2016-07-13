@@ -143,9 +143,9 @@ public class YumCommand implements HandlerCommands, Listener {
                 @Override
                 public void run() {
                     if (args.length < 2) {
-                        YumAPI.installfromyum(sender, pluginname);
+                        YumAPI.installFromYum(sender, pluginname);
                     } else {
-                        YumAPI.installfromyum(sender, pluginname, args[1]);
+                        YumAPI.installFromYum(sender, pluginname, args[1]);
                     }
                 }
             });
@@ -178,7 +178,7 @@ public class YumCommand implements HandlerCommands, Listener {
     @EventHandler
     public void onAdminJoin(final PlayerJoinEvent e) {
         if (e.getPlayer().isOp()) {
-            YumAPI.updatecheck(e.getPlayer());
+            YumAPI.updateCheck(e.getPlayer());
         }
     }
 
@@ -334,9 +334,9 @@ public class YumCommand implements HandlerCommands, Listener {
                     @Override
                     public void run() {
                         if (args.length < 2) {
-                            YumAPI.updatefromyum(sender, plugin);
+                            YumAPI.updateFromYum(sender, plugin);
                         } else {
-                            YumAPI.updatefromyum(sender, plugin, args[1]);
+                            YumAPI.updateFromYum(sender, plugin, args[1]);
                         }
                     }
                 });
@@ -354,7 +354,7 @@ public class YumCommand implements HandlerCommands, Listener {
         Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
             @Override
             public void run() {
-                YumAPI.updateall(e.getSender());
+                YumAPI.updateAll(e.getSender());
             }
         });
     }

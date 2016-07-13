@@ -12,7 +12,9 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.kit.PKit;
+import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.inject.CommandInjector;
+import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.DownloadManager;
@@ -104,9 +106,11 @@ public class YumAPI {
      *            插件
      */
     public static void inject(final Plugin plugin) {
-        CommandInjector.inject(plugin);
-        // ListenerInjector.inject(plugin);
-        TaskInjector.inject(plugin);
+        if (plugin.isEnabled()) {
+            CommandInjector.inject(plugin);
+            ListenerInjector.inject(plugin);
+            TaskInjector.inject(plugin);
+        }
     }
 
     /**
@@ -150,8 +154,8 @@ public class YumAPI {
      *            插件名称
      * @return 是否安装成功
      */
-    public static boolean installfromyum(final CommandSender sender, final String pluginname) {
-        return installfromyum(sender, pluginname, null);
+    public static boolean installFromYum(final CommandSender sender, final String pluginname) {
+        return installFromYum(sender, pluginname, null);
     }
 
     /**
@@ -165,7 +169,7 @@ public class YumAPI {
      *            插件版本
      * @return 是否安装成功
      */
-    public static boolean installfromyum(final CommandSender sender, final String pluginname, final String version) {
+    public static boolean installFromYum(final CommandSender sender, final String pluginname, final String version) {
         final PluginInfo pi = repo.getPlugin(pluginname);
         if (pi != null) {
             return install(sender, pi.name, pi.getUrl(sender, version));
@@ -201,6 +205,18 @@ public class YumAPI {
      */
     public static void reload(final Plugin plugin) {
         plugman.reload(plugin);
+    }
+
+    /**
+     * 取消注入
+     *
+     * @param plugin
+     *            插件
+     */
+    public static void uninject() {
+        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            YumAPI.uninject(plugin);
+        }
     }
 
     /**
@@ -264,7 +280,7 @@ public class YumAPI {
      * @param sender
      *            命令发送者
      */
-    public static void updateall(final CommandSender sender) {
+    public static void updateAll(final CommandSender sender) {
         main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
             @Override
             public void run() {
@@ -279,7 +295,7 @@ public class YumAPI {
                     sender.sendMessage("§d开始更新服务器可更新插件");
                     for (final Plugin updateplugin : ulist) {
                         sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
-                        if (!updatefromyum(sender, updateplugin, null, true)) {
+                        if (!updateFromYum(sender, updateplugin, null, true)) {
                             failed++;
                         }
                     }
@@ -288,7 +304,7 @@ public class YumAPI {
                     }
                     sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
                     sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
-                    updatecheck(sender);
+                    updateCheck(sender);
                 } else {
                     sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
                 }
@@ -303,8 +319,8 @@ public class YumAPI {
      * @param sender
      *            命令发送者
      */
-    public static void updatecheck(final CommandSender sender) {
-        main.getServer().getScheduler().runTaskLaterAsynchronously(main, new Runnable() {
+    public static void updateCheck(final CommandSender sender) {
+        PluginKit.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
                 final List<Plugin> ulist = getUpdateList(sender);
@@ -324,8 +340,8 @@ public class YumAPI {
      *            插件实体
      * @return 是否更新成功
      */
-    public static boolean updatefromyum(final CommandSender sender, final Plugin plugin) {
-        return updatefromyum(sender, plugin, null);
+    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin) {
+        return updateFromYum(sender, plugin, null);
     }
 
     /**
@@ -339,8 +355,8 @@ public class YumAPI {
      *            插件版本(null则自动获取)
      * @return
      */
-    public static boolean updatefromyum(final CommandSender sender, final Plugin plugin, final String version) {
-        return updatefromyum(sender, plugin, version, false);
+    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin, final String version) {
+        return updateFromYum(sender, plugin, version, false);
     }
 
     /**
@@ -356,7 +372,7 @@ public class YumAPI {
      *            是否一键更新
      * @return
      */
-    public static boolean updatefromyum(final CommandSender sender, final Plugin plugin, final String version, final boolean oneKeyUpdate) {
+    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin, final String version, final boolean oneKeyUpdate) {
         final PluginInfo pi = repo.getPlugin(plugin.getName());
         if (pi != null) {
             final File pFile = new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName());
@@ -375,10 +391,24 @@ public class YumAPI {
     }
 
     /**
+     * 更新注入
+     */
+    public static void updateInject() {
+        PluginKit.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                    YumAPI.inject(plugin);
+                }
+            }
+        }, 60);
+    }
+
+    /**
      * 更新Yum源数据
      */
-    public static void updaterepo(final CommandSender sender) {
-        main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
+    public static void updateRepo(final CommandSender sender) {
+        PluginKit.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 repo.updateRepositories(sender);

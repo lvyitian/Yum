@@ -109,6 +109,7 @@ public class PluginInfo implements Serializable {
             } else if (pom != null && !pom.isEmpty()) {
                 pom = pom.replace("[name]", name).replace("[branch]", branch);
                 sender.sendMessage("§6版本: §b尝试从在线POM文件获取最新版本...");
+                System.out.println(pom);
                 ver = IOUtil.getXMLTag(pom, "version", null);
                 if (ver != null) {
                     sender.sendMessage("§6版本: §a成功获取到最新版本 §e" + ver + " §a...");
