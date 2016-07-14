@@ -50,7 +50,7 @@ public class MonitorCommand implements HandlerCommands {
         cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "cmd", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "cmd", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "插件名称")
     public void cmd(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -87,7 +87,7 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "event", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "event", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "插件名称")
     public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -133,7 +133,7 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "task", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "task", description = "查看插件任务能耗", minimumArguments = 1, possibleArguments = "插件名称")
     public void task(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
