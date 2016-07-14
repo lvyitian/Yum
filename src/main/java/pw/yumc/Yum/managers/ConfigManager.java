@@ -18,16 +18,18 @@ public class ConfigManager {
     public final FileConfig setop;
     public final FileConfig network;
     public final FileConfig thread;
-
-    public static ConfigManager i() {
-        return i;
-    }
+    public final FileConfig monitor;
 
     public ConfigManager(final JavaPlugin plugin) {
         config = new FileConfig(plugin);
         setop = new FileConfig(plugin, "setop.yml");
         network = new FileConfig(plugin, "network.yml");
         thread = new FileConfig(plugin, "thread.yml");
+        monitor = new FileConfig(plugin, "monitor.yml");
+    }
+
+    public static ConfigManager i() {
+        return i;
     }
 
     public List<String> getBlackList() {
@@ -64,6 +66,10 @@ public class ConfigManager {
 
     public boolean isMainThreadCheck() {
         return thread.getBoolean("MainThreadCheck", true);
+    }
+
+    public boolean isMonitorEnable() {
+        return monitor.getBoolean(ENABLE, true);
     }
 
     public boolean isNetworkDebug() {

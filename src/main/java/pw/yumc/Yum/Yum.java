@@ -45,7 +45,6 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
-
     }
 
     @Override
@@ -58,9 +57,11 @@ public class Yum extends JavaPlugin {
         initListeners();
         initRunnable();
         new VersionChecker(this);
-        YumAPI.updateInject();
         YumAPI.updateRepo(Bukkit.getConsoleSender());
         YumAPI.updateCheck(Bukkit.getConsoleSender());
+        if (ConfigManager.i().isMonitorEnable()) {
+            YumAPI.updateInject();
+        }
     }
 
     @Override
@@ -87,7 +88,6 @@ public class Yum extends JavaPlugin {
      * 初始化监听
      */
     private void initListeners() {
-        new PluginListener();
         if (ConfigManager.i().isSetOpEnable()) {
             try {
                 final ClassLoader cl = Class.forName("pw.yumc.injected.event.SetOpEvent").getClassLoader();
@@ -109,6 +109,9 @@ public class Yum extends JavaPlugin {
         if (ConfigManager.i().isThreadSafe()) {
             new ThreadSafetyListener(this);
             PluginKit.scp("§a线程管理系统已启用...");
+        }
+        if (ConfigManager.i().isMonitorEnable()) {
+            new PluginListener();
         }
     }
 
