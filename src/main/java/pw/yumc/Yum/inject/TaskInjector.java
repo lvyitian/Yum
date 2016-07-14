@@ -20,13 +20,13 @@ public class TaskInjector implements Runnable {
         this.originalTask = originalTask;
     }
 
-    // sadly it works only with interval tasks
-    // for single runs we would have to register a dynamic proxy
+    // 当前注入只能对TimerTask有效
+    // 对于单次执行的任务 我们需要注册一个动态的代理
     public static void inject(final Plugin plugin) {
         final BukkitScheduler scheduler = Bukkit.getScheduler();
         final List<BukkitTask> pendingTasks = scheduler.getPendingTasks();
         for (final BukkitTask pendingTask : pendingTasks) {
-            // we could ignore async tasks for now
+            // 忽略异步任务
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
                 final Runnable originalTask = Reflect.on(pendingTask).get("task");
                 if (originalTask instanceof TaskInjector) {
@@ -42,7 +42,7 @@ public class TaskInjector implements Runnable {
         final BukkitScheduler scheduler = Bukkit.getScheduler();
         final List<BukkitTask> pendingTasks = scheduler.getPendingTasks();
         for (final BukkitTask pendingTask : pendingTasks) {
-            // we could ignore async tasks for now
+            // 忽略异步任务
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
                 final Runnable originalTask = Reflect.on(pendingTask).get("task");
                 if (originalTask instanceof TaskInjector) {
@@ -59,7 +59,7 @@ public class TaskInjector implements Runnable {
     @Override
     public void run() {
         final long start = System.nanoTime();
-        // TODO add a more aggressive 10 ms cpu sample
+        // TODO 当操作大于10ms的时候添加一个Lag提示
         originalTask.run();
         final long end = System.nanoTime();
         totalTime += end - start;

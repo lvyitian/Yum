@@ -65,12 +65,16 @@ public class ListenerInjector implements EventExecutor {
         try {
             if (!event.isAsynchronous()) {
                 final long start = System.nanoTime();
-                // TODO add a more aggressive 10 ms cpu sample
+                // TODO 当操作大于10ms的时候添加一个Lag提示
                 originalExecutor.execute(listener, event);
                 final long end = System.nanoTime();
                 final String en = event.getEventName();
+                final long lag = end - start;
+                if (lag / 1000000 > 10) {
+                    PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时§c耗时超过 §410ms!");
+                }
                 if (eventTotalTime.containsKey(en)) {
-                    eventTotalTime.put(en, eventTotalTime.get(en) + end - start);
+                    eventTotalTime.put(en, eventTotalTime.get(en) + lag);
                     eventCount.put(en, eventCount.get(en) + 1);
                 } else {
                     eventTotalTime.put(en, end - start);
@@ -83,7 +87,7 @@ public class ListenerInjector implements EventExecutor {
             while (e.getCause() != null) {
                 e = e.getCause();
             }
-            PluginKit.sc(prefix + "插件 §b" + plugin.getName() + " §6处理 " + event.getEventName() + " §a事件时发生异常 §c" + e.getClass().getName() + ": " + e.getMessage());
+            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时发生异常 §c" + e.getClass().getName() + ": " + e.getMessage());
             PluginKit.sc("§c错误信息如下:");
             final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
             for (int i = 0; i < l; i++) {

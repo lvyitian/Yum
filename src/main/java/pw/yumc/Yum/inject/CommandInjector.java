@@ -84,7 +84,7 @@ public class CommandInjector implements TabExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         final long start = System.nanoTime();
-        // TODO add a more aggressive 10 ms cpu sample
+        // TODO 当操作大于10ms的时候添加一个Lag提示
         final boolean result = originalExecutor.onCommand(sender, command, label, args);
         final long end = System.nanoTime();
         totalTime += end - start;

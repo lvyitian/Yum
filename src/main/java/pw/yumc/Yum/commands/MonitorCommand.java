@@ -37,10 +37,12 @@ import pw.yumc.Yum.inject.TaskInjector;
  */
 public class MonitorCommand implements HandlerCommands {
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
-    private final String total = "§6总耗时: §a%.2f秒 ";
+    private final String total = "§6总耗时: §a%.2f毫秒 ";
     private final String count = "§6执行次数: §b%s次 ";
-    private final String avg = "§6平均耗时: §d%.5f秒!";
-    private final String p_n_f = prefix + "§c插件不存在!";
+    private final String avg = "§6平均耗时: §d%.5f毫秒!";
+    private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
+
+    private final double um = 1000000.0;
 
     public MonitorCommand(final Yum yum) {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
@@ -48,17 +50,12 @@ public class MonitorCommand implements HandlerCommands {
         cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "a")
-    public void a(final InvokeCommandEvent e) {
-
-    }
-
     @HandlerCommand(name = "cmd", minimumArguments = 1, possibleArguments = "插件名称")
     public void cmd(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         if (Bukkit.getPluginManager().getPlugin(pname) == null) {
-            sender.sendMessage(p_n_f);
+            sender.sendMessage(String.format(p_n_f, pname));
             return;
         }
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -80,10 +77,10 @@ public class MonitorCommand implements HandlerCommands {
                 final CommandInjector injected = (CommandInjector) executor;
                 final StringBuffer str = new StringBuffer();
                 str.append("§6- §e" + command.getValue().getName() + " ");
-                str.append(String.format(total, injected.totalTime / 1000000.0));
+                str.append(String.format(total, injected.totalTime / um));
                 str.append(String.format(count, injected.count));
                 if (injected.count != 0) {
-                    str.append(String.format(avg, injected.totalTime / 1000000.0 / injected.count));
+                    str.append(String.format(avg, injected.totalTime / um / injected.count));
                 }
                 e.getSender().sendMessage(str.toString());
             }
@@ -96,7 +93,7 @@ public class MonitorCommand implements HandlerCommands {
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
         if (plugin == null) {
-            sender.sendMessage(p_n_f);
+            sender.sendMessage(String.format(p_n_f, pname));
             return;
         }
         sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的事件能耗如下!");
@@ -106,8 +103,8 @@ public class MonitorCommand implements HandlerCommands {
         for (final RegisteredListener listener : listeners) {
             if (listener instanceof TimedRegisteredListener) {
                 final TimedRegisteredListener trl = (TimedRegisteredListener) listener;
-                eventTotalTime.put(trl.getEventClass().newInstance().getEventName(), trl.getTotalTime());
-                eventCount.put(trl.getEventClass().newInstance().getEventName(), trl.getCount());
+                eventTotalTime.put(trl.getEventClass().getSimpleName(), trl.getTotalTime());
+                eventCount.put(trl.getEventClass().getSimpleName(), trl.getCount());
                 continue;
             }
             final EventExecutor executor = Reflect.on(listener).get("executor");
@@ -127,10 +124,10 @@ public class MonitorCommand implements HandlerCommands {
         for (final String event : eventTotalTime.keySet()) {
             final StringBuffer str = new StringBuffer();
             str.append("§6- §e" + event + " ");
-            str.append(String.format(total, eventTotalTime.get(event) / 1000000.0));
+            str.append(String.format(total, eventTotalTime.get(event) / um));
             str.append(String.format(count, eventCount.get(event)));
             if (eventCount.get(event) != 0) {
-                str.append(String.format(avg, eventTotalTime.get(event) / 1000000.0 / eventCount.get(event)));
+                str.append(String.format(avg, eventTotalTime.get(event) / um / eventCount.get(event)));
             }
             e.getSender().sendMessage(str.toString());
         }
@@ -142,7 +139,7 @@ public class MonitorCommand implements HandlerCommands {
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
         if (plugin == null) {
-            sender.sendMessage(p_n_f);
+            sender.sendMessage(String.format(p_n_f, pname));
             return;
         }
         final List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
@@ -155,10 +152,10 @@ public class MonitorCommand implements HandlerCommands {
                     final StringBuffer str = new StringBuffer();
                     final Class<? extends Runnable> taskName = executor.getOriginalTask().getClass();
                     str.append("§6- §e" + (StrKit.isBlank(taskName.getSimpleName()) ? taskName.getName() : taskName.getSimpleName()) + " ");
-                    str.append(String.format(total, executor.totalTime / 1000000.0));
+                    str.append(String.format(total, executor.totalTime / um));
                     str.append(String.format(count, executor.count));
                     if (executor.count != 0) {
-                        str.append(String.format(avg, executor.totalTime / 1000000.0 / executor.count));
+                        str.append(String.format(avg, executor.totalTime / um / executor.count));
                     }
                     e.getSender().sendMessage(str.toString());
                 }
