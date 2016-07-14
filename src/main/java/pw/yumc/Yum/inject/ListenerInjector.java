@@ -71,7 +71,7 @@ public class ListenerInjector implements EventExecutor {
                 final String en = event.getEventName();
                 final long lag = end - start;
                 if (lag / 1000000 > 10) {
-                    PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时§c耗时超过 §410ms!");
+                    PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时§c耗时 §4" + lag / 1000000 + "ms!");
                 }
                 if (eventTotalTime.containsKey(en)) {
                     eventTotalTime.put(en, eventTotalTime.get(en) + lag);
