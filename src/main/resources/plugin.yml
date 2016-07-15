@@ -32,7 +32,7 @@ commands:
     permission-message: §c你没有 <permission> 的权限来执行此命令!
   monitor: 
     description: MC系统监控命令
-    aliases: [m]
+    aliases: [mi]
     usage: §6使用§a/monitor help§6查看帮助!
     permission: monitor.use
     permission-message: §c你没有 <permission> 的权限来执行此命令!
