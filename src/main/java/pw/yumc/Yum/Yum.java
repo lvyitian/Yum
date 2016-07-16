@@ -59,9 +59,6 @@ public class Yum extends JavaPlugin {
         new VersionChecker(this);
         YumAPI.updateRepo(Bukkit.getConsoleSender());
         YumAPI.updateCheck(Bukkit.getConsoleSender());
-        if (ConfigManager.i().isMonitorEnable()) {
-            YumAPI.updateInject();
-        }
     }
 
     @Override

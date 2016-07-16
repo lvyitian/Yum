@@ -40,6 +40,10 @@ public class ConfigManager {
         return config.getStringList("ignorelist");
     }
 
+    public List<String> getMonitorIgnoreList() {
+        return monitor.getStringList(IGNORE);
+    }
+
     public List<String> getNetworkBlackList() {
         return network.getStringList(BLACK);
     }
@@ -96,5 +100,6 @@ public class ConfigManager {
         setop.reload();
         network.reload();
         thread.reload();
+        monitor.reload();
     }
 }

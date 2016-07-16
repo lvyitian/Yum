@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pw.yumc</groupId>
 	<artifactId>Yum</artifactId>
-	<version>2.6.1</version>
+	<version>2.6.2</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -60,9 +60,9 @@
 	<properties>
 		<update.description>&amp;a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
+			&amp;b2.6.2 &amp;6- &amp;d能耗监控添加忽略列表 &amp;3详见monitor.yml...;
 			&amp;b2.6.1 &amp;6- &amp;c优化能耗监控 命令别名修改为mi(防止与ESS冲突)...;
 			&amp;b2.6   &amp;6- &amp;a添加能耗监控系统 事件错误监控...;
-			&amp;b2.5   &amp;6- &amp;d修复主线程守护系统错误...;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

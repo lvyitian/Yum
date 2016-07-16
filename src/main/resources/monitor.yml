@@ -3,7 +3,10 @@
 ############################
 
 #配置版本号 请勿修改!!!
-Version: 1.0
+Version: 1.1
 
 #是否开启
 Enable: true
+#忽略检测列表
+Ignore:
+- Essentials

@@ -40,6 +40,7 @@ public class MonitorCommand implements HandlerCommands {
     private final String total = "§6总耗时: §a%.2f毫秒 ";
     private final String count = "§6执行次数: §b%s次 ";
     private final String avg = "§6平均耗时: §d%.5f毫秒!";
+    private final String avg_warn = "§6平均耗时: §c%.5f毫秒!";
     private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
     private final double um = 1000000.0;
@@ -127,7 +128,8 @@ public class MonitorCommand implements HandlerCommands {
             str.append(String.format(total, eventTotalTime.get(event) / um));
             str.append(String.format(count, eventCount.get(event)));
             if (eventCount.get(event) != 0) {
-                str.append(String.format(avg, eventTotalTime.get(event) / um / eventCount.get(event)));
+                final double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
+                str.append(String.format(avgTime < 10 ? avg : avg_warn, avgTime));
             }
             e.getSender().sendMessage(str.toString());
         }

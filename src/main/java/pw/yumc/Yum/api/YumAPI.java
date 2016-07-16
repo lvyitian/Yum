@@ -106,7 +106,7 @@ public class YumAPI {
      *            插件
      */
     public static void inject(final Plugin plugin) {
-        if (plugin.isEnabled()) {
+        if (plugin.isEnabled() && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
             CommandInjector.inject(plugin);
             ListenerInjector.inject(plugin);
             TaskInjector.inject(plugin);

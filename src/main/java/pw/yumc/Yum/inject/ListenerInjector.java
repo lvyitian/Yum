@@ -15,6 +15,7 @@ import org.bukkit.plugin.TimedRegisteredListener;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
+import pw.yumc.Yum.managers.ConfigManager;
 
 public class ListenerInjector implements EventExecutor {
     private final String prefix = "§6[§bYum §a事件监控§6] ";
@@ -70,7 +71,7 @@ public class ListenerInjector implements EventExecutor {
                 final long end = System.nanoTime();
                 final String en = event.getEventName();
                 final long lag = end - start;
-                if (lag / 1000000 > 10) {
+                if (lag / 1000000 > 10 && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
                     PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时§c耗时 §4" + lag / 1000000 + "ms!");
                 }
                 if (eventTotalTime.containsKey(en)) {
