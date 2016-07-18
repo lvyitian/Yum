@@ -26,6 +26,7 @@ import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.Yum;
+import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
@@ -43,6 +44,10 @@ public class MonitorCommand implements HandlerCommands {
     private final String avg_warn = "§6平均耗时: §c%.5f毫秒!";
     private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
+    private final String injected = "§a插件 §b%s §a成功注入能耗监控器!";
+    private final String uninjected = "§a插件 §b%s §a成功撤销能耗监控器!";
+    private final String notEnable = "§c插件 §b%s §c未成功加载 无法执行注入!";
+
     private final double um = 1000000.0;
 
     public MonitorCommand(final Yum yum) {
@@ -51,7 +56,7 @@ public class MonitorCommand implements HandlerCommands {
         cmdhandler.registerCommands(PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "cmd", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "cmd", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
     public void cmd(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -88,7 +93,7 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "event", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "event", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
     public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -135,7 +140,24 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "task", description = "查看插件任务能耗", minimumArguments = 1, possibleArguments = "插件名称")
+    @HandlerCommand(name = "inject", aliases = "i", description = "注入能耗监控器", minimumArguments = 1, possibleArguments = "[插件名称]")
+    public void inject(final InvokeCommandEvent e) {
+        final String pname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
+        if (plugin == null) {
+            sender.sendMessage(String.format(p_n_f, pname));
+            return;
+        }
+        if (plugin.isEnabled()) {
+            YumAPI.inject(plugin);
+            sender.sendMessage(String.format(prefix + injected, pname));
+        } else {
+            sender.sendMessage(String.format(prefix + notEnable, pname));
+        }
+    }
+
+    @HandlerCommand(name = "task", description = "查看插件任务能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
     public void task(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -162,6 +184,21 @@ public class MonitorCommand implements HandlerCommands {
                     e.getSender().sendMessage(str.toString());
                 }
             }
+        }
+    }
+
+    @HandlerCommand(name = "uninject", aliases = "ui", description = "撤销能耗监控器", minimumArguments = 1, possibleArguments = "[插件名称]")
+    public void uninject(final InvokeCommandEvent e) {
+        final String pname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
+        if (plugin == null) {
+            sender.sendMessage(String.format(p_n_f, pname));
+            return;
+        }
+        if (plugin.isEnabled()) {
+            YumAPI.uninject(plugin);
+            sender.sendMessage(String.format(prefix + uninjected, pname));
         }
     }
 }

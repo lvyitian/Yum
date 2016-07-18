@@ -29,6 +29,11 @@ public class PluginListener implements Listener {
 
     @EventHandler
     public void onPluginEnable(final PluginEnableEvent e) {
-        YumAPI.inject(e.getPlugin());
+        PluginKit.runTaskLater(new Runnable() {
+            @Override
+            public void run() {
+                YumAPI.inject(e.getPlugin());
+            }
+        }, 60);
     }
 }
