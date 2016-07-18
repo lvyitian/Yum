@@ -8,9 +8,9 @@ import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.kit.PKit;
 
 public class ConfigManager {
-    private final static String ENABLE = "Enable";
-    private final static String BLACK = "Black";
-    private final static String IGNORE = "Ignore";
+    public final static String ENABLE = "Enable";
+    public final static String BLACK = "Black";
+    public final static String IGNORE = "Ignore";
 
     private final static ConfigManager i = new ConfigManager(PKit.i());
 
@@ -70,6 +70,10 @@ public class ConfigManager {
 
     public boolean isMainThreadCheck() {
         return thread.getBoolean("MainThreadCheck", true);
+    }
+
+    public boolean isMonitorDebug() {
+        return monitor.getBoolean("Debug");
     }
 
     public boolean isMonitorEnable() {

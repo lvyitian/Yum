@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
+import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.events.PluginNetworkEvent;
 import pw.yumc.Yum.managers.ConfigManager;
 
@@ -36,6 +37,7 @@ public class PluginNetworkListener implements Listener {
         if (urlinfo.startsWith("socket")) {
             return;
         }
+        NetCommand.addNetCount(plugin.getName());
         if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost())) {
             return;
         }
