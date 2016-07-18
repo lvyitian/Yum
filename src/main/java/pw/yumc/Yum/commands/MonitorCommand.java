@@ -24,12 +24,14 @@ import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
+import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
+import pw.yumc.Yum.managers.ConfigManager;
 
 /**
  *
@@ -37,16 +39,24 @@ import pw.yumc.Yum.inject.TaskInjector;
  * @author 喵♂呜
  */
 public class MonitorCommand implements HandlerCommands {
+    public static boolean debug = false;
+    public static Throwable lastError = null;
+
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
+
     private final String total = "§6总耗时: §a%.2f毫秒 ";
     private final String count = "§6执行次数: §b%s次 ";
     private final String avg = "§6平均耗时: §d%.5f毫秒!";
     private final String avg_warn = "§6平均耗时: §c%.5f毫秒!";
-    private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
     private final String injected = "§a插件 §b%s §a成功注入能耗监控器!";
     private final String uninjected = "§a插件 §b%s §a成功撤销能耗监控器!";
     private final String notEnable = "§c插件 §b%s §c未成功加载 无法执行注入!";
+
+    private final String no_error = prefix + "§a自服务器启动以来尚未发现报错!";
+    private final String last_error = prefix + "§c最后一次错误异常由 §b%s §c造成 详细如下:";
+
+    private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
     private final double um = 1000000.0;
 
@@ -54,9 +64,10 @@ public class MonitorCommand implements HandlerCommands {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
         cmdhandler.registerCommands(this);
         cmdhandler.registerCommands(PluginTabComplete.instence);
+        debug = ConfigManager.i().isMonitorDebug();
     }
 
-    @HandlerCommand(name = "cmd", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
+    @HandlerCommand(name = "cmd", aliases = "c", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
     public void cmd(final InvokeCommandEvent e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -93,7 +104,7 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "event", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
+    @HandlerCommand(name = "event", aliases = "e", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
     public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -154,6 +165,20 @@ public class MonitorCommand implements HandlerCommands {
             sender.sendMessage(String.format(prefix + injected, pname));
         } else {
             sender.sendMessage(String.format(prefix + notEnable, pname));
+        }
+    }
+
+    @HandlerCommand(name = "lasterror", aliases = "la", description = "查看最后一次报错")
+    public void lasterror(final InvokeCommandEvent e) {
+        final CommandSender sender = e.getSender();
+        if (lastError == null) {
+            sender.sendMessage(no_error);
+            return;
+        }
+        final Plugin plugin = PluginKit.getOperatePlugin(lastError.getStackTrace());
+        if (plugin != null) {
+            sender.sendMessage(String.format(last_error, plugin.getName()));
+            lastError.printStackTrace();
         }
     }
 

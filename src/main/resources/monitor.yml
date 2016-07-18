@@ -3,10 +3,12 @@
 ############################
 
 #配置版本号 请勿修改!!!
-Version: 1.1
+Version: 1.2
 
 #是否开启
 Enable: true
+#是否显示开发人员信息
+Debug: false
 #忽略检测列表
 Ignore:
-- Essentials
+- PluginHelper

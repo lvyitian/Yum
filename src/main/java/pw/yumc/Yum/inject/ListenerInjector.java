@@ -15,6 +15,7 @@ import org.bukkit.plugin.TimedRegisteredListener;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
+import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.ConfigManager;
 
 public class ListenerInjector implements EventExecutor {
@@ -72,7 +73,7 @@ public class ListenerInjector implements EventExecutor {
                 final String en = event.getEventName();
                 final long lag = end - start;
                 if (lag / 1000000 > 10 && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
-                    PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时§c耗时 §4" + lag / 1000000 + "ms!");
+                    PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件 §c耗时 §4" + lag / 1000000 + "ms!");
                 }
                 if (eventTotalTime.containsKey(en)) {
                     eventTotalTime.put(en, eventTotalTime.get(en) + lag);
@@ -88,12 +89,19 @@ public class ListenerInjector implements EventExecutor {
             while (e.getCause() != null) {
                 e = e.getCause();
             }
-            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时发生异常 §c" + e.getClass().getName() + ": " + e.getMessage());
-            PluginKit.sc("§c错误信息如下:");
+            MonitorCommand.lastError = e;
+            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时发生异常!");
+            PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
+            PluginKit.sc("§6异常说明: §3" + e.getMessage());
+            PluginKit.sc("§6简易错误信息如下:");
             final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
             for (int i = 0; i < l; i++) {
                 final StackTraceElement ste = e.getStackTrace()[i];
                 PluginKit.sc("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
+            }
+            if (MonitorCommand.debug) {
+                PluginKit.sc("§c开发人员调试信息如下:");
+                e.printStackTrace();
             }
         }
     }

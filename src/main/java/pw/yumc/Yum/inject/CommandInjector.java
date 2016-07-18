@@ -15,18 +15,24 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
+import cn.citycraft.PluginHelper.kit.PluginKit;
+import cn.citycraft.PluginHelper.kit.StrKit;
+import pw.yumc.Yum.commands.MonitorCommand;
 
 public class CommandInjector implements TabExecutor {
-
+    private final String prefix = "§6[§bYum §a命令监控§6] ";
     private final CommandExecutor originalExecutor;
     private final TabCompleter originalCompleter;
+
+    private final Plugin plugin;
 
     public long totalTime;
     public int count;
 
-    public CommandInjector(final CommandExecutor originalCommandExecutor, final TabCompleter originalTabCompleter) {
+    public CommandInjector(final CommandExecutor originalCommandExecutor, final TabCompleter originalTabCompleter, final Plugin plugin) {
         this.originalExecutor = originalCommandExecutor;
         this.originalCompleter = originalTabCompleter;
+        this.plugin = plugin;
     }
 
     public static void inject(final Plugin toInjectPlugin) {
@@ -42,7 +48,7 @@ public class CommandInjector implements TabExecutor {
                         return;
                     }
                     final TabCompleter completer = Reflect.on(command).get("completer");
-                    final CommandInjector commandInjector = new CommandInjector(executor, completer);
+                    final CommandInjector commandInjector = new CommandInjector(executor, completer, toInjectPlugin);
                     Reflect.on(command).set("executor", commandInjector);
                     Reflect.on(command).set("completer", commandInjector);
                 }
@@ -83,13 +89,38 @@ public class CommandInjector implements TabExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        final long start = System.nanoTime();
-        // TODO 当操作大于10ms的时候添加一个Lag提示
-        final boolean result = originalExecutor.onCommand(sender, command, label, args);
-        final long end = System.nanoTime();
-        totalTime += end - start;
-        count++;
-        return result;
+        try {
+            final long start = System.nanoTime();
+            // TODO 当操作大于10ms的时候添加一个Lag提示
+            final boolean result = originalExecutor.onCommand(sender, command, label, args);
+            final long end = System.nanoTime();
+            final long lag = end - start;
+            if (Bukkit.isPrimaryThread() && lag / 1000000 > 10) {
+                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6执行 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
+            }
+            totalTime += lag;
+            count++;
+            return result;
+        } catch (Throwable e) {
+            while (e.getCause() != null) {
+                e = e.getCause();
+            }
+            MonitorCommand.lastError = e;
+            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + label + " §6命令时发生异常!");
+            PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
+            PluginKit.sc("§6异常说明: §3" + e.getMessage());
+            PluginKit.sc("§6简易错误信息如下:");
+            final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
+            for (int i = 0; i < l; i++) {
+                final StackTraceElement ste = e.getStackTrace()[i];
+                PluginKit.sc("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
+            }
+            if (MonitorCommand.debug) {
+                PluginKit.sc("§c开发人员调试信息如下:");
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
     @Override
