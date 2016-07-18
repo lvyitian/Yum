@@ -37,7 +37,6 @@ public class PluginNetworkListener implements Listener {
         if (urlinfo.startsWith("socket")) {
             return;
         }
-        NetCommand.addNetCount(plugin.getName());
         if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost())) {
             return;
         }
@@ -47,6 +46,7 @@ public class PluginNetworkListener implements Listener {
             return;
         }
         if (plugin != null) {
+            NetCommand.addNetCount(plugin.getName());
             if (ConfigManager.i().getNetworkBlackList().contains(plugin.getName())) {
                 breakNetwork(e);
                 return;

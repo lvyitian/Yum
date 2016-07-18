@@ -20,10 +20,14 @@ import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
+import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
+import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.Yum.models.BukkitDev;
+import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
 
 /**
@@ -33,6 +37,10 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
  * @author 喵♂呜
  */
 public class YumCommand implements HandlerCommands, Listener {
+    private final String prefix = "§6[§bYum §a插件管理§6] ";
+    private final String not_found_from_bukkit = prefix + "§c未在BukkitDev搜索到 %s 的相关插件!";
+    private final String bukkitlistprefix = "  §6插件名称    §d发布类型";
+    private final String bukkitlist = "§6- §b&s    §d%s";
     Yum main;
 
     public YumCommand(final Yum yum) {
@@ -260,6 +268,21 @@ public class YumCommand implements HandlerCommands, Listener {
                 }
             }
         });
+    }
+
+    @HandlerCommand(name = "search", aliases = "s", minimumArguments = 1, description = "从BukkitDev搜索插件", possibleArguments = "插件名称")
+    public void search(final InvokeCommandEvent e) {
+        final String pname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        final BukkitDev bd = JsonHandle.fromJson(IOUtil.getData(String.format(BukkitDev.SEARCH, pname)), BukkitDev.class);
+        if (bd.projects.isEmpty()) {
+            sender.sendMessage(String.format(not_found_from_bukkit, pname));
+            return;
+        }
+        sender.sendMessage(bukkitlistprefix);
+        for (final Projects p : bd.projects) {
+            sender.sendMessage(String.format(bukkitlist, p.name, p.stage));
+        }
     }
 
     /**
