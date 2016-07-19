@@ -96,7 +96,7 @@ public class CommandInjector implements TabExecutor {
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > 10) {
-                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6执行 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
+                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
             }
             totalTime += lag;
             count++;
@@ -106,7 +106,7 @@ public class CommandInjector implements TabExecutor {
                 e = e.getCause();
             }
             MonitorCommand.lastError = e;
-            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + label + " §6命令时发生异常!");
+            PluginKit.sc(prefix + "§6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令时发生异常!");
             PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
             PluginKit.sc("§6异常说明: §3" + e.getMessage());
             PluginKit.sc("§6简易错误信息如下:");

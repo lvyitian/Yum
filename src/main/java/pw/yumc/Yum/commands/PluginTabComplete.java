@@ -23,13 +23,15 @@ public class PluginTabComplete implements HandlerCommands {
         final String[] args = e.getArgs();
         if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
             return StrKit.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
-        } else if (args[0].equalsIgnoreCase("repo")) {
+        } else if (args[0].equalsIgnoreCase("repo") || args[0].equalsIgnoreCase("r")) {
             if (args.length == 2) {
                 return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "add", "all", "list", "delall", "clean", "update", "del" }), new ArrayList<String>());
             }
             if (args.length == 3 && (args[1] == "add" || args[1] == "del")) {
                 return StrKit.copyPartialMatches(args[2], YumAPI.getRepo().getRepos().keySet(), new ArrayList<String>());
             }
+        } else if (args[0].equalsIgnoreCase("bukkitrepo") || args[0].equalsIgnoreCase("br")) {
+            return StrKit.copyPartialMatches(args[1], Arrays.asList(new String[] { "look", "install" }), new ArrayList<String>());
         } else {
             return StrKit.copyPartialMatches(args[1], YumAPI.getPlugman().getPluginNames(false), new ArrayList<String>());
         }
