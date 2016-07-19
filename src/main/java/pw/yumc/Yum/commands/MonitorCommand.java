@@ -56,8 +56,8 @@ public class MonitorCommand implements HandlerCommands {
     private final String uninjected = prefix + "§a插件 §b%s §a成功撤销能耗监控器!";
     private final String notEnable = prefix + "§c插件 §b%s §c未成功加载 无法执行注入!";
 
-    private final String lagprefix = "§6插件名称        §c主线程耗时  §a命令耗时  §b事件耗时  §d任务耗时";
-    private final String laglist = "§b%-15s §c%-11.2f §a%-9.2f §b%-9.2f §d%-9.2f";
+    private final String lagprefix = "   §6插件名称        §c主线程耗时  §a命令耗时  §b事件耗时  §d任务耗时";
+    private final String laglist = "§6%-2s §b%-15s §c%-11.2f §a%-9.2f §b%-9.2f §d%-9.2f";
 
     private final String no_error = prefix + "§a自服务器启动以来尚未发现报错!";
     private final String last_error = prefix + "§c最后一次错误异常由 §b%s §c造成 详细如下:";
@@ -179,13 +179,14 @@ public class MonitorCommand implements HandlerCommands {
         final CommandSender sender = e.getSender();
         final Map<String, Long> mm = MonitorManager.getMonitor();
         int i = 0;
+        final int max = e.getArgs().length > 0 ? Integer.parseInt(e.getArgs()[0]) : 8;
         sender.sendMessage(lagprefix);
         for (final Entry<String, Long> entry : mm.entrySet()) {
-            if (i++ > 5) {
+            if (++i > max) {
                 break;
             }
             final MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
-            sender.sendMessage(String.format(laglist, entry.getKey(), mi.monitor, mi.cmd, mi.event, mi.task));
+            sender.sendMessage(String.format(laglist, i, entry.getKey(), mi.monitor, mi.cmd, mi.event, mi.task));
         }
     }
 

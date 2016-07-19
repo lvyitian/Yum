@@ -33,7 +33,6 @@ import pw.yumc.Yum.runnables.MainThreadCheckTask;
  * @since 2015年8月21日下午5:14:39
  */
 public class Yum extends JavaPlugin {
-    public static boolean disable = false;;
     public static Thread mainThread = null;
     public static Timer task = new Timer();
     public static TimerTask tt;
@@ -46,7 +45,6 @@ public class Yum extends JavaPlugin {
     @Override
     public void onDisable() {
         NetworkManager.unregister();
-        disable = true;
     }
 
     @Override
@@ -61,10 +59,6 @@ public class Yum extends JavaPlugin {
         new VersionChecker(this);
         YumAPI.updateRepo(Bukkit.getConsoleSender());
         YumAPI.updateCheck(Bukkit.getConsoleSender());
-        if (disable) {
-            YumAPI.updateInject();
-            disable = false;
-        }
     }
 
     @Override
