@@ -60,6 +60,7 @@
 	<properties>
 		<update.description>&amp;a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
+			&amp;c注意  &amp;6- &amp;cYum更新需要重启服务器!重启服务器!重启服务器!;
 			&amp;b2.6.5 &amp;6- &amp;c修复list命令 &amp;a添加全局能耗统计...;
 			&amp;b2.6.4 &amp;6- &amp;e添加从&amp;bBukkitDev&amp;e下载和更新...;
 			&amp;b2.6.3 &amp;6- &amp;a注入操作延时执行 防止部分任务未注册 添加手动注入...;
