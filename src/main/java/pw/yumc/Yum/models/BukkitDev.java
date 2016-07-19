@@ -1,16 +1,19 @@
 package pw.yumc.Yum.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class BukkitDev implements Serializable {
-    public volatile static String HOST = "https://api.curseforge.com";
-    public volatile static String MODULE = "/servermods";
-    public volatile static String SEARCH = HOST + MODULE + "/projects?search=%s";
-    public volatile static String PLUGIN = HOST + MODULE + "/files?projectIds=%s";
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-    public List<Projects> projects;
-    public List<Files> files;
+public class BukkitDev implements Serializable {
+    public static String HOST = "https://api.curseforge.com";
+    public static String MODULE = "/servermods";
+    public static String SEARCH = HOST + MODULE + "/projects?search=%s";
+    public static String PLUGIN = HOST + MODULE + "/files?projectIds=%s";
 
     public static class Files {
         public int projectId;
@@ -21,6 +24,27 @@ public class BukkitDev implements Serializable {
         public String gameVersion;
         public String md5;
         public String releaseType;
+
+        public Files(final JSONObject obj) {
+            projectId = Integer.parseInt(obj.get("projectId").toString());
+            name = obj.get("name").toString();
+            fileUrl = obj.get("fileUrl").toString();
+            fileName = obj.get("fileName").toString();
+            downloadUrl = obj.get("downloadUrl").toString();
+            gameVersion = obj.get("gameVersion").toString();
+            md5 = obj.get("md5").toString();
+            releaseType = obj.get("releaseType").toString();
+        }
+
+        public static List<Files> parseList(final String json) {
+            final List<Files> temp = new ArrayList<>();
+            final JSONArray ja = (JSONArray) JSONValue.parse(json);
+            for (int i = 0; i < ja.size(); i++) {
+                temp.add(new Files((JSONObject) ja.get(i)));
+            }
+            Collections.reverse(temp);
+            return temp;
+        }
     }
 
     public static class Projects {
@@ -28,5 +52,21 @@ public class BukkitDev implements Serializable {
         public String name;
         public String slug;
         public String stage;
+
+        public Projects(final JSONObject obj) {
+            id = Integer.parseInt(obj.get("id").toString());
+            name = obj.get("name").toString();
+            slug = obj.get("slug").toString();
+            stage = obj.get("stage").toString();
+        }
+
+        public static List<Projects> parseList(final String json) {
+            final List<Projects> temp = new ArrayList<>();
+            final JSONArray ja = (JSONArray) JSONValue.parse(json);
+            for (int i = 0; i < ja.size(); i++) {
+                temp.add(new Projects((JSONObject) ja.get(i)));
+            }
+            return temp;
+        }
     }
 }

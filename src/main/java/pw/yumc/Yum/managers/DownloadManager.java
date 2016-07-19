@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import cn.citycraft.PluginHelper.callback.CallBack.One;
+
 /**
  * 下载管理类
  *
@@ -58,7 +60,7 @@ public class DownloadManager {
      * @return 是否成功
      */
     public boolean run(final CommandSender sender, final String urlstring) {
-        return run(sender, urlstring, new File("plugins", getFileName(urlstring)));
+        return run(sender, urlstring, new File("plugins", getFileName(urlstring)), null);
     }
 
     /**
@@ -88,13 +90,54 @@ public class DownloadManager {
      *
      * @param sender
      *            - 命令发送者
+     * @param urlstring
+     *            - 下载地址
+     * @param file
+     *            - 保存文件
+     * @param callback
+     *            -回调函数
+     * @return 是否成功
+     */
+    public boolean run(final CommandSender sender, final String urlstring, final File file, final One<File> callback) {
+        try {
+            final URL url = new URL(urlstring);
+            return run(sender, url, file, callback);
+        } catch (final MalformedURLException e) {
+            sender.sendMessage("§4错误: §c无法识别的URL地址...");
+            sender.sendMessage("§4地址: §c" + urlstring);
+            return false;
+        }
+    }
+
+    /**
+     * 从网络下载文件
+     *
+     * @param sender
+     *            - 命令发送者
      * @param url
      *            - 下载地址
      * @param file
      *            - 保存文件
      * @return 是否成功
      */
-    public boolean run(CommandSender sender, final URL url, final File file) {
+    public boolean run(final CommandSender sender, final URL url, final File file) {
+        return run(sender, url, file, null);
+    }
+
+    /**
+     * 从网络下载文件
+     *
+     * @param sender
+     *            - 命令发送者
+     * @param url
+     *            - 下载地址
+     * @param file
+     *            - 保存文件
+     * @param callback
+     *            -回调函数
+     * @return 是否成功
+     */
+    public boolean run(CommandSender sender, final URL url, final File file, final One<File> callback) {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         if (sender == null) {
@@ -144,7 +187,6 @@ public class DownloadManager {
                 pVer = "";
             }
             sender.sendMessage("§6" + (pVer.isEmpty() ? "文件" : "插件") + ": §b" + file.getName() + (pVer.isEmpty() ? "" : " §a版本 §e" + pVer) + " §a下载完成!");
-            return true;
         } catch (final Exception ex) {
             sender.sendMessage("§6异常: §c" + ex.getMessage());
             sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
@@ -160,6 +202,10 @@ public class DownloadManager {
             } catch (final Exception ex) {
             }
         }
+        if (callback != null) {
+            callback.run(file);
+        }
+        return true;
     }
 
     /**
@@ -183,7 +229,7 @@ public class DownloadManager {
      * @return 是否成功
      */
     public boolean run(final String urlstring, final File file) {
-        return run(null, urlstring, file);
+        return run(null, urlstring, file, null);
     }
 
     /**
@@ -196,7 +242,7 @@ public class DownloadManager {
      * @return 是否成功
      */
     public boolean run(final URL url, final File file) {
-        return run(null, url, file);
+        return run(null, url, file, null);
     }
 
     private String getPer(final int per) {

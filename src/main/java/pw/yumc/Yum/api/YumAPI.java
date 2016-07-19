@@ -417,6 +417,18 @@ public class YumAPI {
     }
 
     /**
+     * 更新或安装插件
+     *
+     * @param sender
+     *            命令发送者
+     */
+    public static void upgrade(final CommandSender sender) {
+        plugman.upgrade(sender);
+    }
+
+    /**
+     * 更新或安装指定插件
+     *
      * @param sender
      *            命令发送者
      * @param plugin

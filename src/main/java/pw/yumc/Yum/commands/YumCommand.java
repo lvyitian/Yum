@@ -1,5 +1,7 @@
 package pw.yumc.Yum.commands;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -16,17 +18,21 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import cn.citycraft.PluginHelper.callback.CallBack.One;
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import cn.citycraft.PluginHelper.commands.HandlerCommands;
 import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
-import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
+import cn.citycraft.PluginHelper.kit.PluginKit;
+import cn.citycraft.PluginHelper.kit.ZipKit;
+import cn.citycraft.PluginHelper.tellraw.FancyMessage;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.models.BukkitDev;
+import pw.yumc.Yum.models.BukkitDev.Files;
 import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
 
@@ -39,8 +45,27 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
 public class YumCommand implements HandlerCommands, Listener {
     private final String prefix = "§6[§bYum §a插件管理§6] ";
     private final String not_found_from_bukkit = prefix + "§c未在BukkitDev搜索到 %s 的相关插件!";
-    private final String bukkitlistprefix = "  §6插件名称    §d发布类型";
-    private final String bukkitlist = "§6- §b&s    §d%s";
+    private final String not_found_id_from_bukkit = prefix + "§c未在BukkitDev搜索到ID为 %s 的相关插件!";
+
+    private final String searchlimit = prefix + "§c为保证搜索速度和准确性 关键词必须大于 3 个字符!";
+    private final String searching = prefix + "§a正在从BukkitDev获取 §b%s §a的相关数据...";
+    private final String result = prefix + "§6关键词 §b%s §6的搜索结果如下:";
+    private final String bukkitlistprefix = " §6插件ID  §3插件名称                  §d发布类型   §a操作";
+    private final String bukkitlist = "§6- §e%-6s §b%-25s §d%-10s";
+
+    private final String fsearching = prefix + "§a正在从BukkitDev获取ID §b%s §a的文件列表...";
+    private final String filelistprefix = "  §6插件名称             §3游戏版本      §d发布类型   §a操作";
+    private final String filelist = "§6- §b%-20s §3%-15s §d%-10s";
+
+    private final String look = "§6查看";
+    private final String install = "§a安装";
+    private final String update = "§a更新";
+    private final String unload = "§d卸载";
+    private final String reload = "§6重载";
+    private final String delete = "§c删除";
+
+    private final String unzip_error = prefix + "ZIP文件解压错误!";
+
     Yum main;
 
     public YumCommand(final Yum yum) {
@@ -50,6 +75,58 @@ public class YumCommand implements HandlerCommands, Listener {
         cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyCommandConsole", false));
         cmdhandler.registerCommands(this);
         cmdhandler.registerCommands(PluginTabComplete.instence);
+    }
+
+    @HandlerCommand(name = "bukkitrepo", aliases = "br", minimumArguments = 2, description = "从BukkitDev查看安装插件", possibleArguments = "<操作符> <项目ID|项目名称> [地址]")
+    public void bukkitrepo(final InvokeCommandEvent e) {
+        final String[] args = e.getArgs();
+        final CommandSender sender = e.getSender();
+        PluginKit.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                final String id = args[1];
+                switch (args[0]) {
+                case "look":
+                    sender.sendMessage(String.format(fsearching, id));
+                    final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));
+                    if (lf.isEmpty()) {
+                        sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                    }
+                    sender.sendMessage(filelistprefix);
+                    for (int i = 0; i < lf.size() || i < 8; i++) {
+                        final Files f = lf.get(i);
+                        final FancyMessage fm = FancyMessage.newFM();
+                        fm.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
+                        fm.then(" ");
+                        fm.then(install).command(String.format("yum br install %s %s", f.name, f.downloadUrl));
+                        fm.send(sender);
+                    }
+                    break;
+                case "install":
+                    if (args.length < 3) {
+                        return;
+                    }
+                    final String url = args[2];
+                    final File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
+                    YumAPI.getDownload().run(e.getSender(), url, file, new One<File>() {
+                        @Override
+                        public void run(final File file) {
+                            if (file.getName().endsWith(".zip")) {
+                                try {
+                                    ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
+                                } catch (final IOException e) {
+                                    sender.sendMessage(unzip_error);
+                                }
+                            }
+                            YumAPI.upgrade(sender);
+                        }
+                    });
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
     }
 
     @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除插件", possibleArguments = "<插件名称>")
@@ -167,7 +244,16 @@ public class YumCommand implements HandlerCommands, Listener {
         final CommandSender sender = e.getSender();
         sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            sender.sendMessage("§6- " + YumAPI.getPlugman().getFormattedName(plugin, true));
+            final String pname = plugin.getName();
+            final FancyMessage fm = FancyMessage.newFM();
+            fm.text(String.format("§6- %-25s", YumAPI.getPlugman().getFormattedName(plugin, true)));
+            fm.then(" ");
+            fm.then(update).command("yum u " + pname);
+            fm.then(" ");
+            fm.then(unload).command("yum unload " + pname);
+            fm.then(" ");
+            fm.then(reload).command("yum re " + pname);
+            fm.then(delete).command("yum del " + pname);
         }
     }
 
@@ -272,17 +358,32 @@ public class YumCommand implements HandlerCommands, Listener {
 
     @HandlerCommand(name = "search", aliases = "s", minimumArguments = 1, description = "从BukkitDev搜索插件", possibleArguments = "插件名称")
     public void search(final InvokeCommandEvent e) {
-        final String pname = e.getArgs()[0];
-        final CommandSender sender = e.getSender();
-        final BukkitDev bd = JsonHandle.fromJson(IOUtil.getData(String.format(BukkitDev.SEARCH, pname)), BukkitDev.class);
-        if (bd.projects.isEmpty()) {
-            sender.sendMessage(String.format(not_found_from_bukkit, pname));
-            return;
-        }
-        sender.sendMessage(bukkitlistprefix);
-        for (final Projects p : bd.projects) {
-            sender.sendMessage(String.format(bukkitlist, p.name, p.stage));
-        }
+        PluginKit.runTaskAsync(new Runnable() {
+            @Override
+            public void run() {
+                final String pname = e.getArgs()[0];
+                final CommandSender sender = e.getSender();
+                if (pname.length() < 3) {
+                    sender.sendMessage(searchlimit);
+                    return;
+                }
+                sender.sendMessage(String.format(searching, pname));
+                final List<Projects> list = Projects.parseList(IOUtil.getData(String.format(BukkitDev.SEARCH, pname.toLowerCase())));
+                if (list.isEmpty()) {
+                    sender.sendMessage(String.format(not_found_from_bukkit, pname));
+                    return;
+                }
+                sender.sendMessage(String.format(result, pname));
+                sender.sendMessage(bukkitlistprefix);
+                for (final Projects p : list) {
+                    final FancyMessage fm = FancyMessage.newFM();
+                    fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
+                    fm.then(" ");
+                    fm.then(look).command("yum br look " + p.id);
+                    fm.send(sender);
+                }
+            }
+        });
     }
 
     /**
