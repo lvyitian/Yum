@@ -41,9 +41,9 @@ public class ListenerInjector implements EventExecutor {
             if (listener instanceof TimedRegisteredListener) {
                 return;
             }
-            EventExecutor originalExecutor = Reflect.on(listener).get("executor");
+            final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
             if (originalExecutor instanceof ListenerInjector) {
-                originalExecutor = ((ListenerInjector) originalExecutor).getOriginalExecutor();
+                return;
             }
             final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
             Reflect.on(listener).set("executor", listenerInjector);

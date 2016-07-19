@@ -39,9 +39,9 @@ public class TaskInjector implements Runnable {
         for (final BukkitTask pendingTask : pendingTasks) {
             // 忽略异步任务
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
-                Runnable originalTask = Reflect.on(pendingTask).get("task");
+                final Runnable originalTask = Reflect.on(pendingTask).get("task");
                 if (originalTask instanceof TaskInjector) {
-                    originalTask = ((TaskInjector) originalTask).getOriginalTask();
+                    return;
                 }
                 final TaskInjector taskInjector = new TaskInjector(originalTask, plugin);
                 Reflect.on(pendingTask).set("task", taskInjector);

@@ -98,7 +98,7 @@ public class YumCommand implements HandlerCommands, Listener {
                         final FancyMessage fm = FancyMessage.newFM();
                         fm.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
                         fm.then(" ");
-                        fm.then(install).command(String.format("yum br install %s %s", f.name, f.downloadUrl));
+                        fm.then(install).command(String.format("/yum br install %s %s", f.name, f.downloadUrl));
                         fm.send(sender);
                     }
                     break;
@@ -246,15 +246,15 @@ public class YumCommand implements HandlerCommands, Listener {
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             final String pname = plugin.getName();
             final FancyMessage fm = FancyMessage.newFM();
-            fm.text(String.format("§6- %-25s", YumAPI.getPlugman().getFormattedName(plugin, true)));
+            fm.text(String.format("§6- %-32s", YumAPI.getPlugman().getFormattedName(plugin, true)));
             fm.then(" ");
-            fm.then(update).command("yum u " + pname);
+            fm.then(update).command("/yum u " + pname);
             fm.then(" ");
-            fm.then(unload).command("yum unload " + pname);
+            fm.then(unload).command("/yum unload " + pname);
             fm.then(" ");
-            fm.then(reload).command("yum re " + pname);
+            fm.then(reload).command("/yum re " + pname);
             fm.then(" ");
-            fm.then(delete).command("yum del " + pname);
+            fm.then(delete).command("/yum del " + pname);
             fm.send(sender);
         }
     }
@@ -381,7 +381,7 @@ public class YumCommand implements HandlerCommands, Listener {
                     final FancyMessage fm = FancyMessage.newFM();
                     fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
                     fm.then(" ");
-                    fm.then(look).command("yum br look " + p.id);
+                    fm.then(look).command("/yum br look " + p.id);
                     fm.send(sender);
                 }
             }

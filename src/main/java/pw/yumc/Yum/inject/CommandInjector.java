@@ -44,13 +44,11 @@ public class CommandInjector implements TabExecutor {
                 final PluginCommand pluginCommand = (PluginCommand) command;
                 final Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toInjectPlugin)) {
-                    CommandExecutor executor = Reflect.on(command).get("executor");
-                    TabCompleter completer = Reflect.on(command).get("completer");;
+                    final CommandExecutor executor = Reflect.on(command).get("executor");
                     if (executor instanceof CommandInjector) {
-                        final CommandInjector cInjector = (CommandInjector) executor;
-                        executor = cInjector.getOriginalExecutor();
-                        completer = cInjector.getOriginalCompleter();
+                        return;
                     }
+                    final TabCompleter completer = Reflect.on(command).get("completer");
                     final CommandInjector commandInjector = new CommandInjector(executor, completer, toInjectPlugin);
                     Reflect.on(command).set("executor", commandInjector);
                     Reflect.on(command).set("completer", commandInjector);
@@ -99,7 +97,8 @@ public class CommandInjector implements TabExecutor {
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > 10) {
-                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
+                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000
+                        + "ms!");
             }
             totalTime += lag;
             count++;
