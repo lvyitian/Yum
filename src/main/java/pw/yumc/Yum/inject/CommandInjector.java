@@ -18,6 +18,7 @@ import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.commands.MonitorCommand;
+import pw.yumc.Yum.managers.MonitorManager;
 
 public class CommandInjector implements TabExecutor {
     private final String prefix = "§6[§bYum §a命令监控§6] ";
@@ -43,11 +44,13 @@ public class CommandInjector implements TabExecutor {
                 final PluginCommand pluginCommand = (PluginCommand) command;
                 final Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toInjectPlugin)) {
-                    final CommandExecutor executor = Reflect.on(command).get("executor");
+                    CommandExecutor executor = Reflect.on(command).get("executor");
+                    TabCompleter completer = Reflect.on(command).get("completer");;
                     if (executor instanceof CommandInjector) {
-                        return;
+                        final CommandInjector cInjector = (CommandInjector) executor;
+                        executor = cInjector.getOriginalExecutor();
+                        completer = cInjector.getOriginalCompleter();
                     }
-                    final TabCompleter completer = Reflect.on(command).get("completer");
                     final CommandInjector commandInjector = new CommandInjector(executor, completer, toInjectPlugin);
                     Reflect.on(command).set("executor", commandInjector);
                     Reflect.on(command).set("completer", commandInjector);
@@ -100,6 +103,7 @@ public class CommandInjector implements TabExecutor {
             }
             totalTime += lag;
             count++;
+            MonitorManager.addCmd(plugin.getName(), lag);
             return result;
         } catch (Throwable e) {
             while (e.getCause() != null) {

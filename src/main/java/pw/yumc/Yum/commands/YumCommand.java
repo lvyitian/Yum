@@ -253,7 +253,9 @@ public class YumCommand implements HandlerCommands, Listener {
             fm.then(unload).command("yum unload " + pname);
             fm.then(" ");
             fm.then(reload).command("yum re " + pname);
+            fm.then(" ");
             fm.then(delete).command("yum del " + pname);
+            fm.send(sender);
         }
     }
 

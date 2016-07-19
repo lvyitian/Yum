@@ -9,6 +9,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import cn.citycraft.PluginHelper.kit.PKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.Yum.managers.MonitorManager;
 
 /**
  *
@@ -29,6 +30,7 @@ public class PluginListener implements Listener {
 
     @EventHandler
     public void onPluginEnable(final PluginEnableEvent e) {
+        MonitorManager.reset(e.getPlugin().getName());
         PluginKit.runTaskLater(new Runnable() {
             @Override
             public void run() {

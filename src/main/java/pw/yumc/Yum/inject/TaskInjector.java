@@ -11,6 +11,7 @@ import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.commands.MonitorCommand;
+import pw.yumc.Yum.managers.MonitorManager;
 
 public class TaskInjector implements Runnable {
     private final String prefix = "§6[§bYum §a任务监控§6] ";
@@ -38,9 +39,9 @@ public class TaskInjector implements Runnable {
         for (final BukkitTask pendingTask : pendingTasks) {
             // 忽略异步任务
             if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
-                final Runnable originalTask = Reflect.on(pendingTask).get("task");
+                Runnable originalTask = Reflect.on(pendingTask).get("task");
                 if (originalTask instanceof TaskInjector) {
-                    return;
+                    originalTask = ((TaskInjector) originalTask).getOriginalTask();
                 }
                 final TaskInjector taskInjector = new TaskInjector(originalTask, plugin);
                 Reflect.on(pendingTask).set("task", taskInjector);
@@ -80,6 +81,7 @@ public class TaskInjector implements Runnable {
             }
             totalTime += lag;
             count++;
+            MonitorManager.addTask(plugin.getName(), lag);
         } catch (Throwable e) {
             while (e.getCause() != null) {
                 e = e.getCause();

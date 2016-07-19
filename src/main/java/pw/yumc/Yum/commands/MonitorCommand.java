@@ -32,6 +32,8 @@ import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.Yum.managers.MonitorManager;
+import pw.yumc.Yum.managers.MonitorManager.MonitorInfo;
 
 /**
  *
@@ -49,16 +51,20 @@ public class MonitorCommand implements HandlerCommands {
     private final String avg = "§6平均耗时: §d%.5f毫秒!";
     private final String avg_warn = "§6平均耗时: §c%.5f毫秒!";
 
-    private final String injected = "§a插件 §b%s §a成功注入能耗监控器!";
-    private final String uninjected = "§a插件 §b%s §a成功撤销能耗监控器!";
-    private final String notEnable = "§c插件 §b%s §c未成功加载 无法执行注入!";
+    private final String reinject = prefix + "§a能耗监控器重载完毕!";
+    private final String injected = prefix + "§a插件 §b%s §a成功注入能耗监控器!";
+    private final String uninjected = prefix + "§a插件 §b%s §a成功撤销能耗监控器!";
+    private final String notEnable = prefix + "§c插件 §b%s §c未成功加载 无法执行注入!";
+
+    private final String lagprefix = "§6插件名称        §c主线程耗时  §a命令耗时  §b事件耗时  §d任务耗时";
+    private final String laglist = "§b%-15s §c%-11.2f §a%-9.2f §b%-9.2f §d%-9.2f";
 
     private final String no_error = prefix + "§a自服务器启动以来尚未发现报错!";
     private final String last_error = prefix + "§c最后一次错误异常由 §b%s §c造成 详细如下:";
 
     private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
-    private final double um = 1000000.0;
+    private final double um = 1000000.00;
 
     public MonitorCommand(final Yum yum) {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
@@ -140,7 +146,7 @@ public class MonitorCommand implements HandlerCommands {
         }
         for (final String event : eventTotalTime.keySet()) {
             final StringBuffer str = new StringBuffer();
-            str.append("§6- §e" + event + " ");
+            str.append(String.format("§6- §e%-25s ", event));
             str.append(String.format(total, eventTotalTime.get(event) / um));
             str.append(String.format(count, eventCount.get(event)));
             if (eventCount.get(event) != 0) {
@@ -162,9 +168,24 @@ public class MonitorCommand implements HandlerCommands {
         }
         if (plugin.isEnabled()) {
             YumAPI.inject(plugin);
-            sender.sendMessage(String.format(prefix + injected, pname));
+            sender.sendMessage(String.format(injected, pname));
         } else {
-            sender.sendMessage(String.format(prefix + notEnable, pname));
+            sender.sendMessage(String.format(notEnable, pname));
+        }
+    }
+
+    @HandlerCommand(name = "lag", aliases = "l", description = "查看插件总耗时")
+    public void lag(final InvokeCommandEvent e) {
+        final CommandSender sender = e.getSender();
+        final Map<String, Long> mm = MonitorManager.getMonitor();
+        int i = 0;
+        sender.sendMessage(lagprefix);
+        for (final Entry<String, Long> entry : mm.entrySet()) {
+            if (i++ > 5) {
+                break;
+            }
+            final MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
+            sender.sendMessage(String.format(laglist, entry.getKey(), mi.monitor, mi.cmd, mi.event, mi.task));
         }
     }
 
@@ -180,6 +201,13 @@ public class MonitorCommand implements HandlerCommands {
             sender.sendMessage(String.format(last_error, plugin.getName()));
             lastError.printStackTrace();
         }
+    }
+
+    @HandlerCommand(name = "reinject", aliases = "i", description = "重载能耗监控器")
+    public void reinject(final InvokeCommandEvent e) {
+        final CommandSender sender = e.getSender();
+        YumAPI.updateInject();
+        sender.sendMessage(reinject);
     }
 
     @HandlerCommand(name = "task", description = "查看插件任务能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
@@ -199,8 +227,7 @@ public class MonitorCommand implements HandlerCommands {
                 if (task instanceof TaskInjector) {
                     final TaskInjector executor = (TaskInjector) task;
                     final StringBuffer str = new StringBuffer();
-                    final Class<? extends Runnable> taskName = executor.getOriginalTask().getClass();
-                    str.append("§6- §e" + (StrKit.isBlank(taskName.getSimpleName()) ? taskName.getName() : taskName.getSimpleName()) + " ");
+                    str.append("§6- §e" + getClassName(executor.getOriginalTask().getClass()) + " ");
                     str.append(String.format(total, executor.totalTime / um));
                     str.append(String.format(count, executor.count));
                     if (executor.count != 0) {
@@ -223,7 +250,11 @@ public class MonitorCommand implements HandlerCommands {
         }
         if (plugin.isEnabled()) {
             YumAPI.uninject(plugin);
-            sender.sendMessage(String.format(prefix + uninjected, pname));
+            sender.sendMessage(String.format(uninjected, pname));
         }
+    }
+
+    private String getClassName(final Class<?> clazz) {
+        return StrKit.isBlank(clazz.getSimpleName()) ? clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1) : clazz.getSimpleName();
     }
 }

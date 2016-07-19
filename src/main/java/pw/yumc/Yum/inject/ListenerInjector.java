@@ -17,6 +17,7 @@ import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.Yum.managers.MonitorManager;
 
 public class ListenerInjector implements EventExecutor {
     private final String prefix = "§6[§bYum §a事件监控§6] ";
@@ -40,9 +41,9 @@ public class ListenerInjector implements EventExecutor {
             if (listener instanceof TimedRegisteredListener) {
                 return;
             }
-            final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
+            EventExecutor originalExecutor = Reflect.on(listener).get("executor");
             if (originalExecutor instanceof ListenerInjector) {
-                return;
+                originalExecutor = ((ListenerInjector) originalExecutor).getOriginalExecutor();
             }
             final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
             Reflect.on(listener).set("executor", listenerInjector);
@@ -82,6 +83,7 @@ public class ListenerInjector implements EventExecutor {
                     eventTotalTime.put(en, end - start);
                     eventCount.put(en, 1);
                 }
+                MonitorManager.addEvent(plugin.getName(), lag);
             } else {
                 originalExecutor.execute(listener, event);
             }
