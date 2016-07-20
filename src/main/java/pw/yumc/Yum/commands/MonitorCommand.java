@@ -1,5 +1,6 @@
 package pw.yumc.Yum.commands;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
-import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.MonitorManager.MonitorInfo;
 
@@ -41,7 +41,6 @@ import pw.yumc.Yum.managers.MonitorManager.MonitorInfo;
  * @author 喵♂呜
  */
 public class MonitorCommand implements HandlerCommands {
-    public static boolean debug = false;
     public static Throwable lastError = null;
 
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
@@ -70,7 +69,6 @@ public class MonitorCommand implements HandlerCommands {
         final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
         cmdhandler.registerCommands(this);
         cmdhandler.registerCommands(PluginTabComplete.instence);
-        debug = ConfigManager.i().isMonitorDebug();
     }
 
     @HandlerCommand(name = "cmd", aliases = "c", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
@@ -111,7 +109,7 @@ public class MonitorCommand implements HandlerCommands {
     }
 
     @HandlerCommand(name = "event", aliases = "e", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException {
+    public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
@@ -130,7 +128,12 @@ public class MonitorCommand implements HandlerCommands {
                 eventCount.put(trl.getEventClass().getSimpleName(), trl.getCount());
                 continue;
             }
-            final EventExecutor executor = Reflect.on(listener).get("executor");
+            EventExecutor executor = Reflect.on(listener).get("executor");
+            if (listener.getClass().getName().contains("PWPRegisteredListener")) {
+                final Field f = Reflect.on(listener).getDeclaredField(RegisteredListener.class, "executor");
+                f.setAccessible(true);
+                executor = (EventExecutor) f.get(listener);
+            }
             if (executor instanceof ListenerInjector) {
                 final ListenerInjector injected = (ListenerInjector) executor;
                 for (final String entry : injected.eventTotalTime.keySet()) {

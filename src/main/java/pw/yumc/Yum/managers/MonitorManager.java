@@ -10,12 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.citycraft.PluginHelper.kit.PluginKit;
+
 /**
  *
  * @since 2016年7月19日 下午3:55:54
  * @author 喵♂呜
  */
 public class MonitorManager {
+    public static int lagTime = 20;
+    public static boolean debug = ConfigManager.i().isMonitorDebug();
+
     private static Map<String, Long> monitor = new HashMap<>();
     private static Map<String, Long> task = new HashMap<>();
     private static Map<String, Long> event = new HashMap<>();
@@ -44,6 +49,21 @@ public class MonitorManager {
 
     public static MonitorInfo getMonitorInfo(final String pname) {
         return new MonitorInfo(monitor.get(pname) / um, cmd.get(pname) / um, event.get(pname) / um, task.get(pname) / um);
+    }
+
+    public static void print(final Throwable e) {
+        PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
+        PluginKit.sc("§6异常说明: §3" + e.getMessage());
+        PluginKit.sc("§6简易错误信息如下:");
+        final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
+        for (int i = 0; i < l; i++) {
+            final StackTraceElement ste = e.getStackTrace()[i];
+            PluginKit.sc("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
+        }
+        if (debug) {
+            PluginKit.sc("§c开发人员调试信息如下:");
+            e.printStackTrace();
+        }
     }
 
     public static void reset(final String pname) {
