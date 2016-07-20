@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
@@ -20,7 +21,9 @@ import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
 
 public class ListenerInjector implements EventExecutor {
-    private final String prefix = "§6[§bYum §a事件监控§6] ";
+    private final static String prefix = "§6[§bYum §a事件监控§6] ";
+    private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
+    private final static String plugin_is_null = "插件不得为NULL!";
     private final EventExecutor originalExecutor;
 
     private final Plugin plugin;
@@ -36,30 +39,39 @@ public class ListenerInjector implements EventExecutor {
     }
 
     public static void inject(final Plugin plugin) {
-        final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
-        for (final RegisteredListener listener : listeners) {
-            if (listener instanceof TimedRegisteredListener) {
-                return;
+        Validate.notNull(plugin, plugin_is_null);
+        try {
+            final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
+            for (final RegisteredListener listener : listeners) {
+                if (listener instanceof TimedRegisteredListener) {
+                    return;
+                }
+                final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
+                if (originalExecutor instanceof ListenerInjector) {
+                    return;
+                }
+                final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
+                Reflect.on(listener).set("executor", listenerInjector);
             }
-            final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
-            if (originalExecutor instanceof ListenerInjector) {
-                return;
-            }
-            final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
-            Reflect.on(listener).set("executor", listenerInjector);
+        } catch (final Throwable e) {
+            PluginKit.sc(String.format(inject_error, plugin.getName()));
         }
     }
 
     public static void uninject(final Plugin plugin) {
-        final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
-        for (final RegisteredListener listener : listeners) {
-            if (listener instanceof TimedRegisteredListener) {
-                return;
+        Validate.notNull(plugin, plugin_is_null);
+        try {
+            final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
+            for (final RegisteredListener listener : listeners) {
+                if (listener instanceof TimedRegisteredListener) {
+                    return;
+                }
+                final EventExecutor executor = Reflect.on(listener).get("executor");
+                if (executor instanceof ListenerInjector) {
+                    Reflect.on(listener).set("executor", ((ListenerInjector) executor).getOriginalExecutor());
+                }
             }
-            final EventExecutor executor = Reflect.on(listener).get("executor");
-            if (executor instanceof ListenerInjector) {
-                Reflect.on(listener).set("executor", ((ListenerInjector) executor).getOriginalExecutor());
-            }
+        } catch (final Throwable e) {
         }
     }
 

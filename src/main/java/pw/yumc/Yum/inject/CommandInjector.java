@@ -3,6 +3,7 @@ package pw.yumc.Yum.inject;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +22,9 @@ import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.MonitorManager;
 
 public class CommandInjector implements TabExecutor {
-    private final String prefix = "§6[§bYum §a命令监控§6] ";
+    private final static String prefix = "§6[§bYum §a命令监控§6] ";
+    private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
+    private final static String plugin_is_null = "插件不得为NULL!";
     private final CommandExecutor originalExecutor;
     private final TabCompleter originalCompleter;
 
@@ -36,47 +39,56 @@ public class CommandInjector implements TabExecutor {
         this.plugin = plugin;
     }
 
-    public static void inject(final Plugin toInjectPlugin) {
-        final PluginManager pluginManager = Bukkit.getPluginManager();
-        final SimpleCommandMap commandMap = Reflect.on(pluginManager).get("commandMap");
-        for (final Command command : commandMap.getCommands()) {
-            if (command instanceof PluginCommand) {
-                final PluginCommand pluginCommand = (PluginCommand) command;
-                final Plugin plugin = pluginCommand.getPlugin();
-                if (plugin.equals(toInjectPlugin)) {
-                    final CommandExecutor executor = Reflect.on(command).get("executor");
-                    if (executor instanceof CommandInjector) {
-                        return;
+    public static void inject(final Plugin plugin) {
+        Validate.notNull(plugin, plugin_is_null);
+        try {
+            final PluginManager pluginManager = Bukkit.getPluginManager();
+            final SimpleCommandMap commandMap = Reflect.on(pluginManager).get("commandMap");
+            for (final Command command : commandMap.getCommands()) {
+                if (command instanceof PluginCommand) {
+                    final PluginCommand pluginCommand = (PluginCommand) command;
+                    final Plugin cp = pluginCommand.getPlugin();
+                    if (cp.equals(plugin)) {
+                        final CommandExecutor executor = Reflect.on(command).get("executor");
+                        if (executor instanceof CommandInjector) {
+                            return;
+                        }
+                        final TabCompleter completer = Reflect.on(command).get("completer");
+                        final CommandInjector commandInjector = new CommandInjector(executor, completer, plugin);
+                        Reflect.on(command).set("executor", commandInjector);
+                        Reflect.on(command).set("completer", commandInjector);
                     }
-                    final TabCompleter completer = Reflect.on(command).get("completer");
-                    final CommandInjector commandInjector = new CommandInjector(executor, completer, toInjectPlugin);
-                    Reflect.on(command).set("executor", commandInjector);
-                    Reflect.on(command).set("completer", commandInjector);
                 }
             }
+        } catch (final Throwable e) {
+            PluginKit.sc(String.format(inject_error, plugin.getName()));
         }
     }
 
-    public static void uninject(final Plugin toUninject) {
-        final PluginManager pluginManager = Bukkit.getPluginManager();
-        final SimpleCommandMap commandMap = Reflect.on(pluginManager).get("commandMap");
-        for (final Command command : commandMap.getCommands()) {
-            if (command instanceof PluginCommand) {
-                final PluginCommand pluginCommand = (PluginCommand) command;
-                final Plugin plugin = pluginCommand.getPlugin();
-                if (plugin.equals(toUninject)) {
-                    final CommandExecutor executor = Reflect.on(command).get("executor");
-                    if (executor instanceof CommandInjector) {
-                        final CommandInjector injected = (CommandInjector) executor;
-                        Reflect.on(command).set("executor", injected.getOriginalExecutor());
-                    }
-                    final TabCompleter completer = Reflect.on(command).get("completer");
-                    if (completer instanceof CommandInjector) {
-                        final CommandInjector injected = (CommandInjector) completer;
-                        Reflect.on(command).set("completer", injected.getOriginalCompleter());
+    public static void uninject(final Plugin plugin) {
+        Validate.notNull(plugin, plugin_is_null);
+        try {
+            final PluginManager pluginManager = Bukkit.getPluginManager();
+            final SimpleCommandMap commandMap = Reflect.on(pluginManager).get("commandMap");
+            for (final Command command : commandMap.getCommands()) {
+                if (command instanceof PluginCommand) {
+                    final PluginCommand pluginCommand = (PluginCommand) command;
+                    final Plugin cp = pluginCommand.getPlugin();
+                    if (cp.equals(plugin)) {
+                        final CommandExecutor executor = Reflect.on(command).get("executor");
+                        if (executor instanceof CommandInjector) {
+                            final CommandInjector injected = (CommandInjector) executor;
+                            Reflect.on(command).set("executor", injected.getOriginalExecutor());
+                        }
+                        final TabCompleter completer = Reflect.on(command).get("completer");
+                        if (completer instanceof CommandInjector) {
+                            final CommandInjector injected = (CommandInjector) completer;
+                            Reflect.on(command).set("completer", injected.getOriginalCompleter());
+                        }
                     }
                 }
             }
+        } catch (final Throwable e) {
         }
     }
 
@@ -97,8 +109,7 @@ public class CommandInjector implements TabExecutor {
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > 10) {
-                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000
-                        + "ms!");
+                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
             }
             totalTime += lag;
             count++;
