@@ -129,7 +129,7 @@ public class YumCommand implements HandlerCommands, Listener {
         });
     }
 
-    @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除插件", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除插件", possibleArguments = "<插件名称>", sort = 6)
     public void delete(final InvokeCommandEvent e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -146,7 +146,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "find", aliases = { "f" }, minimumArguments = 1, possibleArguments = "<插件类名>", description = "通过类名查找插件")
+    @HandlerCommand(name = "find", aliases = { "f" }, minimumArguments = 1, possibleArguments = "<插件类名>", description = "通过类名查找插件", sort = 10)
     public void find(final InvokeCommandEvent e) {
         final String classname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -161,7 +161,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "fulldelete", aliases = { "fdel" }, minimumArguments = 1, description = "删除插件以及数据文件夹", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "fulldelete", aliases = { "fdel" }, minimumArguments = 1, description = "删除插件以及数据文件夹", possibleArguments = "<插件名称>", sort = 7)
     public void fulldelete(final InvokeCommandEvent e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -178,7 +178,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "info", minimumArguments = 1, description = "查看插件详情", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "info", minimumArguments = 1, description = "查看插件详情", possibleArguments = "<插件名称>", sort = 2)
     public void info(final InvokeCommandEvent e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -217,7 +217,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "install", aliases = { "i" }, minimumArguments = 1, description = "安装插件", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "install", aliases = { "i" }, minimumArguments = 1, description = "安装插件", possibleArguments = "<插件名称>", sort = 12)
     public void install(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
@@ -239,7 +239,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "list", aliases = { "l" }, description = "列出已安装插件列表")
+    @HandlerCommand(name = "list", aliases = { "l" }, description = "列出已安装插件列表", sort = 1)
     public void list(final InvokeCommandEvent e) {
         final CommandSender sender = e.getSender();
         sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
@@ -259,7 +259,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "load", minimumArguments = 1, description = "载入插件", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "load", minimumArguments = 1, description = "载入插件", possibleArguments = "<插件名称>", sort = 3)
     public void load(final InvokeCommandEvent e) {
         final CommandSender sender = e.getSender();
         final String pluginname = e.getArgs()[0];
@@ -278,7 +278,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "reload", aliases = { "re" }, description = "重载插件", possibleArguments = "<插件名称|all|*>")
+    @HandlerCommand(name = "reload", aliases = { "re" }, description = "重载插件", possibleArguments = "<插件名称|all|*>", sort = 5)
     public void reload(final InvokeCommandEvent e) {
         final CommandSender sender = e.getSender();
         if (e.getArgs().length == 0) {
@@ -299,7 +299,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "repo", aliases = { "r" }, minimumArguments = 1, description = "插件源命令", possibleArguments = "<add|del|all|clean|list> <仓库名称>")
+    @HandlerCommand(name = "repo", aliases = { "r" }, minimumArguments = 1, description = "插件源命令", possibleArguments = "<add|del|all|clean|list> <仓库名称>", sort = 16)
     public void repo(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
@@ -358,7 +358,7 @@ public class YumCommand implements HandlerCommands, Listener {
         });
     }
 
-    @HandlerCommand(name = "search", aliases = "s", minimumArguments = 1, description = "从BukkitDev搜索插件", possibleArguments = "插件名称")
+    @HandlerCommand(name = "search", aliases = "s", minimumArguments = 1, description = "从BukkitDev搜索插件", possibleArguments = "插件名称", sort = 11)
     public void search(final InvokeCommandEvent e) {
         PluginKit.runTaskAsync(new Runnable() {
             @Override
@@ -388,48 +388,7 @@ public class YumCommand implements HandlerCommands, Listener {
         });
     }
 
-    /**
-     * 发生实体消息
-     *
-     * @param sender
-     *            命令发送者
-     * @param prefix
-     *            实体前缀
-     * @param map
-     *            实体
-     * @param key
-     *            实体Key
-     */
-    public void sendEntry(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
-        final Object value = map.get(key);
-        if (value != null) {
-            sender.sendMessage(prefix + (String) value);
-        }
-    }
-
-    /**
-     * 发生实体消息
-     *
-     * @param sender
-     *            命令发送者
-     * @param prefix
-     *            实体前缀
-     * @param map
-     *            实体
-     * @param key
-     *            实体Key
-     */
-    @SuppressWarnings("unchecked")
-    public void sendEntryList(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
-        final List<String> values = (List<String>) map.get(key);
-        if (values != null) {
-            for (final String value : values) {
-                sender.sendMessage(prefix + value);
-            }
-        }
-    }
-
-    @HandlerCommand(name = "unload", minimumArguments = 1, description = "卸载插件", possibleArguments = "<插件名称>")
+    @HandlerCommand(name = "unload", minimumArguments = 1, description = "卸载插件", possibleArguments = "<插件名称>", sort = 4)
     public void unload(final InvokeCommandEvent e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
@@ -441,7 +400,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "update", aliases = { "u" }, description = "更新插件或缓存", possibleArguments = "[插件名称] [插件版本]")
+    @HandlerCommand(name = "update", aliases = { "u" }, description = "更新插件或缓存", possibleArguments = "[插件名称] [插件版本]", sort = 13)
     public void update(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
@@ -475,7 +434,7 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "updateall", aliases = { "ua" }, description = "更新所有可更新插件")
+    @HandlerCommand(name = "updateall", aliases = { "ua" }, description = "更新所有可更新插件", sort = 14)
     public void updateall(final InvokeCommandEvent e) {
         Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
             @Override
@@ -485,7 +444,7 @@ public class YumCommand implements HandlerCommands, Listener {
         });
     }
 
-    @HandlerCommand(name = "upgrade", aliases = { "ug" }, description = "升级或载入插件", possibleArguments = "[插件名称]")
+    @HandlerCommand(name = "upgrade", aliases = { "ug" }, description = "升级或载入插件", possibleArguments = "[插件名称]", sort = 15)
     public void upgrade(final InvokeCommandEvent e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
@@ -510,6 +469,47 @@ public class YumCommand implements HandlerCommands, Listener {
 
     private String pnf(final String pname) {
         return String.format("§4错误: §c插件 §b %s §c不存在或已卸载!", pname);
+    }
+
+    /**
+     * 发生实体消息
+     *
+     * @param sender
+     *            命令发送者
+     * @param prefix
+     *            实体前缀
+     * @param map
+     *            实体
+     * @param key
+     *            实体Key
+     */
+    private void sendEntry(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
+        final Object value = map.get(key);
+        if (value != null) {
+            sender.sendMessage(prefix + (String) value);
+        }
+    }
+
+    /**
+     * 发生实体消息
+     *
+     * @param sender
+     *            命令发送者
+     * @param prefix
+     *            实体前缀
+     * @param map
+     *            实体
+     * @param key
+     *            实体Key
+     */
+    @SuppressWarnings("unchecked")
+    private void sendEntryList(final CommandSender sender, final String prefix, final Map<String, Object> map, final String key) {
+        final List<String> values = (List<String>) map.get(key);
+        if (values != null) {
+            for (final String value : values) {
+                sender.sendMessage(prefix + value);
+            }
+        }
     }
 
 }
