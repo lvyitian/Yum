@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.kit.HttpKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
@@ -32,7 +31,6 @@ import pw.yumc.Yum.models.RepoSerialization.URLType;
  * @since 2016年1月9日 上午10:02:57
  */
 public class RepositoryManager {
-    PluginHelperLogger logger = PluginHelperLogger.getLogger();
     org.bukkit.plugin.Plugin main;
     RepoCache repocache;
 
@@ -207,7 +205,7 @@ public class RepositoryManager {
             sender = Bukkit.getConsoleSender();
         }
         if (repocenter == null || repocenter.repos.isEmpty()) {
-            logger.debug("源地址为Null或源列表为空!");
+            sender.sendMessage("源地址为Null或源列表为空!");
             return false;
         }
         for (final Repository repo : repocenter.repos) {

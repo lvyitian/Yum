@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
+import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
 
 public class RepoCache implements Serializable {
-    PluginHelperLogger logger = PluginHelperLogger.getLogger();
     Map<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
     Map<String, Repositories> repos = new HashMap<String, Repositories>();
 
@@ -27,7 +26,6 @@ public class RepoCache implements Serializable {
 
     public Repositories addRepo(final String repo) {
         if (repos.containsKey(repo) || repo.isEmpty()) {
-            logger.debug("源地址为空或已存在 " + repo);
             return null;
         }
         final Repositories reposes = getRepo(repo);
@@ -53,12 +51,12 @@ public class RepoCache implements Serializable {
     public Repositories getRepo(final String repo) {
         final String json = IOUtil.getData(repo);
         if (json == null || json.isEmpty()) {
-            logger.debug("源地址获取数据为空 " + repo);
+            PluginKit.sc("§c源地址获取数据为空 §b" + repo);
             return null;
         }
         final Repositories reposes = JsonHandle.fromJson(json, Repositories.class);
         if (reposes == null || reposes.repos.isEmpty()) {
-            logger.debug("源地址解析Json为空 " + repo);
+            PluginKit.sc("§c源地址解析Json为空 §b" + repo);
             return null;
         }
         return reposes;
