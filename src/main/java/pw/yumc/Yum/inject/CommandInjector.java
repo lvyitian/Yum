@@ -119,6 +119,10 @@ public class CommandInjector implements TabExecutor {
             while (e.getCause() != null) {
                 e = e.getCause();
             }
+            sender.sendMessage(prefix + "§c命令执行异常 请反馈下列信息给腐竹!");
+            sender.sendMessage("§6插件名称: §b" + plugin.getName());
+            sender.sendMessage("§6异常名称: §c" + e.getClass().getName());
+            sender.sendMessage("§6异常说明: §3" + e.getMessage());
             MonitorCommand.lastError = e;
             PluginKit.sc(prefix + "§6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令时发生异常!");
             PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
