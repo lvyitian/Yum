@@ -1,5 +1,6 @@
 package pw.yumc.Yum.inject;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class ListenerInjector implements EventExecutor {
     private final static String prefix = "§6[§bYum §a事件监控§6] ";
-    private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
+    private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败 §6注入类: §3%s!";
     private final static String plugin_is_null = "插件不得为NULL!";
     private final EventExecutor originalExecutor;
 
@@ -40,21 +41,33 @@ public class ListenerInjector implements EventExecutor {
 
     public static void inject(final Plugin plugin) {
         Validate.notNull(plugin, plugin_is_null);
-        try {
-            final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
-            for (final RegisteredListener listener : listeners) {
+        final List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
+        for (final RegisteredListener listener : listeners) {
+            try {
                 if (listener instanceof TimedRegisteredListener) {
                     return;
                 }
-                final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
-                if (originalExecutor instanceof ListenerInjector) {
-                    return;
+                if (listener.getClass().getName().contains("PWPRegisteredListener")) {
+                    final Field f = Reflect.on(listener).getDeclaredField(RegisteredListener.class, "executor");
+                    f.setAccessible(true);
+                    final EventExecutor originalExecutor = (EventExecutor) f.get(listener);
+                    if (originalExecutor instanceof ListenerInjector) {
+                        return;
+                    }
+                    final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
+                    f.set(listener, listenerInjector);
+                } else {
+                    final EventExecutor originalExecutor = Reflect.on(listener).get("executor");
+                    if (originalExecutor instanceof ListenerInjector) {
+                        return;
+                    }
+                    final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
+                    Reflect.on(listener).set("executor", listenerInjector);
                 }
-                final ListenerInjector listenerInjector = new ListenerInjector(originalExecutor, plugin);
-                Reflect.on(listener).set("executor", listenerInjector);
+            } catch (final Throwable e) {
+                PluginKit.sc(String.format(inject_error, plugin.getName(), listener.getClass().getName()));
+                e.printStackTrace();
             }
-        } catch (final Throwable e) {
-            PluginKit.sc(String.format(inject_error, plugin.getName()));
         }
     }
 
