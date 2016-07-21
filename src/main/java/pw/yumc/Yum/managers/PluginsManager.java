@@ -48,12 +48,12 @@ public class PluginsManager {
     private final Set<String> ignoreList = new HashSet<>();
     private final Plugin main;
 
-    public static String getVersion(final Plugin plugin) {
-        return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
-    }
-
     public PluginsManager(final Plugin plugin) {
         this.main = plugin;
+    }
+
+    public static String getVersion(final Plugin plugin) {
+        return StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
     }
 
     /**
@@ -687,6 +687,9 @@ public class PluginsManager {
             return false;
         }
         for (final File file : updateDirectory.listFiles()) {
+            if (file.isDirectory()) {
+                continue;
+            }
             PluginDescriptionFile description = null;
             try {
                 description = loader.getPluginDescription(file);

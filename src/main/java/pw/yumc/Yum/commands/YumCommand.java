@@ -57,6 +57,9 @@ public class YumCommand implements HandlerCommands, Listener {
     private final String filelistprefix = "  §6插件名称             §3游戏版本      §d发布类型   §a操作";
     private final String filelist = "§6- §b%-20s §3%-15s §d%-10s";
 
+    private final String del = "§c删除: §a插件 §b%s §a版本 §d%s §a已从服务器卸载并删除!";
+    private final String delFailed = "§c删除: §a插件 §b%s §c卸载或删除时发生错误 删除失败!";
+
     private final String look = "§6查看";
     private final String install = "§a安装";
     private final String update = "§a更新";
@@ -86,7 +89,7 @@ public class YumCommand implements HandlerCommands, Listener {
             public void run() {
                 final String id = args[1];
                 switch (args[0]) {
-                case "look":
+                case "look": {
                     sender.sendMessage(String.format(fsearching, id));
                     final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));
                     if (lf.isEmpty()) {
@@ -98,15 +101,41 @@ public class YumCommand implements HandlerCommands, Listener {
                         final FancyMessage fm = FancyMessage.newFM();
                         fm.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
                         fm.then(" ");
-                        fm.then(install).command(String.format("/yum br install %s %s", f.name, f.downloadUrl));
+                        fm.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
                         fm.send(sender);
                     }
                     break;
-                case "install":
+                }
+                case "ai": {
                     if (args.length < 3) {
                         return;
                     }
                     final String url = args[2];
+                    final File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
+                    YumAPI.getDownload().run(e.getSender(), url, file, new One<File>() {
+                        @Override
+                        public void run(final File file) {
+                            if (file.getName().endsWith(".zip")) {
+                                try {
+                                    ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
+                                    file.delete();
+                                } catch (final IOException e) {
+                                    sender.sendMessage(unzip_error);
+                                }
+                            }
+                            YumAPI.upgrade(sender);
+                        }
+                    });
+                    break;
+                }
+                case "install": {
+                    sender.sendMessage(String.format(fsearching, id));
+                    final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));
+                    if (lf.isEmpty()) {
+                        sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                    }
+                    final Files f = lf.get(0);
+                    final String url = f.downloadUrl;
                     final File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
                     YumAPI.getDownload().run(e.getSender(), url, file, new One<File>() {
                         @Override
@@ -122,6 +151,7 @@ public class YumCommand implements HandlerCommands, Listener {
                         }
                     });
                     break;
+                }
                 default:
                     break;
                 }
@@ -137,9 +167,9 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (YumAPI.getPlugman().deletePlugin(sender, plugin)) {
-                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
+                sender.sendMessage(String.format(del, pluginname, version));
             } else {
-                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
+                sender.sendMessage(String.format(delFailed, pluginname));
             }
         } else {
             sender.sendMessage(pnf(pluginname));
@@ -169,9 +199,9 @@ public class YumCommand implements HandlerCommands, Listener {
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (YumAPI.getPlugman().fullDeletePlugin(sender, plugin)) {
-                sender.sendMessage("§c删除: §a插件 §b" + pluginname + " §a版本 §d" + version + " §a已从服务器卸载并删除!");
+                sender.sendMessage(String.format(version, pluginname, version));
             } else {
-                sender.sendMessage("§c删除: §c插件 §b" + pluginname + " §c卸载或删除时发生错误 删除失败!");
+                sender.sendMessage(String.format(delFailed, pluginname));
             }
         } else {
             sender.sendMessage(pnf(pluginname));
