@@ -9,7 +9,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.MonitorManager;
@@ -52,7 +51,7 @@ public class TaskInjector implements Runnable {
                 }
             }
         } catch (final Throwable e) {
-            PluginKit.sc(String.format(inject_error, plugin.getName()));
+            MonitorManager.log(String.format(inject_error, plugin.getName()));
         }
     }
 
@@ -98,7 +97,7 @@ public class TaskInjector implements Runnable {
             }
             MonitorCommand.lastError = e;
             MonitorManager.log(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务时发生异常!");
-            MonitorManager.print(e);
+            MonitorManager.printThrowable(e);
         }
 
     }

@@ -22,6 +22,7 @@ public class MonitorManager {
     public static String prefix = "§6[§bYum §a能耗监控§6] ";
     public static int lagTime = 20;
     public static boolean debug = ConfigManager.i().isMonitorDebug();
+    public static boolean log_to_file = ConfigManager.i().isLogToFile();
 
     private static Map<String, Long> monitor = new HashMap<>();
     private static Map<String, Long> task = new HashMap<>();
@@ -54,21 +55,25 @@ public class MonitorManager {
     }
 
     public static void lagTip(final String message) {
-        LogKit.DEFAULT.logSender(prefix + message);
+        log(prefix + message);
     }
 
     public static void log(final String message) {
-        LogKit.DEFAULT.logSender(message);
+        if (log_to_file) {
+            LogKit.DEFAULT.logSender(message);
+        } else {
+            PluginKit.sc(message);
+        }
     }
 
-    public static void print(final Throwable e) {
-        LogKit.DEFAULT.logSender("§6异常名称: §c" + e.getClass().getName());
-        LogKit.DEFAULT.logSender("§6异常说明: §3" + e.getMessage());
-        LogKit.DEFAULT.logSender("§6简易错误信息如下:");
+    public static void printThrowable(final Throwable e) {
+        log("§6异常名称: §c" + e.getClass().getName());
+        log("§6异常说明: §3" + e.getMessage());
+        log("§6简易错误信息如下:");
         final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
         for (int i = 0; i < l; i++) {
             final StackTraceElement ste = e.getStackTrace()[i];
-            LogKit.DEFAULT.logSender("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
+            log("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
         }
         if (debug) {
             PluginKit.sc("§c开发人员调试信息如下:");

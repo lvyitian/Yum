@@ -125,7 +125,7 @@ public class CommandInjector implements TabExecutor {
             sender.sendMessage("§6异常说明: §3" + e.getMessage());
             MonitorCommand.lastError = e;
             MonitorManager.log(prefix + "§6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令时发生异常!");
-            MonitorManager.print(e);
+            MonitorManager.printThrowable(e);
         }
         return false;
     }

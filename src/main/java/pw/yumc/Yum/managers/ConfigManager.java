@@ -68,6 +68,10 @@ public class ConfigManager {
         return network.getBoolean("AllowPrimaryThread", false);
     }
 
+    public boolean isLogToFile() {
+        return monitor.getBoolean("LogToFile");
+    }
+
     public boolean isMainThreadCheck() {
         return thread.getBoolean("MainThreadCheck", true);
     }

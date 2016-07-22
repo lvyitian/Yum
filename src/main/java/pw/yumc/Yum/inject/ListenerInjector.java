@@ -16,7 +16,6 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
@@ -65,7 +64,7 @@ public class ListenerInjector implements EventExecutor {
                     Reflect.on(listener).set("executor", listenerInjector);
                 }
             } catch (final Throwable e) {
-                PluginKit.sc(String.format(inject_error, plugin.getName(), listener.getClass().getName()));
+                MonitorManager.log(String.format(inject_error, plugin.getName(), listener.getClass().getName()));
                 e.printStackTrace();
             }
         }
@@ -118,7 +117,7 @@ public class ListenerInjector implements EventExecutor {
             }
             MonitorCommand.lastError = e;
             MonitorManager.log(prefix + "§6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时发生异常!");
-            MonitorManager.print(e);
+            MonitorManager.printThrowable(e);
         }
     }
 
