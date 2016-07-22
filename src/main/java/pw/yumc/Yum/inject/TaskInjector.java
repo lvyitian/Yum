@@ -87,7 +87,7 @@ public class TaskInjector implements Runnable {
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > MonitorManager.lagTime) {
-                PluginKit.sc("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务 §c耗时 §4" + lag / 1000000 + "ms!");
+                MonitorManager.lagTip("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务 §c耗时 §4" + lag / 1000000 + "ms!");
             }
             totalTime += lag;
             count++;
@@ -97,7 +97,7 @@ public class TaskInjector implements Runnable {
                 e = e.getCause();
             }
             MonitorCommand.lastError = e;
-            PluginKit.sc(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务时发生异常!");
+            MonitorManager.log(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务时发生异常!");
             MonitorManager.print(e);
         }
 

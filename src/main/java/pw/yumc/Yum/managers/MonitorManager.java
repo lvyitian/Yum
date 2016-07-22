@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.citycraft.PluginHelper.kit.LogKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 
 /**
@@ -18,6 +19,7 @@ import cn.citycraft.PluginHelper.kit.PluginKit;
  * @author 喵♂呜
  */
 public class MonitorManager {
+    public static String prefix = "§6[§bYum §a能耗监控§6] ";
     public static int lagTime = 20;
     public static boolean debug = ConfigManager.i().isMonitorDebug();
 
@@ -51,14 +53,22 @@ public class MonitorManager {
         return new MonitorInfo(monitor.get(pname) / um, cmd.get(pname) / um, event.get(pname) / um, task.get(pname) / um);
     }
 
+    public static void lagTip(final String message) {
+        LogKit.DEFAULT.logSender(prefix + message);
+    }
+
+    public static void log(final String message) {
+        LogKit.DEFAULT.logSender(message);
+    }
+
     public static void print(final Throwable e) {
-        PluginKit.sc("§6异常名称: §c" + e.getClass().getName());
-        PluginKit.sc("§6异常说明: §3" + e.getMessage());
-        PluginKit.sc("§6简易错误信息如下:");
+        LogKit.DEFAULT.logSender("§6异常名称: §c" + e.getClass().getName());
+        LogKit.DEFAULT.logSender("§6异常说明: §3" + e.getMessage());
+        LogKit.DEFAULT.logSender("§6简易错误信息如下:");
         final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
         for (int i = 0; i < l; i++) {
             final StackTraceElement ste = e.getStackTrace()[i];
-            PluginKit.sc("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
+            LogKit.DEFAULT.logSender("    §e位于 §c" + ste.getClassName() + "." + ste.getMethodName() + "(§4" + ste.getFileName() + ":" + ste.getLineNumber() + "§c)");
         }
         if (debug) {
             PluginKit.sc("§c开发人员调试信息如下:");

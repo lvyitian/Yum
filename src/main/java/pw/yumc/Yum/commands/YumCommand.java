@@ -44,16 +44,16 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
  */
 public class YumCommand implements HandlerCommands, Listener {
     private final String prefix = "§6[§bYum §a插件管理§6] ";
-    private final String not_found_from_bukkit = prefix + "§c未在BukkitDev搜索到 %s 的相关插件!";
-    private final String not_found_id_from_bukkit = prefix + "§c未在BukkitDev搜索到ID为 %s 的相关插件!";
 
     private final String searchlimit = prefix + "§c为保证搜索速度和准确性 关键词必须大于 3 个字符!";
-    private final String searching = prefix + "§a正在从BukkitDev获取 §b%s §a的相关数据...";
+    private final String searching = prefix + "§a正在从 §eBukkitDev 获取 §b%s §a的相关数据...";
+    private final String not_found_from_bukkit = prefix + "§c未在 §eBukkitDev 搜索到 %s 的相关插件!";
     private final String result = prefix + "§6关键词 §b%s §6的搜索结果如下:";
     private final String bukkitlistprefix = " §6插件ID  §3插件名称                  §d发布类型   §a操作";
     private final String bukkitlist = "§6- §e%-6s §b%-25s §d%-10s";
 
-    private final String fsearching = prefix + "§a正在从BukkitDev获取ID §b%s §a的文件列表...";
+    private final String fsearching = prefix + "§a正在从 §eBukkitDev 获取ID §b%s §a的文件列表...";
+    private final String not_found_id_from_bukkit = prefix + "§c未在 §eBukkitDev 搜索到ID为 %s 的相关插件!";
     private final String filelistprefix = "  §6插件名称             §3游戏版本      §d发布类型   §a操作";
     private final String filelist = "§6- §b%-20s §3%-15s §d%-10s";
 
