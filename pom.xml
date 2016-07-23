@@ -40,6 +40,10 @@
 							<pattern>cn.citycraft.PluginHelper</pattern>
 							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
 						</relocation>
+						<relocation>
+							<pattern>pw.yumc.PluginHelper</pattern>
+							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
+						</relocation>
 					</relocations>
 				</configuration>
 				<executions>

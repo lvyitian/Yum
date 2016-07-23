@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import cn.citycraft.PluginHelper.bukkit.P;
 import cn.citycraft.PluginHelper.config.FileConfig;
-import cn.citycraft.PluginHelper.kit.PKit;
 
 public class ConfigManager {
     public final static String ENABLE = "Enable";
     public final static String BLACK = "Black";
     public final static String IGNORE = "Ignore";
 
-    private final static ConfigManager i = new ConfigManager(PKit.i());
+    private final static ConfigManager i = new ConfigManager(P.instance);
 
     public final FileConfig config;
     public final FileConfig setop;

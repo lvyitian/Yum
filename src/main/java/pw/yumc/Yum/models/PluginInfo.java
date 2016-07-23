@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.PluginHelperLogger;
-import cn.citycraft.PluginHelper.kit.PKit;
+import cn.citycraft.PluginHelper.bukkit.Log;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Plugin;
 import pw.yumc.Yum.models.RepoSerialization.TagInfo;
@@ -19,7 +19,7 @@ public class PluginInfo implements Serializable {
         try {
             NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         } catch (final Exception e) {
-            PKit.i().getLogger().warning("服务器NMS解析失败: " + Bukkit.getServer().getClass().getPackage().getName());
+            Log.warning("服务器NMS解析失败: " + Bukkit.getServer().getClass().getPackage().getName());
             NMSVersion = "NONMS";
         }
     }
