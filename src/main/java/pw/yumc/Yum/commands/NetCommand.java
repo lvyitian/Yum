@@ -7,13 +7,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.commands.HandlerCommand;
-import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
-import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.YumCore.commands.CommandArgument;
+import pw.yumc.YumCore.commands.CommandExecutor;
+import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.annotation.Async;
+import pw.yumc.YumCore.commands.annotation.Cmd;
+import pw.yumc.YumCore.commands.annotation.Help;
 
-public class NetCommand implements HandlerCommands {
+public class NetCommand implements CommandExecutor {
     public static HashMap<String, Integer> netlist = new HashMap<>();
 
     private final String prefix = "§6[§bYum §a网络管理§6] ";
@@ -27,9 +30,7 @@ public class NetCommand implements HandlerCommands {
     private final String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
     public NetCommand(final Yum yum) {
-        final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "net");
-        cmdhandler.registerCommands(this);
-        cmdhandler.registerCommands(PluginTabComplete.instence);
+        new CommandManager("net", this, PluginTabComplete.instence);
     }
 
     public static void addNetCount(final String pname) {
@@ -40,8 +41,10 @@ public class NetCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "list", aliases = "l", permission = "", description = "列出联网的插件")
-    public void list(final InvokeCommandEvent e) {
+    @Cmd(aliases = "l")
+    @Help("列出联网的插件详情")
+    @Async
+    public void list(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         if (netlist.isEmpty()) {
             sender.sendMessage(no_net);
@@ -54,8 +57,9 @@ public class NetCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "off", minimumArguments = 1, description = "禁止插件联网", possibleArguments = "[插件名称]")
-    public void off(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "禁止插件联网", possibleArguments = "[插件名称]")
+    public void off(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         if (Bukkit.getPluginManager().getPlugin(pname) == null) {
@@ -66,8 +70,9 @@ public class NetCommand implements HandlerCommands {
         sender.sendMessage(String.format(add, pname, "§c黑名单"));
     }
 
-    @HandlerCommand(name = "on", minimumArguments = 1, description = "允许插件联网", possibleArguments = "[插件名称]")
-    public void on(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "允许插件联网", possibleArguments = "[插件名称]")
+    public void on(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         if (Bukkit.getPluginManager().getPlugin(pname) == null) {

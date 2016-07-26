@@ -19,10 +19,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.callback.CallBack.One;
-import cn.citycraft.PluginHelper.commands.HandlerCommand;
-import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
-import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.ZipKit;
 import cn.citycraft.PluginHelper.tellraw.FancyMessage;
@@ -35,6 +31,13 @@ import pw.yumc.Yum.models.BukkitDev;
 import pw.yumc.Yum.models.BukkitDev.Files;
 import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
+import pw.yumc.YumCore.commands.CommandArgument;
+import pw.yumc.YumCore.commands.CommandExecutor;
+import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.annotation.Async;
+import pw.yumc.YumCore.commands.annotation.Cmd;
+import pw.yumc.YumCore.commands.annotation.Help;
+import pw.yumc.YumCore.commands.annotation.Sort;
 
 /**
  * Yum命令基类
@@ -42,18 +45,18 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
  * @since 2016年1月9日 上午10:02:24
  * @author 喵♂呜
  */
-public class YumCommand implements HandlerCommands, Listener {
+public class YumCommand implements Listener, CommandExecutor {
     private final String prefix = "§6[§bYum §a插件管理§6] ";
 
     private final String searchlimit = prefix + "§c为保证搜索速度和准确性 关键词必须大于 3 个字符!";
-    private final String searching = prefix + "§a正在从 §eBukkitDev 获取 §b%s §a的相关数据...";
-    private final String not_found_from_bukkit = prefix + "§c未在 §eBukkitDev 搜索到 %s 的相关插件!";
+    private final String searching = prefix + "§a正在从 §eBukkitDev §a获取 §b%s §a的相关数据...";
+    private final String not_found_from_bukkit = prefix + "§c未在 §eBukkitDev §c搜索到 §b%s §c的相关插件!";
     private final String result = prefix + "§6关键词 §b%s §6的搜索结果如下:";
     private final String bukkitlistprefix = " §6插件ID  §3插件名称                  §d发布类型   §a操作";
     private final String bukkitlist = "§6- §e%-6s §b%-25s §d%-10s";
 
-    private final String fsearching = prefix + "§a正在从 §eBukkitDev 获取ID §b%s §a的文件列表...";
-    private final String not_found_id_from_bukkit = prefix + "§c未在 §eBukkitDev 搜索到ID为 %s 的相关插件!";
+    private final String fsearching = prefix + "§a正在从 §eBukkitDev §a获取ID §b%s §a的文件列表...";
+    private final String not_found_id_from_bukkit = prefix + "§c未在 §eBukkitDev §c搜索到ID为 §b%s §c的相关插件!";
     private final String filelistprefix = "  §6插件名称             §3游戏版本      §d发布类型   §a操作";
     private final String filelist = "§6- §b%-20s §3%-15s §d%-10s";
 
@@ -74,14 +77,12 @@ public class YumCommand implements HandlerCommands, Listener {
     public YumCommand(final Yum yum) {
         main = yum;
         Bukkit.getPluginManager().registerEvents(this, yum);
-        final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "yum");
-        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyCommandConsole", false));
-        cmdhandler.registerCommands(this);
-        cmdhandler.registerCommands(PluginTabComplete.instence);
+        new CommandManager("yum", this, PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "bukkitrepo", aliases = "br", minimumArguments = 2, description = "从BukkitDev查看安装插件", possibleArguments = "<操作符> <项目ID|项目名称> [地址]")
-    public void bukkitrepo(final InvokeCommandEvent e) {
+    @Cmd(aliases = "br", minimumArguments = 2)
+    @Help(value = "从BukkitDev查看安装插件", possibleArguments = "<操作符> <项目ID|项目名称> [地址]")
+    public void bukkitrepo(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         PluginKit.runTaskAsync(new Runnable() {
@@ -154,13 +155,16 @@ public class YumCommand implements HandlerCommands, Listener {
                 }
                 default:
                     break;
+
                 }
             }
         });
     }
 
-    @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除插件", possibleArguments = "<插件名称>", sort = 6)
-    public void delete(final InvokeCommandEvent e) {
+    @Cmd(aliases = "del", minimumArguments = 1)
+    @Help(value = "删除插件", possibleArguments = "<插件名称>")
+    @Sort(6)
+    public void delete(final CommandArgument e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -176,8 +180,10 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "find", aliases = { "f" }, minimumArguments = 1, possibleArguments = "<插件类名>", description = "通过类名查找插件", sort = 10)
-    public void find(final InvokeCommandEvent e) {
+    @Cmd(aliases = "f", minimumArguments = 1)
+    @Help(value = "通过类名查找插件", possibleArguments = "<插件类名>")
+    @Sort(10)
+    public void find(final CommandArgument e) {
         final String classname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         try {
@@ -191,8 +197,10 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "fulldelete", aliases = { "fdel" }, minimumArguments = 1, description = "删除插件以及数据文件夹", possibleArguments = "<插件名称>", sort = 7)
-    public void fulldelete(final InvokeCommandEvent e) {
+    @Cmd(aliases = "fdel", minimumArguments = 1)
+    @Help(value = "删除插件以及数据文件夹", possibleArguments = "<插件名称>")
+    @Sort(7)
+    public void fulldelete(final CommandArgument e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -208,8 +216,11 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "info", minimumArguments = 1, description = "查看插件详情", possibleArguments = "<插件名称>", sort = 2)
-    public void info(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "查看插件详情", possibleArguments = "<插件名称>")
+    @Sort(2)
+    @Async
+    public void info(final CommandArgument e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -247,8 +258,10 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "install", aliases = { "i" }, minimumArguments = 1, description = "安装插件", possibleArguments = "<插件名称>", sort = 12)
-    public void install(final InvokeCommandEvent e) {
+    @Cmd(aliases = "i", minimumArguments = 1)
+    @Help(value = "安装插件", possibleArguments = "<插件名称>")
+    @Sort(12)
+    public void install(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final String pluginname = args[0];
@@ -269,8 +282,11 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "list", aliases = { "l" }, description = "列出已安装插件列表", sort = 1)
-    public void list(final InvokeCommandEvent e) {
+    @Cmd(aliases = "l")
+    @Help(value = "列出已安装插件列表")
+    @Sort(1)
+    @Async
+    public void list(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -289,8 +305,10 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "load", minimumArguments = 1, description = "载入插件", possibleArguments = "<插件名称>", sort = 3)
-    public void load(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "载入插件", possibleArguments = "<插件名称>")
+    @Sort(3)
+    public void load(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         final String pluginname = e.getArgs()[0];
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -308,8 +326,10 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "reload", aliases = { "re" }, description = "重载插件", possibleArguments = "<插件名称|all|*>", sort = 5)
-    public void reload(final InvokeCommandEvent e) {
+    @Cmd(aliases = "re")
+    @Help(value = "重载插件", possibleArguments = "<插件名称|all|*>")
+    @Sort(5)
+    public void reload(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         if (e.getArgs().length == 0) {
             ConfigManager.i().reload();
@@ -329,97 +349,95 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "repo", aliases = { "r" }, minimumArguments = 1, description = "插件源命令", possibleArguments = "<add|del|all|clean|list> <仓库名称>", sort = 16)
-    public void repo(final InvokeCommandEvent e) {
+    @Cmd(aliases = "r", minimumArguments = 1)
+    @Help(value = "插件源命令", possibleArguments = "<add|del|all|clean|list> <仓库名称>")
+    @Sort(16)
+    @Async
+    public void repo(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
-        main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
-            @Override
-            public void run() {
-                final String cmd = args[0];
-                switch (cmd) {
-                case "add":
-                    if (args.length == 2) {
-                        if (YumAPI.getRepo().addRepositories(sender, args[1])) {
-                            final String reponame = YumAPI.getRepo().getRepoCache(args[1]).name;
-                            sender.sendMessage("§6仓库: §a源仓库 §e" + reponame + " §a的插件信息已缓存!");
-                        } else {
-                            sender.sendMessage("§6仓库: §c源地址未找到仓库信息或当前地址已缓存!");
-                        }
-                    } else {
-                        sender.sendMessage("§6仓库: §c请输入需要添加的源地址!");
-                    }
-                    break;
-                case "del":
-                    if (args.length == 2) {
-                        final Repositories delrepo = YumAPI.getRepo().getRepoCache(args[1]);
-                        if (delrepo != null) {
-                            YumAPI.getRepo().delRepositories(sender, args[1]);
-                            sender.sendMessage("§6仓库: §a源仓库 §e" + delrepo.name + " §c已删除 §a请使用 §b/yum repo update §a更新缓存!");
-                        } else {
-                            sender.sendMessage("§6仓库: §c源地址未找到!");
-                        }
-                    } else {
-                        sender.sendMessage("§6仓库: §c请输入需要删除的源地址!");
-                    }
-                    break;
-                case "delall":
-                    YumAPI.getRepo().getRepoCache().getRepos().clear();
-                    sender.sendMessage("§6仓库: §a缓存的仓库信息已清理!");
-                    break;
-                case "list":
-                    sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
-                    StrKit.sendStringArray(sender, YumAPI.getRepo().getAllPluginsInfo());
-                    break;
-                case "all":
-                    sender.sendMessage("§6仓库: §b缓存的仓库信息如下 ");
-                    StrKit.sendStringArray(sender, YumAPI.getRepo().getRepoCache().getAllRepoInfo());
-                    break;
-                case "clean":
-                    YumAPI.getRepo().clean();
-                    sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
-                    break;
-                case "update":
-                    YumAPI.getRepo().updateRepositories(sender);
-                    sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
-                    break;
+        final String cmd = args[0];
+        switch (cmd) {
+        case "add":
+            if (args.length == 2) {
+                if (YumAPI.getRepo().addRepositories(sender, args[1])) {
+                    final String reponame = YumAPI.getRepo().getRepoCache(args[1]).name;
+                    sender.sendMessage("§6仓库: §a源仓库 §e" + reponame + " §a的插件信息已缓存!");
+                } else {
+                    sender.sendMessage("§6仓库: §c源地址未找到仓库信息或当前地址已缓存!");
                 }
+            } else {
+                sender.sendMessage("§6仓库: §c请输入需要添加的源地址!");
             }
-        });
+            break;
+        case "del":
+            if (args.length == 2) {
+                final Repositories delrepo = YumAPI.getRepo().getRepoCache(args[1]);
+                if (delrepo != null) {
+                    YumAPI.getRepo().delRepositories(sender, args[1]);
+                    sender.sendMessage("§6仓库: §a源仓库 §e" + delrepo.name + " §c已删除 §a请使用 §b/yum repo update §a更新缓存!");
+                } else {
+                    sender.sendMessage("§6仓库: §c源地址未找到!");
+                }
+            } else {
+                sender.sendMessage("§6仓库: §c请输入需要删除的源地址!");
+            }
+            break;
+        case "delall":
+            YumAPI.getRepo().getRepoCache().getRepos().clear();
+            sender.sendMessage("§6仓库: §a缓存的仓库信息已清理!");
+            break;
+        case "list":
+            sender.sendMessage("§6仓库: §b缓存的插件信息如下 ");
+            StrKit.sendStringArray(sender, YumAPI.getRepo().getAllPluginsInfo());
+            break;
+        case "all":
+            sender.sendMessage("§6仓库: §b缓存的仓库信息如下 ");
+            StrKit.sendStringArray(sender, YumAPI.getRepo().getRepoCache().getAllRepoInfo());
+            break;
+        case "clean":
+            YumAPI.getRepo().clean();
+            sender.sendMessage("§6仓库: §a缓存的插件信息已清理!");
+            break;
+        case "update":
+            YumAPI.getRepo().updateRepositories(sender);
+            sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
+            break;
+        }
     }
 
-    @HandlerCommand(name = "search", aliases = "s", minimumArguments = 1, description = "从BukkitDev搜索插件", possibleArguments = "插件名称", sort = 11)
-    public void search(final InvokeCommandEvent e) {
-        PluginKit.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                final String pname = e.getArgs()[0];
-                final CommandSender sender = e.getSender();
-                if (pname.length() < 3) {
-                    sender.sendMessage(searchlimit);
-                    return;
-                }
-                sender.sendMessage(String.format(searching, pname));
-                final List<Projects> list = Projects.parseList(IOUtil.getData(String.format(BukkitDev.SEARCH, pname.toLowerCase())));
-                if (list.isEmpty()) {
-                    sender.sendMessage(String.format(not_found_from_bukkit, pname));
-                    return;
-                }
-                sender.sendMessage(String.format(result, pname));
-                sender.sendMessage(bukkitlistprefix);
-                for (final Projects p : list) {
-                    final FancyMessage fm = FancyMessage.newFM();
-                    fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
-                    fm.then(" ");
-                    fm.then(look).command("/yum br look " + p.id);
-                    fm.send(sender);
-                }
-            }
-        });
+    @Cmd(aliases = "s", minimumArguments = 1)
+    @Help(value = "从BukkitDev搜索插件", possibleArguments = "插件名称")
+    @Sort(11)
+    @Async
+    public void search(final CommandArgument e) {
+        final String pname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        if (pname.length() < 3) {
+            sender.sendMessage(searchlimit);
+            return;
+        }
+        sender.sendMessage(String.format(searching, pname));
+        final List<Projects> list = Projects.parseList(IOUtil.getData(String.format(BukkitDev.SEARCH, pname.toLowerCase())));
+        if (list.isEmpty()) {
+            sender.sendMessage(String.format(not_found_from_bukkit, pname));
+            return;
+        }
+        sender.sendMessage(String.format(result, pname));
+        sender.sendMessage(bukkitlistprefix);
+        for (final Projects p : list) {
+            final FancyMessage fm = FancyMessage.newFM();
+            fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
+            fm.then(" ");
+            fm.then(look).command("/yum br look " + p.id);
+            fm.send(sender);
+        }
     }
 
-    @HandlerCommand(name = "unload", minimumArguments = 1, description = "卸载插件", possibleArguments = "<插件名称>", sort = 4)
-    public void unload(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "卸载插件", possibleArguments = "<插件名称>")
+    @Sort(4)
+    public void unload(final CommandArgument e) {
         final String pluginname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
@@ -430,8 +448,11 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "update", aliases = { "u" }, description = "更新插件或缓存", possibleArguments = "[插件名称] [插件版本]", sort = 13)
-    public void update(final InvokeCommandEvent e) {
+    @Cmd(aliases = "u")
+    @Help(value = "更新插件或缓存", possibleArguments = "[插件名称] [插件版本]")
+    @Sort(13)
+    @Async
+    public void update(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         switch (args.length) {
@@ -445,16 +466,11 @@ public class YumCommand implements HandlerCommands, Listener {
             final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
             sender.sendMessage("§a开始更新插件: " + pluginname);
             if (plugin != null) {
-                Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (args.length < 2) {
-                            YumAPI.updateFromYum(sender, plugin);
-                        } else {
-                            YumAPI.updateFromYum(sender, plugin, args[1]);
-                        }
-                    }
-                });
+                if (args.length < 2) {
+                    YumAPI.updateFromYum(sender, plugin);
+                } else {
+                    YumAPI.updateFromYum(sender, plugin, args[1]);
+                }
             } else {
                 sender.sendMessage("§c插件" + pluginname + "未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
             }
@@ -464,37 +480,31 @@ public class YumCommand implements HandlerCommands, Listener {
         }
     }
 
-    @HandlerCommand(name = "updateall", aliases = { "ua" }, description = "更新所有可更新插件", sort = 14)
-    public void updateall(final InvokeCommandEvent e) {
-        Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-            @Override
-            public void run() {
-                YumAPI.updateAll(e.getSender());
-            }
-        });
+    @Cmd(aliases = "ua")
+    @Help("更新所有可更新插件")
+    @Sort(14)
+    public void updateall(final CommandArgument e) {
+        YumAPI.updateAll(e.getSender());
     }
 
-    @HandlerCommand(name = "upgrade", aliases = { "ug" }, description = "升级或载入插件", possibleArguments = "[插件名称]", sort = 15)
-    public void upgrade(final InvokeCommandEvent e) {
+    @Cmd(aliases = "ug")
+    @Help(value = "升级或安装插件", possibleArguments = "[插件名称]")
+    @Sort(15)
+    public void upgrade(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
-        Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-            @Override
-            public void run() {
-                if (args.length == 0) {
-                    YumAPI.getPlugman().upgrade(sender);
-                } else {
-                    final String pluginname = args[0];
-                    final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
-                    sender.sendMessage("§a开始升级插件: §b" + pluginname);
-                    if (plugin != null) {
-                        YumAPI.upgrade(sender, plugin);
-                    } else {
-                        sender.sendMessage("§c错误: §b插件 " + pluginname + " §c未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
-                    }
-                }
+        if (args.length == 0) {
+            YumAPI.getPlugman().upgrade(sender);
+        } else {
+            final String pluginname = args[0];
+            final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+            sender.sendMessage("§a开始升级插件: §b" + pluginname);
+            if (plugin != null) {
+                YumAPI.upgrade(sender, plugin);
+            } else {
+                sender.sendMessage("§c错误: §b插件 " + pluginname + " §c未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
             }
-        });
+        }
     }
 
     private String pnf(final String pname) {

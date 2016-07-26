@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
@@ -20,10 +19,6 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
-import cn.citycraft.PluginHelper.commands.HandlerCommand;
-import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
-import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
@@ -34,13 +29,19 @@ import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.MonitorManager.MonitorInfo;
+import pw.yumc.YumCore.commands.CommandArgument;
+import pw.yumc.YumCore.commands.CommandExecutor;
+import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.annotation.Async;
+import pw.yumc.YumCore.commands.annotation.Cmd;
+import pw.yumc.YumCore.commands.annotation.Help;
 
 /**
  *
  * @since 2016年7月6日 下午5:13:32
  * @author 喵♂呜
  */
-public class MonitorCommand implements HandlerCommands {
+public class MonitorCommand implements CommandExecutor {
     public static Throwable lastError = null;
 
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
@@ -66,13 +67,13 @@ public class MonitorCommand implements HandlerCommands {
     private final double um = 1000000.00;
 
     public MonitorCommand(final Yum yum) {
-        final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "monitor");
-        cmdhandler.registerCommands(this);
-        cmdhandler.registerCommands(PluginTabComplete.instence);
+        new CommandManager("monitor", this, PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "cmd", aliases = "c", description = "查看插件命令能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void cmd(final InvokeCommandEvent e) {
+    @Cmd(aliases = "c", minimumArguments = 1)
+    @Help(value = "查看插件命令能耗", possibleArguments = "[插件名称]")
+    @Async
+    public void cmd(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         if (Bukkit.getPluginManager().getPlugin(pname) == null) {
@@ -93,7 +94,7 @@ public class MonitorCommand implements HandlerCommands {
             }
         }
         for (final Entry<String, Command> command : temp.entrySet()) {
-            final CommandExecutor executor = Reflect.on(command.getValue()).get("executor");
+            final org.bukkit.command.CommandExecutor executor = Reflect.on(command.getValue()).get("executor");
             if (executor instanceof CommandInjector) {
                 final CommandInjector injected = (CommandInjector) executor;
                 final StringBuffer str = new StringBuffer();
@@ -108,8 +109,10 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "event", aliases = "e", description = "查看插件事件能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void event(final InvokeCommandEvent e) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+    @Cmd(aliases = "e", minimumArguments = 1)
+    @Help(value = "查看插件事件能耗", possibleArguments = "[插件名称]")
+    @Async
+    public void event(final CommandArgument e) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
@@ -130,7 +133,7 @@ public class MonitorCommand implements HandlerCommands {
             }
             EventExecutor executor = Reflect.on(listener).get("executor");
             if (listener.getClass().getName().contains("PWPRegisteredListener")) {
-                final Field f = Reflect.on(listener).getDeclaredField(RegisteredListener.class, "executor");
+                final Field f = Reflect.getDeclaredField(RegisteredListener.class, "executor");
                 f.setAccessible(true);
                 executor = (EventExecutor) f.get(listener);
             }
@@ -160,8 +163,9 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "inject", aliases = "i", description = "注入能耗监控器", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void inject(final InvokeCommandEvent e) {
+    @Cmd(aliases = "i", minimumArguments = 1)
+    @Help(value = "注入能耗监控器", possibleArguments = "[插件名称]")
+    public void inject(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
@@ -177,8 +181,10 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "lag", aliases = "l", description = "查看插件总耗时")
-    public void lag(final InvokeCommandEvent e) {
+    @Cmd(aliases = "l")
+    @Help("查看插件总耗时")
+    @Async
+    public void lag(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         final Map<String, Long> mm = MonitorManager.getMonitor();
         int i = 0;
@@ -193,8 +199,10 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "lasterror", aliases = "la", description = "查看最后一次报错")
-    public void lasterror(final InvokeCommandEvent e) {
+    @Cmd(aliases = "la")
+    @Help("查看最后一次报错")
+    @Async
+    public void lasterror(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         if (lastError == null) {
             sender.sendMessage(no_error);
@@ -207,15 +215,23 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "reinject", aliases = "i", description = "重载能耗监控器")
-    public void reinject(final InvokeCommandEvent e) {
+    @Cmd
+    public void lk(final CommandArgument e) {
+        MonitorManager.sendObject(e.getSender());
+    }
+
+    @Cmd(aliases = "ri")
+    @Help("重载能耗监控器")
+    public void reinject(final CommandArgument e) {
         final CommandSender sender = e.getSender();
         YumAPI.updateInject();
         sender.sendMessage(reinject);
     }
 
-    @HandlerCommand(name = "task", description = "查看插件任务能耗", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void task(final InvokeCommandEvent e) {
+    @Cmd(aliases = "t", minimumArguments = 1)
+    @Help(value = "查看插件任务能耗", possibleArguments = "[插件名称]")
+    @Async
+    public void task(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);
@@ -243,8 +259,9 @@ public class MonitorCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "uninject", aliases = "ui", description = "撤销能耗监控器", minimumArguments = 1, possibleArguments = "[插件名称]")
-    public void uninject(final InvokeCommandEvent e) {
+    @Cmd(aliases = "ui", minimumArguments = 1)
+    @Help(value = "撤销能耗监控器", possibleArguments = "[插件名称]")
+    public void uninject(final CommandArgument e) {
         final String pname = e.getArgs()[0];
         final CommandSender sender = e.getSender();
         final Plugin plugin = Bukkit.getPluginManager().getPlugin(pname);

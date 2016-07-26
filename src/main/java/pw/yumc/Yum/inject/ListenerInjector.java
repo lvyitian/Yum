@@ -1,9 +1,9 @@
 package pw.yumc.Yum.inject;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.event.Event;
@@ -22,20 +22,20 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class ListenerInjector implements EventExecutor {
     private final static String prefix = "§6[§bYum §a事件监控§6] ";
+    private final static String warn = "§c注意! §6插件 §b%s §6处理 §d%s §6事件 §c耗时 §4%sms!";
+    private final static String err = prefix + "§6插件 §b%s §6处理 §d%s §6事件时发生异常!";
     private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败 §6注入类: §3%s!";
     private final static String plugin_is_null = "插件不得为NULL!";
     private final EventExecutor originalExecutor;
 
     private final Plugin plugin;
 
-    public Map<String, Long> eventTotalTime;
-    public Map<String, Integer> eventCount;
+    public Map<String, Long> eventTotalTime = new ConcurrentHashMap<>();
+    public Map<String, Integer> eventCount = new ConcurrentHashMap<>();
 
     public ListenerInjector(final EventExecutor originalExecutor, final Plugin plugin) {
         this.originalExecutor = originalExecutor;
         this.plugin = plugin;
-        eventTotalTime = new HashMap<>();
-        eventCount = new HashMap<>();
     }
 
     public static void inject(final Plugin plugin) {
@@ -46,8 +46,9 @@ public class ListenerInjector implements EventExecutor {
                 if (listener instanceof TimedRegisteredListener) {
                     return;
                 }
+                // 兼容PerWorldPlugin
                 if (listener.getClass().getName().contains("PWPRegisteredListener")) {
-                    final Field f = Reflect.on(listener).getDeclaredField(RegisteredListener.class, "executor");
+                    final Field f = Reflect.getDeclaredField(RegisteredListener.class, "executor");
                     f.setAccessible(true);
                     final EventExecutor originalExecutor = (EventExecutor) f.get(listener);
                     if (originalExecutor instanceof ListenerInjector) {
@@ -92,13 +93,12 @@ public class ListenerInjector implements EventExecutor {
         try {
             if (!event.isAsynchronous()) {
                 final long start = System.nanoTime();
-                // TODO 当操作大于10ms的时候添加一个Lag提示
                 originalExecutor.execute(listener, event);
                 final long end = System.nanoTime();
                 final String en = event.getEventName();
                 final long lag = end - start;
                 if (lag / 1000000 > MonitorManager.lagTime && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
-                    MonitorManager.lagTip("§c注意! §6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件 §c耗时 §4" + lag / 1000000 + "ms!");
+                    MonitorManager.lagTip(String.format(warn, plugin.getName(), event.getEventName(), lag / 1000000));
                 }
                 if (eventTotalTime.containsKey(en)) {
                     eventTotalTime.put(en, eventTotalTime.get(en) + lag);
@@ -116,8 +116,7 @@ public class ListenerInjector implements EventExecutor {
                 e = e.getCause();
             }
             MonitorCommand.lastError = e;
-            MonitorManager.log(prefix + "§6插件 §b" + plugin.getName() + " §6处理 §d" + event.getEventName() + " §6事件时发生异常!");
-            MonitorManager.printThrowable(e);
+            MonitorManager.printThrowable(String.format(err, plugin.getName(), event.getEventName()), e);
         }
     }
 

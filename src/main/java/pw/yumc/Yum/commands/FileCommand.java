@@ -7,15 +7,16 @@ import java.io.InputStreamReader;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import cn.citycraft.PluginHelper.commands.HandlerCommand;
-import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
-import cn.citycraft.PluginHelper.commands.InvokeSubCommand;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.YumCore.commands.CommandArgument;
+import pw.yumc.YumCore.commands.CommandExecutor;
+import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.annotation.Async;
+import pw.yumc.YumCore.commands.annotation.Cmd;
+import pw.yumc.YumCore.commands.annotation.Help;
 
 /**
  * File命令基类
@@ -23,7 +24,7 @@ import pw.yumc.Yum.api.YumAPI;
  * @since 2016年1月9日 上午10:02:39
  * @author 喵♂呜
  */
-public class FileCommand implements HandlerCommands {
+public class FileCommand implements CommandExecutor {
     private static String prefix = "§6[§bYum §a文件管理§6] ";
 
     private static String file_not_found = prefix + "§b%s §c文件未找到!";
@@ -34,6 +35,7 @@ public class FileCommand implements HandlerCommands {
 
     private static String waitCommand = prefix + "§a命令已发送,请等待执行完毕...";
     private static String runResult = prefix + "§a命令运行结果如下:";
+    private static String noResult = prefix + "§d当前命令没有返回结果!";
     private static String runError = prefix + "§c命令运行错误: %s %s";
 
     private static String addStartupSuccess = "§a成功添加开机自动启...";
@@ -44,13 +46,13 @@ public class FileCommand implements HandlerCommands {
 
     public FileCommand(final Yum yum) {
         plugin = yum;
-        final InvokeSubCommand cmdhandler = new InvokeSubCommand(yum, "file");
-        cmdhandler.setAllCommandOnlyConsole(yum.getConfig().getBoolean("onlyFileCommandConsole", true));
-        cmdhandler.registerCommands(this);
+        new CommandManager("file", this, PluginTabComplete.instence);
     }
 
-    @HandlerCommand(name = "copy", aliases = "cp", minimumArguments = 2, description = "复制文件", possibleArguments = "<源文件> <目标目录>")
-    public void copy(final InvokeCommandEvent e) {
+    @Cmd(aliases = "cp", minimumArguments = 2)
+    @Help(value = "复制文件", possibleArguments = "<源文件> <目标目录>")
+    @Async
+    public void copy(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final File src = new File(args[0]);
@@ -70,29 +72,34 @@ public class FileCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "delete", aliases = { "del" }, minimumArguments = 1, description = "删除文件(服务器JAR为根目录)", possibleArguments = "<文件相对目录>")
-    public void delete(final InvokeCommandEvent e) {
+    @Cmd(aliases = "del", minimumArguments = 1)
+    @Help(value = "删除文件(服务器JAR为根目录)", possibleArguments = "<文件相对目录>")
+    @Async
+    public void delete(final CommandArgument e) {
         final String[] args = e.getArgs();
-        final String fpath = args[0];
+        String fpath = args[0];
         final File file = new File(fpath);
         final CommandSender sender = e.getSender();
+        fpath = file.getAbsolutePath();
         if (!file.exists()) {
-            sender.sendMessage("§c文件 " + file.getAbsolutePath() + " 不存在!");
+            sender.sendMessage(String.format(file_not_found, fpath));
         } else {
             if (file.isDirectory()) {
-                sender.sendMessage("§e" + file.getAbsolutePath() + " §c是一个目录 请使用file rm!");
+                sender.sendMessage(String.format(file_is_dir, fpath));
                 return;
             }
             try {
-                sender.sendMessage("§d文件 §e" + file.getAbsolutePath() + " " + (file.delete() ? "§a删除成功!" : "§c删除失败!"));
+                sender.sendMessage("§d文件 §e" + fpath + " " + (file.delete() ? "§a删除成功!" : "§c删除失败!"));
             } catch (final Exception ex) {
-                sender.sendMessage("§d文件 §e" + file.getAbsolutePath() + " 删除失败: " + ex.getMessage());
+                sender.sendMessage("§d文件 §e" + fpath + " 删除失败: " + ex.getMessage());
             }
         }
     }
 
-    @HandlerCommand(name = "download", aliases = { "d" }, minimumArguments = 1, description = "下载文件(默认保存到服务器更新文件夹)", possibleArguments = "<下载地址> [保存文件路径]")
-    public void download(final InvokeCommandEvent e) {
+    @Cmd(aliases = "d", minimumArguments = 1)
+    @Help(value = "下载文件(默认保存到服务器更新文件夹)", possibleArguments = "<下载地址> [保存文件路径]")
+    @Async
+    public void download(final CommandArgument e) {
         final String[] args = e.getArgs();
         String urlstr = args[0];
         if (!urlstr.startsWith("http")) {
@@ -107,8 +114,10 @@ public class FileCommand implements HandlerCommands {
         YumAPI.getDownload().run(e.getSender(), urlstr, file);
     }
 
-    @HandlerCommand(name = "ls", aliases = { "l" }, description = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")
-    public void ls(final InvokeCommandEvent e) {
+    @Cmd(aliases = "ls")
+    @Help(value = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")
+    @Async
+    public void ls(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         File dir = new File(".");
@@ -137,8 +146,10 @@ public class FileCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "rename", aliases = { "rn" }, minimumArguments = 2, description = "重命名文件(服务器JAR为根目录)", possibleArguments = "<文件相对路径> <文件名称>")
-    public void rename(final InvokeCommandEvent e) {
+    @Cmd(aliases = "rn", minimumArguments = 2)
+    @Help(value = "重命名文件(服务器JAR为根目录)", possibleArguments = "<文件相对路径> <文件名称>")
+    @Async
+    public void rename(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final String fpath = args[0];
@@ -156,8 +167,10 @@ public class FileCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "rm", minimumArguments = 1, description = "删除文件夹(服务器JAR为根目录)", possibleArguments = "<相对目录>")
-    public void rm(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "删除文件夹(服务器JAR为根目录)", possibleArguments = "<相对目录>")
+    @Async
+    public void rm(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final String fpath = args[0];
@@ -184,34 +197,37 @@ public class FileCommand implements HandlerCommands {
         }
     }
 
-    @HandlerCommand(name = "run", aliases = "r", minimumArguments = 1, description = "运行一个命令或文件", possibleArguments = "<命令或文件绝对路径>")
-    public void run(final InvokeCommandEvent e) {
+    @Cmd(aliases = "r", minimumArguments = 1)
+    @Help(value = "运行一个命令或文件", possibleArguments = "<命令或文件绝对路径>")
+    @Async
+    public void run(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
-        PluginKit.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Process process = Runtime.getRuntime().exec(StrKit.join(args, " "));
-                    sender.sendMessage(waitCommand);
-                    final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String line = null;
-                    final StringBuilder build = new StringBuilder();
-                    while ((line = br.readLine()) != null) {
-                        build.append(line);
-                        build.append("\n");
-                    }
-                    sender.sendMessage(runResult);
-                    sender.sendMessage(build.toString().split("\n"));
-                } catch (final Exception e2) {
-                    sender.sendMessage(String.format(runError, e2.getClass().getSimpleName(), e2.getMessage()));
-                }
+        try {
+            final Process process = Runtime.getRuntime().exec(StrKit.join(args, " "));
+            sender.sendMessage(waitCommand);
+            final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = null;
+            final StringBuilder build = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                build.append(line);
+                build.append("\n");
             }
-        });
+            if (build.toString().replace("\n", "").isEmpty()) {
+                sender.sendMessage(noResult);
+            } else {
+                sender.sendMessage(runResult);
+                sender.sendMessage(build.toString().split("\n"));
+            }
+        } catch (final Exception e2) {
+            sender.sendMessage(String.format(runError, e2.getClass().getSimpleName(), e2.getMessage()));
+        }
     }
 
-    @HandlerCommand(name = "startup", minimumArguments = 1, description = "添加开机自动启", possibleArguments = "<命令或文件绝对路径>")
-    public void startup(final InvokeCommandEvent e) {
+    @Cmd(minimumArguments = 1)
+    @Help(value = "添加开机自启动", possibleArguments = "<文件绝对路径>")
+    @Async
+    public void startup(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final File src = new File(args[0]);

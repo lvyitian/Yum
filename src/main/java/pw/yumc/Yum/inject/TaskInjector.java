@@ -15,6 +15,8 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class TaskInjector implements Runnable {
     private final static String prefix = "§6[§bYum §a任务监控§6] ";
+    private final static String warn = "§c注意! §6插件 §b%s §6处理 §d%s §6任务 §c耗时 §4%sms!";
+    private final static String err = prefix + "§6插件 §b%s §6处理 §d%s §6任务时发生异常!";
     private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
     private final static String plugin_is_null = "插件不得为NULL!";
     private final Runnable originalTask;
@@ -81,12 +83,11 @@ public class TaskInjector implements Runnable {
     public void run() {
         try {
             final long start = System.nanoTime();
-            // TODO 当操作大于10ms的时候添加一个Lag提示
             originalTask.run();
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > MonitorManager.lagTime) {
-                MonitorManager.lagTip("§6[§bYum §a能耗监控§6] §c注意! §6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务 §c耗时 §4" + lag / 1000000 + "ms!");
+                MonitorManager.lagTip(String.format(warn, plugin.getName(), taskName, lag / 1000000));
             }
             totalTime += lag;
             count++;
@@ -96,9 +97,7 @@ public class TaskInjector implements Runnable {
                 e = e.getCause();
             }
             MonitorCommand.lastError = e;
-            MonitorManager.log(prefix + "§6插件 §b" + plugin.getName() + " §6执行 §d" + taskName + " §6任务时发生异常!");
-            MonitorManager.printThrowable(e);
+            MonitorManager.printThrowable(String.format(err, plugin.getName(), taskName), e);
         }
-
     }
 }

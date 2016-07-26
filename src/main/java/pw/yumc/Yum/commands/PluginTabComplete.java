@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.citycraft.PluginHelper.commands.HandlerCommands;
-import cn.citycraft.PluginHelper.commands.HandlerTabComplete;
-import cn.citycraft.PluginHelper.commands.InvokeCommandEvent;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.api.YumAPI;
+import pw.yumc.YumCore.commands.CommandArgument;
+import pw.yumc.YumCore.commands.CommandExecutor;
+import pw.yumc.YumCore.commands.annotation.Tab;
 
 /**
  *
  * @since 2016年7月7日 上午8:36:47
  * @author 喵♂呜
  */
-public class PluginTabComplete implements HandlerCommands {
+public class PluginTabComplete implements CommandExecutor {
     public static PluginTabComplete instence = new PluginTabComplete();
 
-    @HandlerTabComplete()
-    public List<String> listtab(final InvokeCommandEvent e) {
+    @Tab
+    public List<String> listtab(final CommandArgument e) {
         final String[] args = e.getArgs();
         if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
             return StrKit.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());

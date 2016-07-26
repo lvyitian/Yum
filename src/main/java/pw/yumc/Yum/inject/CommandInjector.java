@@ -23,6 +23,8 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class CommandInjector implements TabExecutor {
     private final static String prefix = "§6[§bYum §a命令监控§6] ";
+    private final static String warn = "§c注意! §6玩家 §a%s §6执行 §b%s §6插件 §d%s %s §6命令 §c耗时 §4%sms!";
+    private final static String err = prefix + "§6玩家 §a%s §6执行 §b%s §6插件 §d%s %s §6命令时发生异常!";
     private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
     private final static String plugin_is_null = "插件不得为NULL!";
     private final CommandExecutor originalExecutor;
@@ -104,12 +106,11 @@ public class CommandInjector implements TabExecutor {
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         try {
             final long start = System.nanoTime();
-            // TODO 当操作大于10ms的时候添加一个Lag提示
             final boolean result = originalExecutor.onCommand(sender, command, label, args);
             final long end = System.nanoTime();
             final long lag = end - start;
             if (Bukkit.isPrimaryThread() && lag / 1000000 > MonitorManager.lagTime) {
-                MonitorManager.lagTip("§c注意! §6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令 §c耗时 §4" + lag / 1000000 + "ms!");
+                MonitorManager.lagTip(String.format(warn, sender.getName(), plugin.getName(), label, StrKit.join(args, " "), lag / 1000000));
             }
             totalTime += lag;
             count++;
@@ -119,13 +120,9 @@ public class CommandInjector implements TabExecutor {
             while (e.getCause() != null) {
                 e = e.getCause();
             }
-            sender.sendMessage(prefix + "§c命令执行异常 请反馈下列信息给腐竹!");
-            sender.sendMessage("§6插件名称: §b" + plugin.getName());
-            sender.sendMessage("§6异常名称: §c" + e.getClass().getName());
-            sender.sendMessage("§6异常说明: §3" + e.getMessage());
             MonitorCommand.lastError = e;
-            MonitorManager.log(prefix + "§6玩家 §a" + sender.getName() + " §6执行 §b" + plugin.getName() + " §6插件 §d" + label + " " + StrKit.join(args, " ") + " §6命令时发生异常!");
-            MonitorManager.printThrowable(e);
+            MonitorManager.sendError(sender, plugin, e);
+            MonitorManager.printThrowable(String.format(err, sender.getName(), plugin.getName(), label, StrKit.join(args, " ")), e);
         }
         return false;
     }
@@ -136,10 +133,8 @@ public class CommandInjector implements TabExecutor {
             return Collections.emptyList();
         }
         final long start = System.nanoTime();
-        // TODO add a more aggressive 10 ms cpu sample
         final List<String> result = originalCompleter.onTabComplete(sender, command, alias, args);
         final long end = System.nanoTime();
-
         totalTime += end - start;
         count++;
         return result;

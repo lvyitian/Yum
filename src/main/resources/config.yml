@@ -3,14 +3,14 @@
 ############################
 
 #配置版本号 请勿修改!!!
-Version: 2.3
+Version: 2.4
 
 #是否只允许控制台执行插件仓库命令
-onlyCommandConsole: false
+onlyCommandConsole: ''
 #是否只允许控制台执行插件网络管理命令
-onlyNetCommandConsole: false
+onlyNetCommandConsole: ''
 #是否只允许控制台执行插件文件管理命令
-onlyFileCommandConsole: false
+onlyFileCommandConsole: ''
 #禁止rm -rf的文件夹列表
 blacklist:
 - 'plugins'
