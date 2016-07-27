@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.bukkit.P;
 import cn.citycraft.PluginHelper.config.FileConfig;
+import cn.citycraft.PluginHelper.sql.DataBase;
 
 public class ConfigManager {
     public final static String ENABLE = "Enable";
@@ -34,6 +35,10 @@ public class ConfigManager {
 
     public List<String> getBlackList() {
         return config.getStringList("blacklist");
+    }
+
+    public DataBase getDataBase() {
+        return DataBase.create(P.instance, config.getConfigurationSection(""));
     }
 
     public List<String> getIgnoreList() {

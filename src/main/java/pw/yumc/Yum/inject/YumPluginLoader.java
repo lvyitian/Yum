@@ -38,7 +38,7 @@ public class YumPluginLoader implements PluginLoader {
         internal_loader = new JavaPluginLoader(instance);
     }
 
-    public static void cleanJavaPluginLoaders() {
+    public static void replaceJavaPluginLoaders() {
         final YumPluginLoader yumPluginLoader = new YumPluginLoader(Bukkit.getServer());
         final PluginManager spm = Bukkit.getPluginManager();
         try {

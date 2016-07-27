@@ -42,12 +42,16 @@ public class MonitorManager {
     private final static Map<String, Long> event = new ConcurrentHashMap<>();
     private final static Map<String, Long> cmd = new ConcurrentHashMap<>();
 
-    private final static DataBase db = null;
+    private static DataBase db;
 
     private final static double um = 1000000.00;
 
     private final static LogKit mlog = new LogKit("monitor.log");
     private final static LogKit elog = new LogKit("error.log");
+
+    public MonitorManager() {
+        db = ConfigManager.i().getDataBase();
+    }
 
     public static void addCmd(final String pname, final long time) {
         add(pname, time, monitor, cmd);
