@@ -16,6 +16,7 @@ import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.kit.LogKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
+import cn.citycraft.PluginHelper.sql.DataBase;
 
 /**
  *
@@ -40,6 +41,8 @@ public class MonitorManager {
     private final static Map<String, Long> task = new ConcurrentHashMap<>();
     private final static Map<String, Long> event = new ConcurrentHashMap<>();
     private final static Map<String, Long> cmd = new ConcurrentHashMap<>();
+
+    private final static DataBase db = null;
 
     private final static double um = 1000000.00;
 

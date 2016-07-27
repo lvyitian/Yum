@@ -46,10 +46,12 @@ public class MonitorCommand implements CommandExecutor {
 
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
 
-    private final String total = "§6总耗时: §a%.2f毫秒 ";
-    private final String count = "§6执行次数: §b%s次 ";
-    private final String avg = "§6平均耗时: §d%.5f毫秒!";
-    private final String avg_warn = "§6平均耗时: §c%.5f毫秒!";
+    private final String micprefix = "  §6命令名称             §a总耗时    §b执行次数  §d平均耗时";
+    private final String mieprefix = "  §6事件名称             §a总耗时    §b执行次数  §d平均耗时";
+    private final String mitprefix = "  §6任务名称             §a总耗时    §b执行次数  §d平均耗时";
+    private final String milist = "§6- §e%-20s §a%-9.2f §b%-9s §d%-9.5f";
+    private final String mialist = "§6- §e%-20s §a%-9.2f §b%-9s";
+    private final String miwlist = "§6- §c%-20s §a%-9.2f §b%-9s §c%-9.5f";
 
     private final String reinject = prefix + "§a能耗监控器重载完毕!";
     private final String injected = prefix + "§a插件 §b%s §a成功注入能耗监控器!";
@@ -93,18 +95,17 @@ public class MonitorCommand implements CommandExecutor {
                 }
             }
         }
+        sender.sendMessage(micprefix);
         for (final Entry<String, Command> command : temp.entrySet()) {
             final org.bukkit.command.CommandExecutor executor = Reflect.on(command.getValue()).get("executor");
             if (executor instanceof CommandInjector) {
                 final CommandInjector injected = (CommandInjector) executor;
-                final StringBuffer str = new StringBuffer();
-                str.append("§6- §e" + command.getValue().getName() + " ");
-                str.append(String.format(total, injected.totalTime / um));
-                str.append(String.format(count, injected.count));
                 if (injected.count != 0) {
-                    str.append(String.format(avg, injected.totalTime / um / injected.count));
+                    final double avgTime = injected.totalTime / um / injected.count;
+                    sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, command.getValue().getName(), injected.totalTime / um, injected.count, avgTime));
+                } else {
+                    sender.sendMessage(String.format(mialist, command.getValue().getName(), injected.totalTime / um, injected.count));
                 }
-                e.getSender().sendMessage(str.toString());
             }
         }
     }
@@ -150,16 +151,10 @@ public class MonitorCommand implements CommandExecutor {
                 }
             }
         }
+        sender.sendMessage(mieprefix);
         for (final String event : eventTotalTime.keySet()) {
-            final StringBuffer str = new StringBuffer();
-            str.append(String.format("§6- §e%-25s ", event));
-            str.append(String.format(total, eventTotalTime.get(event) / um));
-            str.append(String.format(count, eventCount.get(event)));
-            if (eventCount.get(event) != 0) {
-                final double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
-                str.append(String.format(avgTime < 10 ? avg : avg_warn, avgTime));
-            }
-            e.getSender().sendMessage(str.toString());
+            final double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
+            sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, event, eventTotalTime.get(event) / um, eventCount.get(event), avgTime));
         }
     }
 
@@ -241,19 +236,18 @@ public class MonitorCommand implements CommandExecutor {
         }
         final List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
         sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的任务能耗如下!");
+        sender.sendMessage(mitprefix);
         for (final BukkitTask pendingTask : pendingTasks) {
             if (pendingTask.getOwner().getName().equalsIgnoreCase(pname)) {
                 final Runnable task = Reflect.on(pendingTask).get("task");
                 if (task instanceof TaskInjector) {
                     final TaskInjector executor = (TaskInjector) task;
-                    final StringBuffer str = new StringBuffer();
-                    str.append("§6- §e" + getClassName(executor.getOriginalTask().getClass()) + " ");
-                    str.append(String.format(total, executor.totalTime / um));
-                    str.append(String.format(count, executor.count));
                     if (executor.count != 0) {
-                        str.append(String.format(avg, executor.totalTime / um / executor.count));
+                        final double avgTime = executor.totalTime / um / executor.count;
+                        sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, getClassName(executor.getOriginalTask().getClass()), executor.totalTime / um, executor.count, avgTime));
+                    } else {
+                        sender.sendMessage(String.format(mialist, getClassName(executor.getOriginalTask().getClass()), executor.totalTime / um, executor.count));
                     }
-                    e.getSender().sendMessage(str.toString());
                 }
             }
         }

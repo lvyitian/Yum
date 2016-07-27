@@ -63,11 +63,12 @@
 		<url>http://ci.yumc.pw/job/${project.artifactId}/</url>
 	</ciManagement>
 	<properties>
-		<update.description>&amp;a全新 2.X 版本 更多守护与优化</update.description>
+		<update.description>§a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
-			&amp;c注意  &amp;6- &amp;aYum更新需要&amp;d重启服务器!&amp;c重启服务器!&amp;4重启服务器!;
-			&amp;b2.7.0 &amp;6- &amp;a完善能耗监控流程...;
-			&amp;b      &amp;6- &amp;a报错能耗添加日志记录;
+			§c注意  §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
+			§b2.7.0 §6- §d完善能耗监控流程...;
+			§b      §6- §c报错§6/§d能耗§a添加日志记录;
+			§b      §6- §a文件处理添加复制命令;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
