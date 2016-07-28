@@ -207,7 +207,7 @@ public class YumCommand implements Listener, CommandExecutor {
         if (plugin != null) {
             final String version = StringUtils.substring(plugin.getDescription().getVersion(), 0, 15);
             if (YumAPI.getPlugman().fullDeletePlugin(sender, plugin)) {
-                sender.sendMessage(String.format(version, pluginname, version));
+                sender.sendMessage(String.format(del, pluginname, version));
             } else {
                 sender.sendMessage(String.format(delFailed, pluginname));
             }

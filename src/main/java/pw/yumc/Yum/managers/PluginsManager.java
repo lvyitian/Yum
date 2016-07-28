@@ -37,6 +37,7 @@ import com.google.common.base.Joiner;
 
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
+import pw.yumc.Yum.inject.YumPluginLoader;
 
 /**
  * 插件管理类
@@ -320,9 +321,12 @@ public class PluginsManager {
      *            - 插件文件
      * @return 是否成功
      */
-    public boolean load(final CommandSender sender, final File pluginFile) {
+    public boolean load(final CommandSender sender, final File pluginFile, final boolean clean) {
         Plugin target = null;
         final String name = pluginFile.getName();
+        if (clean) {
+            YumPluginLoader.inject();
+        }
         try {
             target = Bukkit.getPluginManager().loadPlugin(pluginFile);
         } catch (final InvalidDescriptionException e) {
@@ -334,6 +338,9 @@ public class PluginsManager {
             sender.sendMessage("§c服务器或JAVA的版本低于插件: " + name + " 所需要的版本!!");
             return false;
         } catch (final InvalidPluginException e) {
+            if (!clean) {
+                return load(sender, pluginFile, true);
+            }
             sender.sendMessage("§4异常: §c" + e.getMessage());
             sender.sendMessage("§4文件: §c" + name + " 不是一个可载入的插件!");
             sender.sendMessage("§4注意: §cMOD服重载插件3次以上需重启服务器");
@@ -344,7 +351,7 @@ public class PluginsManager {
             return false;
         }
         if (target == null) {
-            sender.sendMessage("§4异常: §c服务器类加载器载入插件失败!");
+            sender.sendMessage("§4异常: §c服务器类加载器载入插件失败 请查看后台信息!");
             return false;
         }
         target.onLoad();
@@ -398,7 +405,7 @@ public class PluginsManager {
                 return false;
             }
         }
-        return load(sender, pluginFile);
+        return load(sender, pluginFile, false);
     }
 
     /**
@@ -409,7 +416,7 @@ public class PluginsManager {
      * @return 是否成功
      */
     public boolean load(final File pluginFile) {
-        return load(Bukkit.getConsoleSender(), pluginFile);
+        return load(Bukkit.getConsoleSender(), pluginFile, false);
     }
 
     /**
@@ -534,6 +541,9 @@ public class PluginsManager {
             sender = Bukkit.getConsoleSender();
         }
         final PluginManager pluginManager = Bukkit.getPluginManager();
+        if ("Yum".equalsIgnoreCase(name)) {
+            return true;
+        }
         SimpleCommandMap commandMap = null;
         List<Plugin> plugins = null;
         Map<String, Plugin> lookupNames = null;

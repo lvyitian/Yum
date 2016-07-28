@@ -18,6 +18,7 @@ import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.commands.YumCommand;
+import pw.yumc.Yum.inject.YumPluginLoader;
 import pw.yumc.Yum.listeners.PluginListener;
 import pw.yumc.Yum.listeners.PluginNetworkListener;
 import pw.yumc.Yum.listeners.SecurityListener;
@@ -37,6 +38,8 @@ public class Yum extends JavaPlugin {
     public static Thread mainThread = null;
     public static Timer task = new Timer();
     public static TimerTask tt;
+    private static boolean isLoad = false;
+    private static boolean isEnable = false;
 
     @Override
     public FileConfiguration getConfig() {
@@ -50,27 +53,34 @@ public class Yum extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (Bukkit.isPrimaryThread()) {
-            mainThread = Thread.currentThread();
+        if (!isEnable) {
+            if (Bukkit.isPrimaryThread()) {
+                mainThread = Thread.currentThread();
+            }
+            new YumAPI();
+            initCommands();
+            initListeners();
+            initRunnable();
+            MonitorManager.init();
+            new VersionChecker(this);
+            YumAPI.updateRepo(Bukkit.getConsoleSender());
+            YumAPI.updateCheck(Bukkit.getConsoleSender());
         }
-        new YumAPI();
-        initCommands();
-        initListeners();
-        initRunnable();
-        new VersionChecker(this);
-        YumAPI.updateRepo(Bukkit.getConsoleSender());
-        YumAPI.updateCheck(Bukkit.getConsoleSender());
-        MonitorManager.init();
     }
 
     @Override
     public void onLoad() {
-        // 初始化配置
-        ConfigManager.i();
-        // 初始化更新列
-        UpdatePlugin.getUpdateList();
-        // 启用网络注入
-        NetworkManager.register(this);
+        if (!isLoad) {
+            // 初始化配置
+            ConfigManager.i();
+            // 注入插件加载器
+            YumPluginLoader.inject();
+            // 初始化更新列
+            UpdatePlugin.getUpdateList();
+            // 启用网络注入
+            NetworkManager.register(this);
+            isLoad = true;
+        }
     }
 
     /**
