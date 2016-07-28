@@ -370,7 +370,7 @@ public class PluginsManager {
      * @return 是否成功
      */
     public boolean load(CommandSender sender, final String name) {
-        String filename = null;
+        String filename = name;
         if (sender == null) {
             sender = Bukkit.getConsoleSender();
         }

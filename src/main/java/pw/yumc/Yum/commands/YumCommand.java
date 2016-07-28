@@ -31,6 +31,7 @@ import pw.yumc.Yum.models.BukkitDev;
 import pw.yumc.Yum.models.BukkitDev.Files;
 import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
+import pw.yumc.YumCore.bukkit.Log;
 import pw.yumc.YumCore.commands.CommandArgument;
 import pw.yumc.YumCore.commands.CommandExecutor;
 import pw.yumc.YumCore.commands.CommandManager;
@@ -432,6 +433,12 @@ public class YumCommand implements Listener, CommandExecutor {
             fm.then(look).command("/yum br look " + p.id);
             fm.send(sender);
         }
+    }
+
+    @Cmd
+    public void test(final CommandArgument e) {
+        Log.toSender(e.getSender(), "Test");
+        Log.toSender(e.getSender(), new String[] { "Test1", "Test2", "Test3" });
     }
 
     @Cmd(minimumArguments = 1)

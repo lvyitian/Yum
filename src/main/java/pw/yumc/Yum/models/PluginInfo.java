@@ -6,11 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import cn.citycraft.PluginHelper.PluginHelperLogger;
-import cn.citycraft.PluginHelper.bukkit.Log;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Plugin;
 import pw.yumc.Yum.models.RepoSerialization.TagInfo;
 import pw.yumc.Yum.models.RepoSerialization.URLType;
+import pw.yumc.YumCore.bukkit.Log;
 
 public class PluginInfo implements Serializable {
     public static String NMSVersion;

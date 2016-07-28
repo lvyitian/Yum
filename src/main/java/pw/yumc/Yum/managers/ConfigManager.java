@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import cn.citycraft.PluginHelper.bukkit.P;
 import cn.citycraft.PluginHelper.config.FileConfig;
 import cn.citycraft.PluginHelper.sql.DataBase;
+import pw.yumc.YumCore.bukkit.P;
 
 public class ConfigManager {
     public final static String ENABLE = "Enable";

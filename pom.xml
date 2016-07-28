@@ -32,17 +32,17 @@
 					<minimizeJar>true</minimizeJar>
 					<artifactSet>
 						<includes>
-							<include>cn.citycraft:PluginHelper</include>
 							<include>pw.yumc:YumCore</include>
+							<include>cn.citycraft:PluginHelper</include>
 						</includes>
 					</artifactSet>
 					<relocations>
 						<relocation>
-							<pattern>cn.citycraft.PluginHelper</pattern>
+							<pattern>pw.yumc.YumCore</pattern>
 							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
 						</relocation>
 						<relocation>
-							<pattern>pw.yumc.YumCore</pattern>
+							<pattern>cn.citycraft.PluginHelper</pattern>
 							<shadedPattern>${project.groupId}.${project.artifactId}</shadedPattern>
 						</relocation>
 					</relocations>
@@ -66,6 +66,7 @@
 		<update.description>§a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
 			§c注意  §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
+			§b2.7.1 §6- §c修复部分BUG(load可直接载入文件)...;
 			§b2.7.0 §6- §d完善能耗监控流程...;
 			§b      §6- §c报错§6/§d能耗§a添加日志记录;
 			§b      §6- §a文件处理添加复制命令;
