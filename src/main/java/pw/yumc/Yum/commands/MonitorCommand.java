@@ -151,7 +151,7 @@ public class MonitorCommand implements CommandExecutor {
             }
         }
         sender.sendMessage(mieprefix);
-        for (final String event : eventTotalTime.keySet()) {
+        for (final String event : MonitorManager.sortMapByValue(eventTotalTime).keySet()) {
             final double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
             sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, event, eventTotalTime.get(event) / um, eventCount.get(event), avgTime));
         }

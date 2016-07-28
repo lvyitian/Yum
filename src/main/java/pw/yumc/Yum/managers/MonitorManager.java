@@ -134,7 +134,7 @@ public class MonitorManager {
      */
     public static Map<String, Long> sortMapByValue(final Map<String, Long> oriMap) {
         if (oriMap == null || oriMap.isEmpty()) {
-            return null;
+            return oriMap;
         }
         final Map<String, Long> sortedMap = new LinkedHashMap<String, Long>();
         final List<Map.Entry<String, Long>> entryList = new ArrayList<Map.Entry<String, Long>>(oriMap.entrySet());
