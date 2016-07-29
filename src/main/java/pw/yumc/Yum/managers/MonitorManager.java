@@ -1,6 +1,7 @@
 package pw.yumc.Yum.managers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -35,6 +36,8 @@ public class MonitorManager {
     public final static int lagTime = 20;
     public final static boolean debug = ConfigManager.i().isMonitorDebug();
     public final static boolean log_to_file = ConfigManager.i().isLogToFile();
+
+    private static double totalTime = 0;
 
     private final static Map<String, Long> monitor = new ConcurrentHashMap<>();
     private final static Map<String, Long> task = new ConcurrentHashMap<>();
@@ -71,7 +74,8 @@ public class MonitorManager {
     }
 
     public static MonitorInfo getMonitorInfo(final String pname) {
-        return new MonitorInfo(monitor.get(pname) / um, cmd.get(pname) / um, event.get(pname) / um, task.get(pname) / um);
+        final double per = 100.00;
+        return new MonitorInfo(monitor.get(pname) / totalTime * per, cmd.get(pname) / totalTime * per, event.get(pname) / totalTime * per, task.get(pname) / totalTime * per);
     }
 
     public static void init() {
@@ -123,7 +127,7 @@ public class MonitorManager {
     }
 
     public static void sendObject(final CommandSender sender) {
-        sender.sendMessage(String.format("monitor@%s cmd@%s event@%s task@%s", monitor.hashCode(), cmd.hashCode(), event.hashCode(), task.hashCode()));
+        sender.sendMessage(String.format("totalTime@%s monitor@%s cmd@%s event@%s task@%s", totalTime, sum(monitor.values()), sum(cmd.values()), sum(event.values()), sum(task.values())));
     }
 
     /**
@@ -150,9 +154,18 @@ public class MonitorManager {
 
     @SafeVarargs
     private static void add(final String pname, final long time, final Map<String, Long>... maps) {
+        totalTime += time;
         for (final Map<String, Long> map : maps) {
             map.put(pname, map.get(pname) + time);
         }
+    }
+
+    private static long sum(final Collection<? extends Long> numbers) {
+        int result = 0;
+        for (final Long num : numbers) {
+            result += num;
+        }
+        return result;
     }
 
     public static class MonitorInfo {

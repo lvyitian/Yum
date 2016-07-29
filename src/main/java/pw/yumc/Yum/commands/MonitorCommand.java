@@ -46,6 +46,7 @@ public class MonitorCommand implements CommandExecutor {
 
     private final String prefix = "§6[§bYum §a能耗监控§6] ";
 
+    private final String no_mi = prefix + "§6%s §a自服务器启动以来尚未执行任何操作";
     private final String micprefix = "  §6命令名称             §a总耗时    §b执行次数  §d平均耗时";
     private final String mieprefix = "  §6事件名称             §a总耗时    §b执行次数  §d平均耗时";
     private final String mitprefix = "  §6任务名称             §a总耗时    §b执行次数  §d平均耗时";
@@ -57,8 +58,9 @@ public class MonitorCommand implements CommandExecutor {
     private final String uninjected = prefix + "§a插件 §b%s §a成功撤销能耗监控器!";
     private final String notEnable = prefix + "§c插件 §b%s §c未成功加载 无法执行注入!";
 
-    private final String lagprefix = "   §6插件名称        §c主线程耗时  §a命令耗时  §b事件耗时  §d任务耗时";
-    private final String laglist = "§6%-2s §b%-15s §c%-11.2f §a%-9.2f §b%-9.2f §d%-9.2f";
+    private final String lag = prefix + "§a当前服务器插件能耗如下§6(单位: %)";
+    private final String lagprefix = "   §6插件名称             §c主线程                  §a命令  §b事件  §d任务";
+    private final String laglist = "§6%-2s §b%-20s §c%-25s §a%-5.2f §b%-5.2f §d%-5.2f";
 
     private final String no_error = prefix + "§a自服务器启动以来尚未发现报错!";
     private final String last_error = prefix + "§c最后一次错误异常由 §b%s §c造成 详细如下:";
@@ -93,6 +95,10 @@ public class MonitorCommand implements CommandExecutor {
                     temp.put(command.getName(), command);
                 }
             }
+        }
+        if (temp.isEmpty()) {
+            sender.sendMessage(String.format(no_mi, pname));
+            return;
         }
         sender.sendMessage(micprefix);
         for (final Entry<String, Command> command : temp.entrySet()) {
@@ -150,6 +156,10 @@ public class MonitorCommand implements CommandExecutor {
                 }
             }
         }
+        if (eventTotalTime.isEmpty()) {
+            sender.sendMessage(String.format(no_mi, pname));
+            return;
+        }
         sender.sendMessage(mieprefix);
         for (final String event : MonitorManager.sortMapByValue(eventTotalTime).keySet()) {
             final double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
@@ -182,14 +192,19 @@ public class MonitorCommand implements CommandExecutor {
         final CommandSender sender = e.getSender();
         final Map<String, Long> mm = MonitorManager.getMonitor();
         int i = 0;
-        final int max = e.getArgs().length > 0 ? Integer.parseInt(e.getArgs()[0]) : 8;
+        int max = 8;
+        try {
+            max = Integer.parseInt(e.getArgs()[0]);
+        } catch (final Exception ignore) {
+        }
+        sender.sendMessage(lag);
         sender.sendMessage(lagprefix);
         for (final Entry<String, Long> entry : mm.entrySet()) {
             if (++i > max) {
                 break;
             }
             final MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
-            sender.sendMessage(String.format(laglist, i, entry.getKey(), mi.monitor, mi.cmd, mi.event, mi.task));
+            sender.sendMessage(String.format(laglist, i, entry.getKey(), getPer(mi.monitor), mi.cmd, mi.event, mi.task));
         }
     }
 
@@ -234,6 +249,10 @@ public class MonitorCommand implements CommandExecutor {
             return;
         }
         final List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
+        if (pendingTasks.isEmpty()) {
+            sender.sendMessage(String.format(no_mi, pname));
+            return;
+        }
         sender.sendMessage(prefix + "§6插件 §b" + pname + " §6的任务能耗如下!");
         sender.sendMessage(mitprefix);
         for (final BukkitTask pendingTask : pendingTasks) {
@@ -270,5 +289,28 @@ public class MonitorCommand implements CommandExecutor {
 
     private String getClassName(final Class<?> clazz) {
         return StrKit.isBlank(clazz.getSimpleName()) ? clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1) : clazz.getSimpleName();
+    }
+
+    private String getPer(final double per) {
+        final double p = per / 5;
+        final StringBuilder sb = new StringBuilder();
+        if (p < 4) {
+            sb.append("§a");
+        } else if (p < 7) {
+            sb.append("§d");
+        } else if (p < 10) {
+            sb.append("§c");
+        } else {
+            sb.append("§4");
+        }
+        for (int i = 0; i < 11; i++) {
+            if (p > i) {
+                sb.append("|");
+            }
+        }
+        if (per > 0) {
+            sb.append(String.format("% 3.2f", per));
+        }
+        return sb.toString();
     }
 }

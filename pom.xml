@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pw.yumc</groupId>
 	<artifactId>Yum</artifactId>
-	<version>2.7.1</version>
+	<version>2.7.2</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -66,10 +66,8 @@
 		<update.description>§a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
 			§c注意  §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
+			§b2.7.2 §6- §c修复mi lag命令参数错误报错 §d百分比显示能耗...;
 			§b2.7.1 §6- §c修复部分BUG(load可直接载入文件)...;
-			§b2.7.0 §6- §d完善能耗监控流程...;
-			§b      §6- §c报错§6/§d能耗§a添加日志记录;
-			§b      §6- §a文件处理添加复制命令;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

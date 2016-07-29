@@ -21,8 +21,8 @@ public class NetCommand implements CommandExecutor {
     private final String prefix = "§6[§bYum §a网络管理§6] ";
 
     private final String showlist = prefix + "§a自服务器启动以来尝试联网的插件列表如下:";
-    private final String listprefix = "  §6插件名称    §d联网次数";
-    private final String list = "§6- §b%s    §d%s";
+    private final String listprefix = "  §6插件名称             §d联网次数";
+    private final String list = "§6- §b%-20s §d%s";
     private final String no_net = prefix + "§a尚未检测到尝试联网的插件!";
     private final String add = prefix + "§a已添加插件 §b%s §a到网络 %s §a列表!";
 
