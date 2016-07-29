@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import cn.citycraft.PluginHelper.commands.HandlerCommand;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.YumCore.commands.CommandArgument;
@@ -23,7 +22,7 @@ public class NetCommand implements CommandExecutor {
 
     private final String showlist = prefix + "§a自服务器启动以来尝试联网的插件列表如下:";
     private final String listprefix = "  §6插件名称    §d联网次数";
-    private final String list = "§6- §b&s    §d%s";
+    private final String list = "§6- §b%s    §d%s";
     private final String no_net = prefix + "§a尚未检测到尝试联网的插件!";
     private final String add = prefix + "§a已添加插件 §b%s §a到网络 %s §a列表!";
 
