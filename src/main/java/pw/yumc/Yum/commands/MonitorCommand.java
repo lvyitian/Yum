@@ -294,11 +294,11 @@ public class MonitorCommand implements CommandExecutor {
     private String getPer(final double per) {
         final double p = per / 5;
         final StringBuilder sb = new StringBuilder();
-        if (p < 4) {
+        if (p < 3) {
             sb.append("§a");
-        } else if (p < 7) {
+        } else if (p < 6) {
             sb.append("§d");
-        } else if (p < 10) {
+        } else if (p < 9) {
             sb.append("§c");
         } else {
             sb.append("§4");
