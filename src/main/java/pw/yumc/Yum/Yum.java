@@ -27,6 +27,7 @@ import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.NetworkManager;
 import pw.yumc.Yum.runnables.MainThreadCheckTask;
+import pw.yumc.YumCore.update.SubscribeTask;
 
 /**
  * MC插件仓库
@@ -63,6 +64,7 @@ public class Yum extends JavaPlugin {
             initRunnable();
             MonitorManager.init();
             new VersionChecker(this);
+            new SubscribeTask();
             YumAPI.updateRepo(Bukkit.getConsoleSender());
             YumAPI.updateCheck(Bukkit.getConsoleSender());
         }

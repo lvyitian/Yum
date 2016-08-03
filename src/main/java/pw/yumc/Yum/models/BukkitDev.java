@@ -9,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import cn.citycraft.PluginHelper.kit.StrKit;
+
 public class BukkitDev implements Serializable {
     public static String HOST = "https://api.curseforge.com";
     public static String MODULE = "/servermods";
@@ -37,6 +39,9 @@ public class BukkitDev implements Serializable {
         }
 
         public static List<Files> parseList(final String json) {
+            if (StrKit.isBlank(json) || json.equals("[]")) {
+                return Collections.emptyList();
+            }
             final List<Files> temp = new ArrayList<>();
             final JSONArray ja = (JSONArray) JSONValue.parse(json);
             for (int i = 0; i < ja.size(); i++) {
@@ -61,6 +66,9 @@ public class BukkitDev implements Serializable {
         }
 
         public static List<Projects> parseList(final String json) {
+            if (StrKit.isBlank(json) || json.equals("[]")) {
+                return Collections.emptyList();
+            }
             final List<Projects> temp = new ArrayList<>();
             final JSONArray ja = (JSONArray) JSONValue.parse(json);
             for (int i = 0; i < ja.size(); i++) {

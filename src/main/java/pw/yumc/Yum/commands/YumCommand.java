@@ -130,6 +130,7 @@ public class YumCommand implements Listener, CommandExecutor {
                     });
                     break;
                 }
+                case "i":
                 case "install": {
                     sender.sendMessage(String.format(fsearching, id));
                     final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));

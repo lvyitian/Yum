@@ -227,7 +227,7 @@ public class YumAPI {
      */
     public static void uninject(final Plugin plugin) {
         CommandInjector.uninject(plugin);
-        // ListenerInjector.uninject(plugin);
+        ListenerInjector.uninject(plugin);
         TaskInjector.uninject(plugin);
     }
 
