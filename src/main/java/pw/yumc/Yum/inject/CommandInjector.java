@@ -23,7 +23,7 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class CommandInjector implements TabExecutor {
     private final static String prefix = "§6[§bYum §a命令监控§6] ";
-    private final static String warn = "§c注意! §6玩家 §a%s §6执行 §b%s §6插件 §d%s %s §6命令 §c耗时 §4%sms!";
+    private final static String warn = "§c注意! §6玩家 §a%s §6执行 §b%s §6插件 §d%s %s §6命令 §c耗时 §4%sms §c平均耗时 §4%sms!";
     private final static String err = prefix + "§6玩家 §a%s §6执行 §b%s §6插件 §d%s %s §6命令时发生异常!";
     private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
     private final static String plugin_is_null = "插件不得为NULL!";
@@ -109,11 +109,13 @@ public class CommandInjector implements TabExecutor {
             final boolean result = originalExecutor.onCommand(sender, command, label, args);
             final long end = System.nanoTime();
             final long lag = end - start;
-            if (Bukkit.isPrimaryThread() && lag / 1000000 > MonitorManager.lagTime) {
-                MonitorManager.lagTip(String.format(warn, sender.getName(), plugin.getName(), label, StrKit.join(args, " "), lag / 1000000));
-            }
             totalTime += lag;
             count++;
+            final long lagms = lag / MonitorManager.um;
+            final long avglagms = totalTime / count / MonitorManager.um;
+            if (Bukkit.isPrimaryThread() && lagms > MonitorManager.lagTime && avglagms > MonitorManager.lagTime) {
+                MonitorManager.lagTip(String.format(warn, sender.getName(), plugin.getName(), label, StrKit.join(args, " "), lagms, avglagms));
+            }
             MonitorManager.addCmd(plugin.getName(), lag);
             return result;
         } catch (Throwable e) {

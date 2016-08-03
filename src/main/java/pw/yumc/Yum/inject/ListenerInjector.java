@@ -22,7 +22,7 @@ import pw.yumc.Yum.managers.MonitorManager;
 
 public class ListenerInjector implements EventExecutor {
     private final static String prefix = "§6[§bYum §a事件监控§6] ";
-    private final static String warn = "§c注意! §6插件 §b%s §6处理 §d%s §6事件 §c耗时 §4%sms!";
+    private final static String warn = "§c注意! §6插件 §b%s §6处理 §d%s §6事件 §c耗时 §4%sms §c平均耗时 §4%sms!";
     private final static String err = prefix + "§6插件 §b%s §6处理 §d%s §6事件时发生异常!";
     private final static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败 §6注入类: §3%s!";
     private final static String plugin_is_null = "插件不得为NULL!";
@@ -97,15 +97,17 @@ public class ListenerInjector implements EventExecutor {
                 final long end = System.nanoTime();
                 final String en = event.getEventName();
                 final long lag = end - start;
-                if (lag / 1000000 > MonitorManager.lagTime && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
-                    MonitorManager.lagTip(String.format(warn, plugin.getName(), event.getEventName(), lag / 1000000));
-                }
                 if (eventTotalTime.containsKey(en)) {
                     eventTotalTime.put(en, eventTotalTime.get(en) + lag);
                     eventCount.put(en, eventCount.get(en) + 1);
                 } else {
                     eventTotalTime.put(en, end - start);
                     eventCount.put(en, 1);
+                }
+                final long lagms = lag / MonitorManager.um;
+                final long avglagms = eventTotalTime.get(en) / eventCount.get(en) / MonitorManager.um;
+                if (avglagms > MonitorManager.lagTime && lagms > MonitorManager.lagTime && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
+                    MonitorManager.lagTip(String.format(warn, plugin.getName(), event.getEventName(), lagms, avglagms));
                 }
                 MonitorManager.addEvent(plugin.getName(), lag);
             } else {

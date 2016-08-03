@@ -34,6 +34,7 @@ public class MonitorManager {
     private final static String devInfo = "§c开发人员调试信息如下:";
 
     public final static int lagTime = 20;
+    public final static int um = 1000000;
     public final static boolean debug = ConfigManager.i().isMonitorDebug();
     public final static boolean log_to_file = ConfigManager.i().isLogToFile();
 
@@ -43,8 +44,6 @@ public class MonitorManager {
     private final static Map<String, Long> task = new ConcurrentHashMap<>();
     private final static Map<String, Long> event = new ConcurrentHashMap<>();
     private final static Map<String, Long> cmd = new ConcurrentHashMap<>();
-
-    private final static double um = 1000000.00;
 
     private final static LogKit mlog = new LogKit("monitor.log");
     private final static LogKit elog = new LogKit("error.log");
