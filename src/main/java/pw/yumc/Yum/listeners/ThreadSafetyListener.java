@@ -46,7 +46,6 @@ public class ThreadSafetyListener implements Listener {
         checkSafety(creatureSpawnEvent);
     }
 
-    @EventHandler
     public void onInventoryOpen(final InventoryOpenEvent inventoryOpenEvent) {
         checkSafety(inventoryOpenEvent);
     }
@@ -76,7 +75,6 @@ public class ThreadSafetyListener implements Listener {
         checkSafety(worldLoadEvent);
     }
 
-    @EventHandler
     public void onWorldSave(final WorldSaveEvent worldSaveEvent) {
         checkSafety(worldSaveEvent);
     }
