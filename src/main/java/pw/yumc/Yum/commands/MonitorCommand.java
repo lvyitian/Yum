@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
@@ -204,7 +205,7 @@ public class MonitorCommand implements CommandExecutor {
                 break;
             }
             final MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
-            sender.sendMessage(String.format(laglist, i, entry.getKey(), getPer(mi.monitor), mi.cmd, mi.event, mi.task));
+            sender.sendMessage(String.format(laglist, i, entry.getKey(), getPer(sender, mi.monitor), mi.cmd, mi.event, mi.task));
         }
     }
 
@@ -291,7 +292,8 @@ public class MonitorCommand implements CommandExecutor {
         return StrKit.isBlank(clazz.getSimpleName()) ? clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1) : clazz.getSimpleName();
     }
 
-    private String getPer(final double per) {
+    private String getPer(final CommandSender sender, final double per) {
+        final String ps = sender instanceof Player ? "||" : "|";
         final double p = per / 5;
         final StringBuilder sb = new StringBuilder();
         if (p < 3) {
@@ -305,7 +307,7 @@ public class MonitorCommand implements CommandExecutor {
         }
         for (int i = 0; i < 11; i++) {
             if (p > i) {
-                sb.append("|");
+                sb.append(ps);
             }
         }
         if (per > 0) {
