@@ -3,8 +3,10 @@ package pw.yumc.Yum.managers;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -146,14 +148,15 @@ public class DownloadManager {
         try {
             sender.sendMessage("§6开始下载: §3" + getFileName(url));
             sender.sendMessage("§6下载地址: §3" + url.toString());
-            final int fileLength = url.openConnection().getContentLength();
+            final URLConnection uc = reload(sender, url.openConnection());
+            final int fileLength = uc.getContentLength();
             if (fileLength < 0) {
                 sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
                 sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
                 return false;
             }
             sender.sendMessage("§6文件长度: §3" + fileLength);
-            in = new BufferedInputStream(url.openStream());
+            in = new BufferedInputStream(uc.getInputStream());
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
                 sender.sendMessage("§6创建新目录: §d" + file.getParentFile().getAbsolutePath());
@@ -257,6 +260,24 @@ public class DownloadManager {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 302 301跳转处理
+     *
+     * @param 跳转地址
+     * @return 最终地址
+     * @throws Exception
+     */
+    private URLConnection reload(final CommandSender sender, final URLConnection uc) throws Exception {
+        final HttpURLConnection huc = (HttpURLConnection) uc;
+        // 302, 301
+        if (huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM) {
+            final String url = huc.getHeaderField("Location");
+            sender.sendMessage("§6跳转至地址: §3" + url);
+            return reload(sender, new URL(url).openConnection());
+        }
+        return uc;
     }
 
 }
