@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pw.yumc</groupId>
 	<artifactId>Yum</artifactId>
-	<version>2.7.6</version>
+	<version>2.7.7</version>
 	<name>Yum</name>
 	<description>Minecraft 服务器插件管理系统</description>
 	<build>
@@ -66,9 +66,9 @@
 		<update.description>§a全新 2.X 版本 更多守护与优化</update.description>
 		<update.changes>
 			§c注意  §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
-			§b2.7.6 §6- §c暂时取消部分线程安全检测§4(不稳定)...;
-			§b2.7.5 §6- §c修复§eBukkitDev§e下载为空时的异常...;
-			§b2.7.4 §6- §e异步记录服务器报错与耗时操作 §a性能优化...;
+			§b2.7.7 §6- §c修复部分插件重载时提示Plugin already initialized的问题!;
+			         §6- §c修复§eBukkitDev§c下载地址跳转问题...;
+			         §6- §c修复§eBukkitDev§c下载为空时的异常...;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
