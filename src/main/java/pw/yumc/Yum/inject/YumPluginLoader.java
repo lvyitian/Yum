@@ -47,18 +47,27 @@ public class YumPluginLoader implements PluginLoader {
         replaceJavaPluginLoaders(yumPluginLoader);
     }
 
+    public static void inject(final String pname) {
+        injectExistingPlugin(Bukkit.getPluginManager().getPlugin(pname), yumPluginLoader);
+        replaceJavaPluginLoaders(yumPluginLoader);
+    }
+
+    private static void injectExistingPlugin(final Plugin p, final YumPluginLoader yumPluginLoader) {
+        if (p != null && p instanceof JavaPlugin) {
+            final JavaPlugin jp = (JavaPlugin) p;
+            try {
+                final Field f = JavaPlugin.class.getDeclaredField("loader");
+                f.setAccessible(true);
+                f.set(jp, yumPluginLoader);
+            } catch (final Exception e) {
+                Bukkit.getServer().getLogger().log(Level.SEVERE, "Yum failed injecting " + jp.getDescription().getFullName() + " with the new PluginLoader, contact the developers on YUMC!", e);
+            }
+        }
+    }
+
     private static void injectExistingPlugins(final YumPluginLoader yumPluginLoader) {
         for (final org.bukkit.plugin.Plugin p : Bukkit.getPluginManager().getPlugins()) {
-            if (p instanceof JavaPlugin) {
-                final JavaPlugin jp = (JavaPlugin) p;
-                try {
-                    final Field f = JavaPlugin.class.getDeclaredField("loader");
-                    f.setAccessible(true);
-                    f.set(jp, yumPluginLoader);
-                } catch (final Exception e) {
-                    Bukkit.getServer().getLogger().log(Level.SEVERE, "Yum failed injecting " + jp.getDescription().getFullName() + " with the new PluginLoader, contact the developers on YUMC!", e);
-                }
-            }
+            injectExistingPlugin(p, yumPluginLoader);
         }
     }
 
@@ -75,9 +84,7 @@ public class YumPluginLoader implements PluginLoader {
             final Iterator<Map.Entry<Pattern, PluginLoader>> iter = map.entrySet().iterator();
             while (iter.hasNext()) {
                 final Entry<Pattern, PluginLoader> entry = iter.next();
-                if (entry.getValue() instanceof JavaPluginLoader) {
-                    entry.setValue(yumPluginLoader);
-                }
+                entry.setValue(yumPluginLoader);
             }
             field.set(spm, map);
         } catch (final Exception e) {
