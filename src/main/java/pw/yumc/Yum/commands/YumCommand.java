@@ -96,6 +96,7 @@ public class YumCommand implements Listener, CommandExecutor {
                     final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));
                     if (lf.isEmpty()) {
                         sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                        return;
                     }
                     sender.sendMessage(filelistprefix);
                     for (int i = 0; i < lf.size() || i < 8; i++) {
@@ -136,6 +137,7 @@ public class YumCommand implements Listener, CommandExecutor {
                     final List<Files> lf = Files.parseList(IOUtil.getData(String.format(BukkitDev.PLUGIN, id)));
                     if (lf.isEmpty()) {
                         sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                        return;
                     }
                     final Files f = lf.get(0);
                     final String url = f.downloadUrl;
