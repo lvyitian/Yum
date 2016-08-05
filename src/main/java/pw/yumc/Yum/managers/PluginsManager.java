@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +36,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.google.common.base.Joiner;
 
+import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import cn.citycraft.PluginHelper.utils.StringUtil;
 import pw.yumc.Yum.inject.YumPluginLoader;
@@ -321,20 +323,11 @@ public class PluginsManager {
      *            - 插件文件
      * @return 是否成功
      */
-    public boolean load(final CommandSender sender, final File pluginFile, final boolean clean) {
+    public boolean load(final CommandSender sender, final File pluginFile) {
         Plugin target = null;
         final String name = pluginFile.getName();
-        String pname = name;
         try {
             try {
-                try {
-                    final PluginDescriptionFile pluginDescriptionFile = main.getPluginLoader().getPluginDescription(pluginFile);
-                    pname = pluginDescriptionFile.getName();
-                } catch (final InvalidDescriptionException e) {
-                    sender.sendMessage("§4异常: §c" + e.getMessage());
-                    sender.sendMessage("§4插件: §c" + name + " 的 plugin.yml 文件存在错误!");
-                    return false;
-                }
                 target = Bukkit.getPluginManager().loadPlugin(pluginFile);
             } catch (final UnsupportedClassVersionError e) {
                 sender.sendMessage("§4异常: §c" + e.getMessage());
@@ -342,10 +335,6 @@ public class PluginsManager {
                 return false;
             } catch (final InvalidPluginException e) {
                 if (e.getMessage().equalsIgnoreCase("Plugin already initialized!")) {
-                    if (!clean) {
-                        YumPluginLoader.inject(pname);
-                        return load(sender, pluginFile, true);
-                    }
                     sender.sendMessage("§4异常: §c" + e.getMessage());
                     sender.sendMessage("§4插件: §c" + name + " 已载入到服务器!");
                     sender.sendMessage("§4注意: §c当前插件无法在运行时重载 请重启服务器!");
@@ -422,7 +411,7 @@ public class PluginsManager {
                 return false;
             }
         }
-        return load(sender, pluginFile, false);
+        return load(sender, pluginFile);
     }
 
     /**
@@ -433,7 +422,7 @@ public class PluginsManager {
      * @return 是否成功
      */
     public boolean load(final File pluginFile) {
-        return load(Bukkit.getConsoleSender(), pluginFile, false);
+        return load(Bukkit.getConsoleSender(), pluginFile);
     }
 
     /**
@@ -565,7 +554,7 @@ public class PluginsManager {
         List<Plugin> plugins = null;
         Map<String, Plugin> lookupNames = null;
         Map<String, Command> knownCommands = null;
-        final Map<Pattern, JavaPluginLoader> fileAssociations = null;
+        Map<Pattern, JavaPluginLoader> fileAssociations = null;
         if (pluginManager == null) {
             sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
             return false;
@@ -586,10 +575,10 @@ public class PluginsManager {
             final Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
             knownCommandsField.setAccessible(true);
             knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-            // XXX 暂时用不到
-            // final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
-            // fileAssociationsField.setAccessible(true);
-            // fileAssociations = (Map<Pattern, JavaPluginLoader>) fileAssociationsField.get(pluginManager);
+
+            final Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
+            fileAssociationsField.setAccessible(true);
+            fileAssociations = (Map<Pattern, JavaPluginLoader>) fileAssociationsField.get(pluginManager);
 
         } catch (final Exception e) {
             sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 §b" + name + " §c卸载失败!");
@@ -620,39 +609,38 @@ public class PluginsManager {
                         }
                     }
                 }
-                // try {
-                // if (fileAssociations != null) {
-                // // XXX 不能移除 会导致无法加载
-                // for (final Iterator<Entry<Pattern, JavaPluginLoader>> filter = fileAssociations.entrySet().iterator(); filter.hasNext();) {
-                // final Entry<Pattern, JavaPluginLoader> entry = filter.next();
-                // final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
-                // if (match.find()) {
-                // final JavaPluginLoader pluginLoader = entry.getValue();
-                // final Field loadersField = pluginLoader.getClass().getDeclaredField("loaders");
-                // loadersField.setAccessible(true);
-                // final Map<String, URLClassLoader> loaders = (Map<String, URLClassLoader>) loadersField.get(pluginLoader);
-                // // XXX 不能移除 会导致无法调用其他插件
-                // loaders.clear();
-                // sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类实例缓存!");
-                // }
-                // }
-                // }
-                // } catch (final Exception e) {
-                // e.printStackTrace();
-                // }
+                try {
+                    if (fileAssociations != null) {
+                        for (final Entry<Pattern, JavaPluginLoader> entry : fileAssociations.entrySet()) {
+                            final Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
+                            if (match.find()) {
+                                PluginLoader pluginLoader = entry.getValue();
+                                if (pluginLoader instanceof YumPluginLoader) {
+                                    pluginLoader = ((YumPluginLoader) pluginLoader).internal_loader;
+                                }
+                                final Field loadersField = pluginLoader.getClass().getDeclaredField("loaders");
+                                loadersField.setAccessible(true);
+                                final Map<String, URLClassLoader> loaders = (Map<String, URLClassLoader>) loadersField.get(pluginLoader);
+                                for (final Entry<String, URLClassLoader> entry2 : loaders.entrySet()) {
+                                    Reflect.on(entry2.getValue()).set("pluginInit", null).set("plugin", null);
+                                }
+                                sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类实例缓存!");
+                            }
+                        }
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
                 sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
                 final ClassLoader cl = next.getClass().getClassLoader();
                 try {
                     ((URLClassLoader) cl).close();
                 } catch (final IOException ex) {
-                    ex.printStackTrace();
                 }
                 System.gc();
             }
         }
-        if (!pluginVersion.isEmpty())
-
-        {
+        if (!pluginVersion.isEmpty()) {
             sender.sendMessage("§6卸载: §a插件 §b" + name + " §a版本 §d" + pluginVersion + " §a已成功卸载!");
             return true;
         }

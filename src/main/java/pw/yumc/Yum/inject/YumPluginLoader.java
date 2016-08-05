@@ -33,7 +33,7 @@ public class YumPluginLoader implements PluginLoader {
     private static boolean isInit = false;
     private static final String needRestart = "§6[§bYum§6] §c由于修改了服务器内部文件 §bYum §c无法直接重载 §4请重启服务器!";
     private static final YumPluginLoader yumPluginLoader = new YumPluginLoader(Bukkit.getServer());
-    private final JavaPluginLoader internal_loader;
+    public final JavaPluginLoader internal_loader;
     private final Server server;
 
     @SuppressWarnings("deprecation")

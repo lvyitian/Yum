@@ -127,7 +127,7 @@ public class YumAPI {
     public static boolean install(final CommandSender sender, final String pluginname, final String url) {
         final File pluginFile = new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar");
         if (download.run(sender, url, pluginFile)) {
-            return plugman.load(sender, pluginFile, false);
+            return plugman.load(sender, pluginFile);
         }
         return false;
     }
