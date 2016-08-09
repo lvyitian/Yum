@@ -174,6 +174,7 @@ public class YumAPI {
         if (pi != null) {
             return install(sender, pi.name, pi.getUrl(sender, version));
         }
+        sender.sendMessage("§4错误: §c仓库中未找到插件 §b" + pluginname + " §c安装失败!");
         return false;
     }
 
