@@ -21,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import cn.citycraft.PluginHelper.callback.CallBack.One;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.ZipKit;
-import cn.citycraft.PluginHelper.tellraw.FancyMessage;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
@@ -39,6 +38,7 @@ import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
 import pw.yumc.YumCore.commands.annotation.Sort;
+import pw.yumc.YumCore.tellraw.Tellraw;
 
 /**
  * Yum命令基类
@@ -101,11 +101,11 @@ public class YumCommand implements Listener, CommandExecutor {
                     sender.sendMessage(filelistprefix);
                     for (int i = 0; i < lf.size() || i < 8; i++) {
                         final Files f = lf.get(i);
-                        final FancyMessage fm = FancyMessage.newFM();
-                        fm.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
-                        fm.then(" ");
-                        fm.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
-                        fm.send(sender);
+                        final Tellraw tr = Tellraw.create();
+                        tr.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
+                        tr.then(" ");
+                        tr.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
+                        tr.send(sender);
                     }
                     break;
                 }
@@ -295,7 +295,7 @@ public class YumCommand implements Listener, CommandExecutor {
         sender.sendMessage("§6[Yum仓库]§3服务器已安装插件: ");
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             final String pname = plugin.getName();
-            final FancyMessage fm = FancyMessage.newFM();
+            final Tellraw fm = Tellraw.create();
             fm.text(String.format("§6- %-32s", YumAPI.getPlugman().getFormattedName(plugin, true)));
             fm.then(" ");
             fm.then(update).command("/yum u " + pname);
@@ -430,7 +430,7 @@ public class YumCommand implements Listener, CommandExecutor {
         sender.sendMessage(String.format(result, pname));
         sender.sendMessage(bukkitlistprefix);
         for (final Projects p : list) {
-            final FancyMessage fm = FancyMessage.newFM();
+            final Tellraw fm = Tellraw.create();
             fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
             fm.then(" ");
             fm.then(look).command("/yum br look " + p.id);
