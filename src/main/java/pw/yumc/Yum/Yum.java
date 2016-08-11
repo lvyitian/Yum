@@ -12,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.kit.PluginKit;
-import cn.citycraft.PluginHelper.utils.VersionChecker;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.MonitorCommand;
@@ -27,6 +26,7 @@ import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.NetworkManager;
 import pw.yumc.Yum.runnables.MainThreadCheckTask;
+import pw.yumc.YumCore.statistic.Statistics;
 import pw.yumc.YumCore.update.SubscribeTask;
 
 /**
@@ -63,7 +63,7 @@ public class Yum extends JavaPlugin {
             initListeners();
             initRunnable();
             MonitorManager.init();
-            new VersionChecker(this);
+            new Statistics();
             new SubscribeTask();
             YumAPI.updateRepo(Bukkit.getConsoleSender());
             YumAPI.updateCheck(Bukkit.getConsoleSender());

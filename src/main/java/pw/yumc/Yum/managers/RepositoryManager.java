@@ -11,8 +11,9 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
 import cn.citycraft.PluginHelper.kit.HttpKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.models.PluginInfo;
@@ -154,15 +155,7 @@ public class RepositoryManager {
     }
 
     public PackageInfo jsonToPackage(final String json) {
-        try {
-            return JsonHandle.fromJson(json, PackageInfo.class);
-        } catch (final Exception e) {
-            return null;
-        }
-    }
-
-    public Repositories jsonToRepositories(final String json) {
-        return JsonHandle.fromJson(json, Repositories.class);
+        return new PackageInfo((JSONObject) JSONValue.parse(json));
     }
 
     public void updatePackage(final CommandSender sender, final PackageInfo pkg) {

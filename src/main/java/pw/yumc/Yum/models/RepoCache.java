@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cn.citycraft.PluginHelper.jsonresult.JsonHandle;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
@@ -15,10 +17,6 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
 public class RepoCache implements Serializable {
     Map<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
     Map<String, Repositories> repos = new HashMap<String, Repositories>();
-
-    public static RepoCache fromJson(final String json) {
-        return JsonHandle.fromJson(json, RepoCache.class);
-    }
 
     public void addPlugins(final String name, final PluginInfo info) {
         plugins.put(name, info);
@@ -54,7 +52,7 @@ public class RepoCache implements Serializable {
             PluginKit.sc("§c源地址获取数据为空 §b" + repo);
             return null;
         }
-        final Repositories reposes = JsonHandle.fromJson(json, Repositories.class);
+        final Repositories reposes = new Repositories((JSONObject) JSONValue.parse(json));
         if (reposes == null || reposes.repos.isEmpty()) {
             PluginKit.sc("§c源地址解析Json为空 §b" + repo);
             return null;
@@ -72,10 +70,5 @@ public class RepoCache implements Serializable {
         }
         repos.remove(repo);
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return JsonHandle.toJson(this);
     }
 }
