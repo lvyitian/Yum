@@ -271,8 +271,8 @@ public class DownloadManager {
      */
     private URLConnection reload(final CommandSender sender, final URLConnection uc) throws Exception {
         final HttpURLConnection huc = (HttpURLConnection) uc;
-        // 302, 301
-        if (huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM) {
+        // 302, 301, 307
+        if (huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || huc.getResponseCode() == 307) {
             final String url = huc.getHeaderField("Location");
             sender.sendMessage("§6跳转至地址: §3" + url);
             return reload(sender, new URL(url).openConnection());
