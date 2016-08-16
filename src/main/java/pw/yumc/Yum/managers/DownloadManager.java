@@ -149,6 +149,17 @@ public class DownloadManager {
             sender.sendMessage("§6开始下载: §3" + getFileName(url));
             sender.sendMessage("§6下载地址: §3" + url.toString());
             final URLConnection uc = reload(sender, url.openConnection());
+            final int status = ((HttpURLConnection) uc).getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                switch (status) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    throw new IllegalStateException(status + " 文件未找到!");
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                    throw new IllegalStateException(status + " 服务器拒绝了访问!");
+                case HttpURLConnection.HTTP_BAD_GATEWAY:
+                    throw new IllegalStateException(status + " 无效的网关!");
+                }
+            }
             final int fileLength = uc.getContentLength();
             if (fileLength < 0) {
                 sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
