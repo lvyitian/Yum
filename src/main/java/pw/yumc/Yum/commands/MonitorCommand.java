@@ -219,10 +219,8 @@ public class MonitorCommand implements CommandExecutor {
             return;
         }
         final Plugin plugin = PluginKit.getOperatePlugin(lastError.getStackTrace());
-        if (plugin != null) {
-            sender.sendMessage(String.format(last_error, plugin.getName()));
-            lastError.printStackTrace();
-        }
+        sender.sendMessage(String.format(last_error, plugin != null ? plugin.getName() : "未知"));
+        lastError.printStackTrace();
     }
 
     @Cmd
