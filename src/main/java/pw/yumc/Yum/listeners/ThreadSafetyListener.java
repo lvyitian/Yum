@@ -65,7 +65,6 @@ public class ThreadSafetyListener implements Listener {
         checkSafety(quitEvent);
     }
 
-    @EventHandler
     public void onPlayerTeleport(final PlayerTeleportEvent teleportEvent) {
         checkSafety(teleportEvent);
     }

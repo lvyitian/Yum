@@ -198,7 +198,7 @@ public class RepositoryManager {
             sender = Bukkit.getConsoleSender();
         }
         if (repocenter == null || repocenter.repos.isEmpty()) {
-            sender.sendMessage("源地址为Null或源列表为空!");
+            sender.sendMessage(String.format("§6[§bYum§6] 源 %s 数据为空或列表为空!", repocenter.name));
             return false;
         }
         for (final Repository repo : repocenter.repos) {

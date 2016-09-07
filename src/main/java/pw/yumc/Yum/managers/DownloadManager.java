@@ -161,12 +161,13 @@ public class DownloadManager {
                 }
             }
             final int fileLength = uc.getContentLength();
-            if (fileLength < 0) {
+            final boolean dyml = "chunked".equalsIgnoreCase(uc.getHeaderField("Transfer-Encoding"));
+            if (fileLength < 0 && !dyml) {
                 sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
                 sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
                 return false;
             }
-            sender.sendMessage("§6文件长度: §3" + fileLength);
+            sender.sendMessage("§6文件长度: §3" + (dyml ? "动态长度" : fileLength));
             in = new BufferedInputStream(uc.getInputStream());
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -185,11 +186,18 @@ public class DownloadManager {
             while ((count = in.read(data)) != -1) {
                 downloaded += count;
                 fout.write(data, 0, count);
-                final int percent = (int) (downloaded * 100L / fileLength);
-                if (percent % 10 == 0) {
-                    if (System.currentTimeMillis() - time > 500) {
-                        sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+                if (dyml) {
+                    if (System.currentTimeMillis() - time > 1000) {
+                        sender.sendMessage(String.format("§6已下载: §a%sk", downloaded / 1024));
                         time = System.currentTimeMillis();
+                    }
+                } else {
+                    final int percent = (int) (downloaded * 100L / fileLength);
+                    if (percent % 10 == 0) {
+                        if (System.currentTimeMillis() - time > 500) {
+                            sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
+                            time = System.currentTimeMillis();
+                        }
                     }
                 }
             }

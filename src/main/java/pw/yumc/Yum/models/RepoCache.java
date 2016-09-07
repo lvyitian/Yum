@@ -49,12 +49,12 @@ public class RepoCache implements Serializable {
     public Repositories getRepo(final String repo) {
         final String json = IOUtil.getData(repo);
         if (json == null || json.isEmpty()) {
-            PluginKit.sc("§c源地址获取数据为空 §b" + repo);
+            PluginKit.sc("§6[§bYum§6] §c源地址获取数据为空 §b" + repo);
             return null;
         }
         final Repositories reposes = new Repositories((JSONObject) JSONValue.parse(json));
-        if (reposes == null || reposes.repos.isEmpty()) {
-            PluginKit.sc("§c源地址解析Json为空 §b" + repo);
+        if (reposes.repos.isEmpty()) {
+            PluginKit.sc("§6[§bYum§6] §c源地址解析Json为空 §b" + repo);
             return null;
         }
         return reposes;

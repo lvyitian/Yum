@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import cn.citycraft.PluginHelper.callback.CallBack.One;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.ZipKit;
+import cn.citycraft.PluginHelper.utils.FileUtil;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import cn.citycraft.PluginHelper.utils.StrKit;
 import pw.yumc.Yum.Yum;
@@ -30,7 +31,6 @@ import pw.yumc.Yum.models.BukkitDev;
 import pw.yumc.Yum.models.BukkitDev.Files;
 import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
-import pw.yumc.YumCore.bukkit.Log;
 import pw.yumc.YumCore.commands.CommandArgument;
 import pw.yumc.YumCore.commands.CommandExecutor;
 import pw.yumc.YumCore.commands.CommandManager;
@@ -66,6 +66,7 @@ public class YumCommand implements Listener, CommandExecutor {
 
     private final String look = "§6查看";
     private final String install = "§a安装";
+    private final String install_tip = "§a点击安装";
     private final String update = "§a更新";
     private final String unload = "§d卸载";
     private final String reload = "§6重载";
@@ -105,6 +106,7 @@ public class YumCommand implements Listener, CommandExecutor {
                         tr.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
                         tr.then(" ");
                         tr.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
+                        tr.tip(install_tip);
                         tr.send(sender);
                     }
                     break;
@@ -179,6 +181,20 @@ public class YumCommand implements Listener, CommandExecutor {
             } else {
                 sender.sendMessage(String.format(delFailed, pluginname));
             }
+        } else {
+            sender.sendMessage(pnf(pluginname));
+        }
+    }
+
+    @Cmd(aliases = "ddel", minimumArguments = 1)
+    @Help(value = "删除插件数据文件夹", possibleArguments = "<插件名称>")
+    @Sort(7)
+    public void dirdelete(final CommandArgument e) {
+        final String pluginname = e.getArgs()[0];
+        final CommandSender sender = e.getSender();
+        final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginname);
+        if (plugin != null) {
+            FileUtil.deleteDir(sender, plugin.getDataFolder());
         } else {
             sender.sendMessage(pnf(pluginname));
         }
@@ -298,13 +314,13 @@ public class YumCommand implements Listener, CommandExecutor {
             final Tellraw fm = Tellraw.create();
             fm.text(String.format("§6- %-32s", YumAPI.getPlugman().getFormattedName(plugin, true)));
             fm.then(" ");
-            fm.then(update).command("/yum u " + pname);
+            fm.then(update).cmd_tip("/yum u " + pname, update);
             fm.then(" ");
-            fm.then(unload).command("/yum unload " + pname);
+            fm.then(unload).cmd_tip("/yum unload " + pname, unload);
             fm.then(" ");
-            fm.then(reload).command("/yum re " + pname);
+            fm.then(reload).cmd_tip("/yum re " + pname, reload);
             fm.then(" ");
-            fm.then(delete).command("/yum del " + pname);
+            fm.then(delete).cmd_tip("/yum del " + pname, delete);
             fm.send(sender);
         }
     }
@@ -433,15 +449,9 @@ public class YumCommand implements Listener, CommandExecutor {
             final Tellraw fm = Tellraw.create();
             fm.text(String.format(bukkitlist, p.id, p.name, p.stage));
             fm.then(" ");
-            fm.then(look).command("/yum br look " + p.id);
+            fm.then(look).cmd_tip("/yum br look " + p.id, look);
             fm.send(sender);
         }
-    }
-
-    @Cmd
-    public void test(final CommandArgument e) {
-        Log.toSender(e.getSender(), "Test");
-        Log.toSender(e.getSender(), new String[] { "Test1", "Test2", "Test3" });
     }
 
     @Cmd(minimumArguments = 1)

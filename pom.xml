@@ -67,8 +67,8 @@
 		<update.changes>
 			§c注意  §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
 			§b2.7.7 §6- §c修复部分插件重载时提示Plugin already initialized的问题!;
-			         §6- §c修复§eBukkitDev§c下载地址跳转问题...;
-			         §6- §c修复§eBukkitDev§c下载为空时的异常...;
+			        §6- §c修复§eBukkitDev§c下载地址跳转问题...;
+			        §6- §c修复§eBukkitDev§c下载为空时的异常...;
 		</update.changes>
 		<env.GIT_COMMIT>DEBUG</env.GIT_COMMIT>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

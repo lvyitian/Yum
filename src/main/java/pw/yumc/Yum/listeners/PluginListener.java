@@ -40,6 +40,6 @@ public class PluginListener implements Listener {
             public void run() {
                 YumAPI.inject(e.getPlugin());
             }
-        }, 60);
+        }, 2);
     }
 }

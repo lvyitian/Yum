@@ -11,13 +11,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
+import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.commands.YumCommand;
-import pw.yumc.Yum.inject.YumPluginLoader;
 import pw.yumc.Yum.listeners.PluginListener;
 import pw.yumc.Yum.listeners.PluginNetworkListener;
 import pw.yumc.Yum.listeners.SecurityListener;
@@ -39,8 +39,6 @@ public class Yum extends JavaPlugin {
     public static Thread mainThread = null;
     public static Timer task = new Timer();
     public static TimerTask tt;
-    private static boolean isLoad = false;
-    private static boolean isEnable = false;
 
     @Override
     public FileConfiguration getConfig() {
@@ -54,35 +52,38 @@ public class Yum extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!isEnable) {
-            if (Bukkit.isPrimaryThread()) {
-                mainThread = Thread.currentThread();
-            }
-            new YumAPI();
-            initCommands();
-            initListeners();
-            initRunnable();
-            MonitorManager.init();
-            new Statistics();
-            new SubscribeTask();
-            YumAPI.updateRepo(Bukkit.getConsoleSender());
-            YumAPI.updateCheck(Bukkit.getConsoleSender());
+        if (Bukkit.isPrimaryThread()) {
+            mainThread = Thread.currentThread();
+        } else {
+            mainThread = getMainThread();
         }
+        new YumAPI();
+        initCommands();
+        initListeners();
+        initRunnable();
+        MonitorManager.init();
+        new Statistics();
+        new SubscribeTask();
+        YumAPI.updateRepo(Bukkit.getConsoleSender());
+        YumAPI.updateCheck(Bukkit.getConsoleSender());
     }
 
     @Override
     public void onLoad() {
-        if (!isLoad) {
-            // 初始化配置
-            ConfigManager.i();
-            // 注入插件加载器
-            YumPluginLoader.inject();
-            // 初始化更新列
-            UpdatePlugin.getUpdateList();
-            // 启用网络注入
-            NetworkManager.register(this);
-            isLoad = true;
-        }
+        // 初始化配置
+        ConfigManager.i();
+        // 初始化更新列
+        UpdatePlugin.getUpdateList();
+        // 启用网络注入
+        NetworkManager.register(this);
+    }
+
+    /**
+     * @return 主线程
+     */
+    private Thread getMainThread() {
+        final Object console = Reflect.on(Bukkit.getServer()).get("console");
+        return Reflect.on(console).get("primaryThread");
     }
 
     /**

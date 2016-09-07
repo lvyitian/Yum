@@ -236,6 +236,13 @@ public class MonitorCommand implements CommandExecutor {
         sender.sendMessage(reinject);
     }
 
+    @Cmd
+    @Help("重置能耗监控器")
+    @Async
+    public void reset(final CommandArgument e) {
+        MonitorManager.init();
+    }
+
     @Cmd(aliases = "t", minimumArguments = 1)
     @Help(value = "查看插件任务能耗", possibleArguments = "[插件名称]")
     @Async

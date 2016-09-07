@@ -19,7 +19,8 @@ import cn.citycraft.PluginHelper.kit.LogKit;
 import cn.citycraft.PluginHelper.kit.PluginKit;
 
 /**
- *
+ * 能耗监控管理
+ * 
  * @since 2016年7月19日 下午3:55:54
  * @author 喵♂呜
  */
