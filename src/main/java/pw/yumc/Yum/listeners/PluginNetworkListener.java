@@ -5,11 +5,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.commands.NetCommand;
 import pw.yumc.Yum.events.PluginNetworkEvent;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.YumCore.bukkit.Log;
 
 public class PluginNetworkListener implements Listener {
     public String prefix = "§6[§bYum §a网络管理§6] ";
@@ -24,8 +24,8 @@ public class PluginNetworkListener implements Listener {
 
     public void breakNetwork(final PluginNetworkEvent e) {
         if (ConfigManager.i().isNetworkShowInfo()) {
-            PluginKit.sc(String.format(prefix + breaked, e.getPlugin().getName()));
-            PluginKit.sc(String.format(prefix + url, e.getUrl().toString()));
+            Log.console(prefix + breaked, e.getPlugin().getName());
+            Log.console(prefix + url, e.getUrl().toString());
         }
         e.setCancelled(true);
     }
@@ -55,13 +55,13 @@ public class PluginNetworkListener implements Listener {
                 return;
             }
             if (e.isPrimaryThread()) {
-                PluginKit.sc(String.format(prefix + warnMain, plugin.getName()));
+                Log.console(prefix + warnMain, plugin.getName());
                 if (!ConfigManager.i().isAllowPrimaryThread()) {
                     breakNetwork(e);
                 }
             } else {
-                PluginKit.sc(String.format(prefix + warn, plugin.getName()));
-                PluginKit.sc(String.format(prefix + url, urlinfo));
+                Log.console(prefix + warn, plugin.getName());
+                Log.console(prefix + url, urlinfo);
             }
         }
     }

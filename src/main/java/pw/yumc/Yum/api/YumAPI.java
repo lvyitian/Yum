@@ -11,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
-import cn.citycraft.PluginHelper.kit.PKit;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
@@ -21,6 +19,8 @@ import pw.yumc.Yum.managers.DownloadManager;
 import pw.yumc.Yum.managers.PluginsManager;
 import pw.yumc.Yum.managers.RepositoryManager;
 import pw.yumc.Yum.models.PluginInfo;
+import pw.yumc.YumCore.bukkit.P;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  * Yum管理中心
@@ -42,7 +42,7 @@ public class YumAPI {
      *            插件实体
      */
     public YumAPI() {
-        YumAPI.main = PKit.instance;
+        YumAPI.main = P.instance;
         plugman = new PluginsManager(main);
         download = new DownloadManager(main);
         repo = new RepositoryManager(main);
@@ -321,7 +321,7 @@ public class YumAPI {
      *            命令发送者
      */
     public static void updateCheck(final CommandSender sender) {
-        PluginKit.runTaskLaterAsync(new Runnable() {
+        PKit.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
                 final List<Plugin> ulist = getUpdateList(sender);
@@ -395,7 +395,7 @@ public class YumAPI {
      * 更新注入
      */
     public static void updateInject() {
-        PluginKit.runTaskLater(new Runnable() {
+        PKit.runTaskLater(new Runnable() {
             @Override
             public void run() {
                 for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -409,7 +409,7 @@ public class YumAPI {
      * 更新Yum源数据
      */
     public static void updateRepo(final CommandSender sender) {
-        PluginKit.runTaskAsync(new Runnable() {
+        PKit.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 repo.updateRepositories(sender);

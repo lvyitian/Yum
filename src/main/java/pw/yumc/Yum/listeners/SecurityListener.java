@@ -5,9 +5,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.managers.ConfigManager;
+import pw.yumc.YumCore.bukkit.Log;
+import pw.yumc.YumCore.kit.PKit;
 import pw.yumc.injected.event.SetOpEvent;
 
 /**
@@ -26,10 +27,10 @@ public class SecurityListener implements Listener {
 
     @EventHandler
     public void setop(final SetOpEvent e) {
-        final Plugin plugin = PluginKit.getOperatePlugin();
+        final Plugin plugin = PKit.getOperatePlugin();
         if (plugin != null) {
             if (ConfigManager.i().getSetOpBlackList().contains(plugin.getName())) {
-                PluginKit.sc(String.format(prefix + prevent, plugin, e.getOfflinePlayer().getName()));
+                Log.console(prefix + prevent, plugin, e.getOfflinePlayer().getName());
                 e.setCancelled(true);
                 return;
             }

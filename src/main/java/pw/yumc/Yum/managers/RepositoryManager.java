@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import cn.citycraft.PluginHelper.kit.HttpKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.models.PluginInfo;
 import pw.yumc.Yum.models.RepoCache;
@@ -24,6 +23,7 @@ import pw.yumc.Yum.models.RepoSerialization.Repositories;
 import pw.yumc.Yum.models.RepoSerialization.Repository;
 import pw.yumc.Yum.models.RepoSerialization.TagInfo;
 import pw.yumc.Yum.models.RepoSerialization.URLType;
+import pw.yumc.YumCore.kit.HttpKit;
 
 /**
  * 仓库管理类
@@ -71,7 +71,7 @@ public class RepositoryManager {
     }
 
     public List<PluginInfo> getAllPlugin() {
-        final List<PluginInfo> li = new ArrayList<PluginInfo>();
+        final List<PluginInfo> li = new ArrayList<>();
         for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             li.add(plugin.getValue());
         }
@@ -79,7 +79,7 @@ public class RepositoryManager {
     }
 
     public List<String> getAllPluginName() {
-        final List<String> li = new ArrayList<String>();
+        final List<String> li = new ArrayList<>();
         for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             li.add(plugin.getValue().name);
         }
@@ -87,7 +87,7 @@ public class RepositoryManager {
     }
 
     public List<String> getAllPluginsInfo() {
-        final List<String> li = new ArrayList<String>();
+        final List<String> li = new ArrayList<>();
         li.add("§d仓库名称  §a插件名称  §e插件描述");
         for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
             final Plugin plugin = pi.getValue().plugin;
@@ -114,7 +114,7 @@ public class RepositoryManager {
     }
 
     public List<PluginInfo> getPluginInfo(final String name) {
-        final List<PluginInfo> li = new ArrayList<PluginInfo>();
+        final List<PluginInfo> li = new ArrayList<>();
         for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             if (plugin.getValue().name.equalsIgnoreCase(name)) {
                 li.add(plugin.getValue());

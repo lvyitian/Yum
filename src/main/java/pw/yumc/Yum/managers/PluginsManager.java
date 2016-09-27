@@ -33,8 +33,8 @@ import org.bukkit.plugin.UnknownDependencyException;
 
 import com.google.common.base.Joiner;
 
+import cn.citycraft.PluginHelper.kit.StrKit;
 import cn.citycraft.PluginHelper.utils.FileUtil;
-import cn.citycraft.PluginHelper.utils.StringUtil;
 
 /**
  * 插件管理类
@@ -207,7 +207,7 @@ public class PluginsManager {
      * @return 插件
      */
     public Plugin getPluginByName(final String[] args, final int start) {
-        return getPluginByName(StringUtil.consolidateStrings(args, start));
+        return getPluginByName(StrKit.consolidateStrings(args, start));
     }
 
     /**
@@ -233,7 +233,7 @@ public class PluginsManager {
     }
 
     public List<String> getPluginNames(final boolean fullName) {
-        final List<String> plugins = new ArrayList<String>();
+        final List<String> plugins = new ArrayList<>();
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             plugins.add(fullName ? plugin.getDescription().getFullName() : plugin.getName());
         }
@@ -263,7 +263,7 @@ public class PluginsManager {
      * @return 插件命令
      */
     public String getUsages(final Plugin plugin) {
-        final List<String> parsedCommands = new ArrayList<String>();
+        final List<String> parsedCommands = new ArrayList<>();
 
         final Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
 

@@ -5,8 +5,9 @@ import java.util.TimerTask;
 
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.ServerKit;
+import pw.yumc.YumCore.bukkit.Log;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  * 线程安全检查任务
@@ -45,22 +46,22 @@ public class MainThreadCheckTask extends TimerTask {
                 if (isElementEqual(topElement, "java.net.DualStackPlainSocketImpl", "connect0")
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
-                    final Plugin plugin = PluginKit.getOperatePlugin(stackTrace);
+                    final Plugin plugin = PKit.getOperatePlugin(stackTrace);
                     if (plugin != null) {
-                        PluginKit.sc(String.format(prefix + warnPNet, plugin.getName()));
+                        Log.console(prefix + warnPNet, plugin.getName());
                     } else {
-                        PluginKit.sc(prefix + warnNet);
+                        Log.console(prefix + warnNet);
                     }
                     tick();
                 }
                 // File (in) - java.io.FileInputStream.readBytes
                 // File (out) - java.io.FileOutputStream.writeBytes
                 else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes") || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
-                    final Plugin plugin = PluginKit.getOperatePlugin(stackTrace);
+                    final Plugin plugin = PKit.getOperatePlugin(stackTrace);
                     if (plugin != null) {
-                        PluginKit.sc(String.format(prefix + warnPIO, plugin.getName()));
+                        Log.console(prefix + warnPIO, plugin.getName());
                     } else {
-                        PluginKit.sc(prefix + warnIO);
+                        Log.console(prefix + warnIO);
                     }
                     tick();
                 } else {
@@ -79,7 +80,7 @@ public class MainThreadCheckTask extends TimerTask {
     private void tick() {
         stopTime += 5;
         if (stopTime >= 45) {
-            PluginKit.sc(String.format(prefix + deliver, stopTime));
+            Log.console(prefix + deliver, stopTime);
             ServerKit.tick();
         }
     }

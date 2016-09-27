@@ -10,9 +10,9 @@ import java.util.List;
 import org.bukkit.Bukkit;
 
 import cn.citycraft.PluginHelper.kit.ExceptionKit;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.events.PluginNetworkEvent;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  * 网络代理处理类
@@ -52,7 +52,7 @@ public class NetworkManager {
 
         @Override
         public List<Proxy> select(final URI uri) {
-            final PluginNetworkEvent pne = new PluginNetworkEvent(PluginKit.getOperatePlugin(), uri, Bukkit.isPrimaryThread());
+            final PluginNetworkEvent pne = new PluginNetworkEvent(PKit.getOperatePlugin(), uri, Bukkit.isPrimaryThread());
             Bukkit.getPluginManager().callEvent(pne);
             if (pne.isCancelled()) {
                 ExceptionKit.throwException(new IOException("[Yum 网络防护] 已开启网络防护 并被联网规则拦截!"));

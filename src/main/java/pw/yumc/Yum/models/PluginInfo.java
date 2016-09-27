@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import cn.citycraft.PluginHelper.PluginHelperLogger;
 import cn.citycraft.PluginHelper.utils.IOUtil;
 import pw.yumc.Yum.models.RepoSerialization.Plugin;
 import pw.yumc.Yum.models.RepoSerialization.TagInfo;
@@ -95,7 +94,7 @@ public class PluginInfo implements Serializable {
         String ver = version;
         if (ver == null) {
             if (plugin.tags != null) {
-                PluginHelperLogger.getLogger().debug("发现存在TAG标签 开始检索: " + NMSVersion);
+                Log.debug("发现存在TAG标签 开始检索: " + NMSVersion);
                 for (final TagInfo tagInfo : plugin.tags) {
                     if (tagInfo.tag.equalsIgnoreCase(NMSVersion)) {
                         sender.sendMessage("§6版本: §b从Tag标签中获取 §e" + NMSVersion + " §b的最新版本...");

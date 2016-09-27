@@ -16,7 +16,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.MonitorManager;
@@ -63,7 +62,7 @@ public class CommandInjector implements TabExecutor {
                 }
             }
         } catch (final Throwable e) {
-            PluginKit.sc(String.format(inject_error, plugin.getName()));
+            MonitorManager.log(String.format(inject_error, plugin.getName()));
         }
     }
 

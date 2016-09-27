@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import cn.citycraft.PluginHelper.kit.StrKit;
+import pw.yumc.YumCore.kit.StrKit;
 
 public class BukkitDev implements Serializable {
     public static String HOST = "https://api.curseforge.com";

@@ -19,7 +19,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.PluginHelper.callback.CallBack.One;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.ZipKit;
 import cn.citycraft.PluginHelper.utils.FileUtil;
 import cn.citycraft.PluginHelper.utils.IOUtil;
@@ -38,6 +37,7 @@ import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
 import pw.yumc.YumCore.commands.annotation.Sort;
+import pw.yumc.YumCore.kit.PKit;
 import pw.yumc.YumCore.tellraw.Tellraw;
 
 /**
@@ -87,7 +87,7 @@ public class YumCommand implements Listener, CommandExecutor {
     public void bukkitrepo(final CommandArgument e) {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
-        PluginKit.runTaskAsync(new Runnable() {
+        PKit.runTaskAsync(new Runnable() {
             @Override
             public void run() {
                 final String id = args[1];

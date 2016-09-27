@@ -2,7 +2,12 @@ package pw.yumc.Yum.commands;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -52,7 +57,7 @@ public class FileCommand implements CommandExecutor {
     @Cmd(aliases = "cp", minimumArguments = 2)
     @Help(value = "复制文件", possibleArguments = "<源文件> <目标目录>")
     @Async
-    public void copy(final CommandArgument e) {
+    public void copy(final CommandArgument e) throws FileNotFoundException, IOException {
         final String[] args = e.getArgs();
         final CommandSender sender = e.getSender();
         final File src = new File(args[0]);
@@ -65,7 +70,7 @@ public class FileCommand implements CommandExecutor {
             sender.sendMessage(String.format(file_is_dir, args[0]));
             return;
         }
-        if (FileUtil.copyFile(src, des)) {
+        if (Files.copy(new FileInputStream(src), des.toPath(), StandardCopyOption.REPLACE_EXISTING) != 0) {
             sender.sendMessage(String.format(copySuccess, args[0]));
         } else {
             sender.sendMessage(String.format(copyFailed, args[0]));

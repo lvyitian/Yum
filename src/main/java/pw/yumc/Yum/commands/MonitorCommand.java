@@ -21,7 +21,6 @@ import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
@@ -36,6 +35,7 @@ import pw.yumc.YumCore.commands.CommandManager;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  *
@@ -218,7 +218,7 @@ public class MonitorCommand implements CommandExecutor {
             sender.sendMessage(no_error);
             return;
         }
-        final Plugin plugin = PluginKit.getOperatePlugin(lastError.getStackTrace());
+        final Plugin plugin = PKit.getOperatePlugin(lastError.getStackTrace());
         sender.sendMessage(String.format(last_error, plugin != null ? plugin.getName() : "未知"));
         lastError.printStackTrace();
     }

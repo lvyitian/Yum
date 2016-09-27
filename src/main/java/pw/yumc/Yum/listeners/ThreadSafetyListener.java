@@ -17,8 +17,8 @@ import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.Yum;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  * Fork From LagMonitor: https://github.com/games647/LagMonitor.git
@@ -86,7 +86,7 @@ public class ThreadSafetyListener implements Listener {
     private void checkSafety(final Event eventType) {
         if (Yum.mainThread != null && Thread.currentThread() != Yum.mainThread && !eventType.isAsynchronous()) {
             final String eventName = eventType.getEventName();
-            final Plugin plugin = PluginKit.getOperatePlugin();
+            final Plugin plugin = PKit.getOperatePlugin();
             if (plugin != null) {
                 throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName + " 操作插件: " + plugin.getName());
             }

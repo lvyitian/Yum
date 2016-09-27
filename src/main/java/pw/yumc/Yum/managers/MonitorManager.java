@@ -16,11 +16,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import cn.citycraft.PluginHelper.kit.LogKit;
-import cn.citycraft.PluginHelper.kit.PluginKit;
+import pw.yumc.YumCore.bukkit.Log;
 
 /**
  * 能耗监控管理
- * 
+ *
  * @since 2016年7月19日 下午3:55:54
  * @author 喵♂呜
  */
@@ -65,7 +65,7 @@ public class MonitorManager {
         if (log_to_file) {
             elog.logSender(message);
         } else {
-            PluginKit.sc(message);
+            Log.console(message);
         }
     }
 
@@ -92,7 +92,7 @@ public class MonitorManager {
         if (log_to_file) {
             mlog.logSender(message);
         } else {
-            PluginKit.sc(message);
+            Log.console(message);
         }
     }
 
@@ -107,7 +107,7 @@ public class MonitorManager {
             elog(String.format(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber()));
         }
         if (debug) {
-            PluginKit.sc(devInfo);
+            Log.console(devInfo);
             e.printStackTrace();
         }
     }
@@ -140,8 +140,8 @@ public class MonitorManager {
         if (oriMap == null || oriMap.isEmpty()) {
             return oriMap;
         }
-        final Map<String, Long> sortedMap = new LinkedHashMap<String, Long>();
-        final List<Map.Entry<String, Long>> entryList = new ArrayList<Map.Entry<String, Long>>(oriMap.entrySet());
+        final Map<String, Long> sortedMap = new LinkedHashMap<>();
+        final List<Map.Entry<String, Long>> entryList = new ArrayList<>(oriMap.entrySet());
         Collections.sort(entryList, new MonitorComparator());
         final Iterator<Map.Entry<String, Long>> iter = entryList.iterator();
         Entry<String, Long> tmpEntry = null;

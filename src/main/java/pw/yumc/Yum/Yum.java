@@ -12,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import cn.citycraft.CommonData.UpdatePlugin;
 import cn.citycraft.PluginHelper.ext.kit.Reflect;
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.MonitorCommand;
@@ -26,6 +25,7 @@ import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.NetworkManager;
 import pw.yumc.Yum.runnables.MainThreadCheckTask;
+import pw.yumc.YumCore.bukkit.Log;
 import pw.yumc.YumCore.statistic.Statistics;
 import pw.yumc.YumCore.update.SubscribeTask;
 
@@ -108,19 +108,19 @@ public class Yum extends JavaPlugin {
                     throw new ClassNotFoundException();
                 } catch (final NoSuchFieldException | SecurityException e) {
                     new SecurityListener(this);
-                    PluginKit.scp("§a安全管理系统已启用...");
+                    Log.console("§a安全管理系统已启用...");
                 }
             } catch (final ClassNotFoundException e) {
-                PluginKit.scp("§c服务端未注入安全拦截器 关闭功能...");
+                Log.console("§c服务端未注入安全拦截器 关闭功能...");
             }
         }
         if (ConfigManager.i().isNetworkEnable()) {
             new PluginNetworkListener(this);
-            PluginKit.scp("§a网络管理系统已启用...");
+            Log.console("§a网络管理系统已启用...");
         }
         if (ConfigManager.i().isThreadSafe()) {
             new ThreadSafetyListener(this);
-            PluginKit.scp("§a线程管理系统已启用...");
+            Log.console("§a线程管理系统已启用...");
         }
         if (ConfigManager.i().isMonitorEnable()) {
             new PluginListener();
@@ -133,7 +133,7 @@ public class Yum extends JavaPlugin {
     private void initRunnable() {
         // 需要在主线程注册任务
         if (ConfigManager.i().isMainThreadCheck() && mainThread != null) {
-            PluginKit.scp("§aI O 管理系统已启用...");
+            Log.console("§aI O 管理系统已启用...");
             if (tt != null) {
                 tt.cancel();
             }

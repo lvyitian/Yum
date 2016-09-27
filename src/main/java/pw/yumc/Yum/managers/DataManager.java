@@ -1,8 +1,8 @@
 package pw.yumc.Yum.managers;
 
-import cn.citycraft.PluginHelper.sql.DataBase;
-import cn.citycraft.PluginHelper.sql.KeyValue;
 import cn.citycraft.PluginHelper.sql.Type;
+import pw.yumc.YumCore.sql.DataBase;
+import pw.yumc.YumCore.sql.core.KeyValue;
 
 public class DataManager {
     private static DataBase db = ConfigManager.i().getDataBase();

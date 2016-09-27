@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import cn.citycraft.PluginHelper.config.FileConfig;
-import cn.citycraft.PluginHelper.sql.DataBase;
 import pw.yumc.YumCore.bukkit.P;
+import pw.yumc.YumCore.config.FileConfig;
+import pw.yumc.YumCore.sql.DataBase;
 
 public class ConfigManager {
     public final static String ENABLE = "Enable";
@@ -22,11 +22,11 @@ public class ConfigManager {
     public final FileConfig monitor;
 
     public ConfigManager(final JavaPlugin plugin) {
-        config = new FileConfig(plugin);
-        setop = new FileConfig(plugin, "setop.yml");
-        network = new FileConfig(plugin, "network.yml");
-        thread = new FileConfig(plugin, "thread.yml");
-        monitor = new FileConfig(plugin, "monitor.yml");
+        config = new FileConfig();
+        setop = new FileConfig("setop.yml");
+        network = new FileConfig("network.yml");
+        thread = new FileConfig("thread.yml");
+        monitor = new FileConfig("monitor.yml");
     }
 
     public static ConfigManager i() {

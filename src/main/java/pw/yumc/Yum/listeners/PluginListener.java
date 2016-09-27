@@ -6,11 +6,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
-import cn.citycraft.PluginHelper.kit.PluginKit;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.managers.ConfigManager;
 import pw.yumc.Yum.managers.MonitorManager;
+import pw.yumc.YumCore.bukkit.Log;
 import pw.yumc.YumCore.bukkit.P;
+import pw.yumc.YumCore.kit.PKit;
 
 /**
  *
@@ -21,7 +22,7 @@ public class PluginListener implements Listener {
 
     public PluginListener() {
         Bukkit.getPluginManager().registerEvents(this, P.instance);
-        PluginKit.scp("§a性能监控系统已启用...");
+        Log.console("§a性能监控系统已启用...");
     }
 
     @EventHandler
@@ -35,7 +36,7 @@ public class PluginListener implements Listener {
             return;
         }
         MonitorManager.reset(e.getPlugin().getName());
-        PluginKit.runTaskLater(new Runnable() {
+        PKit.runTaskLater(new Runnable() {
             @Override
             public void run() {
                 YumAPI.inject(e.getPlugin());
