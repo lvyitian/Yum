@@ -20,12 +20,10 @@ import org.json.simple.JSONValue;
  */
 public class RepoSerialization {
     @SuppressWarnings("unchecked")
-    public static <E> List<E> parse(final String json, final Class<?> clazz) {
-        if (json == null || "null".equals(json) || json.isEmpty()) {
-            return null;
-        }
-        final List<E> temp = new ArrayList<>();
-        final JSONArray ja = (JSONArray) JSONValue.parse(json);
+    public static <E> List<E> parse(String json, Class<?> clazz) {
+        if (json == null || "null".equals(json) || json.isEmpty()) { return null; }
+        List<E> temp = new ArrayList<>();
+        JSONArray ja = (JSONArray) JSONValue.parse(json);
         for (int i = 0; i < ja.size(); i++) {
             try {
                 temp.add((E) clazz.getConstructor(JSONObject.class).newInstance((JSONObject) ja.get(i)));
@@ -43,12 +41,12 @@ public class RepoSerialization {
         public String url;
         public URLType type;
 
-        public PackageInfo(final JSONObject obj) {
+        public PackageInfo(JSONObject obj) {
             name = String.valueOf(obj.get("name"));
             plugins = Plugin.parseList(String.valueOf(obj.get("plugins")));
             pom = String.valueOf(obj.get("pom"));
             url = String.valueOf(obj.get("url"));
-            final Object tt = obj.get("type");
+            Object tt = obj.get("type");
             type = tt == null ? null : URLType.valueOf(tt.toString());
         }
     }
@@ -65,7 +63,7 @@ public class RepoSerialization {
         public String version;
         public URLType type;
 
-        public Plugin(final JSONObject obj) {
+        public Plugin(JSONObject obj) {
             artifactId = String.valueOf(obj.get("artifactId"));
             branch = String.valueOf(obj.get("branch"));
             description = String.valueOf(obj.get("description"));
@@ -75,11 +73,11 @@ public class RepoSerialization {
             pom = String.valueOf(obj.get("pom"));
             tags = TagInfo.parseList(String.valueOf(obj.get("tags")));
             version = String.valueOf(obj.get("version"));
-            final Object tt = obj.get("type");
+            Object tt = obj.get("type");
             type = tt == null ? null : URLType.valueOf(tt.toString());
         }
 
-        public static List<Plugin> parseList(final String json) {
+        public static List<Plugin> parseList(String json) {
             return parse(json, Plugin.class);
         }
     }
@@ -88,7 +86,7 @@ public class RepoSerialization {
         public String name;
         public List<Repository> repos;
 
-        public Repositories(final JSONObject obj) {
+        public Repositories(JSONObject obj) {
             name = String.valueOf(obj.get("name"));
             repos = Repository.parseList(String.valueOf(obj.get("repos")));
         }
@@ -99,14 +97,14 @@ public class RepoSerialization {
         public URLType type;
         public String url;
 
-        public Repository(final JSONObject obj) {
+        public Repository(JSONObject obj) {
             id = String.valueOf(obj.get("id"));
-            final Object tt = obj.get("type");
+            Object tt = obj.get("type");
             type = tt == null ? null : URLType.valueOf(tt.toString());
             url = String.valueOf(obj.get("url"));
         }
 
-        public static List<Repository> parseList(final String json) {
+        public static List<Repository> parseList(String json) {
             return parse(json, Repository.class);
         }
     }
@@ -117,15 +115,15 @@ public class RepoSerialization {
         public URLType type;
         public String url;
 
-        public TagInfo(final JSONObject obj) {
+        public TagInfo(JSONObject obj) {
             tag = String.valueOf(obj.get("tag"));
             version = String.valueOf(obj.get("version"));
-            final Object tt = obj.get("type");
+            Object tt = obj.get("type");
             type = tt == null ? null : URLType.valueOf(tt.toString());
             url = String.valueOf(obj.get("url"));
         }
 
-        public static List<TagInfo> parseList(final String json) {
+        public static List<TagInfo> parseList(String json) {
             return parse(json, TagInfo.class);
         }
     }

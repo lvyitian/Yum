@@ -17,26 +17,24 @@ import pw.yumc.injected.event.SetOpEvent;
  * @author 喵♂呜
  */
 public class SecurityListener implements Listener {
-    private final String prefix = "§6[§bYum §a安全系统§6] ";
-    private final String warn = "§c插件 §e%s §c已设置玩家 §a%s §c为OP §4请注意服务器安全!";
-    private final String prevent = "§c黑名单插件 §e%s §c尝试设置玩家 §a%s §c为OP §a安全系统已成功拦截!";
+    private String prefix = "§6[§bYum §a安全系统§6] ";
+    private String warn = "§c插件 §e%s §c已设置玩家 §a%s §c为OP §4请注意服务器安全!";
+    private String prevent = "§c黑名单插件 §e%s §c尝试设置玩家 §a%s §c为OP §a安全系统已成功拦截!";
 
-    public SecurityListener(final Yum yum) {
+    public SecurityListener(Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
 
     @EventHandler
-    public void setop(final SetOpEvent e) {
-        final Plugin plugin = PKit.getOperatePlugin();
+    public void setop(SetOpEvent e) {
+        Plugin plugin = PKit.getOperatePlugin();
         if (plugin != null) {
             if (ConfigManager.i().getSetOpBlackList().contains(plugin.getName())) {
                 Log.console(prefix + prevent, plugin, e.getOfflinePlayer().getName());
                 e.setCancelled(true);
                 return;
             }
-            if (ConfigManager.i().getSetOpIgnoreList().contains(plugin.getName())) {
-                return;
-            }
+            if (ConfigManager.i().getSetOpIgnoreList().contains(plugin.getName())) { return; }
             Bukkit.getConsoleSender().sendMessage(String.format(prefix + warn, plugin, e.getOfflinePlayer().getName()));
         }
     }

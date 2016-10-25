@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import cn.citycraft.PluginHelper.kit.StrKit;
 import pw.yumc.Yum.models.PluginInfo;
 import pw.yumc.Yum.models.RepoCache;
 import pw.yumc.Yum.models.RepoSerialization.PackageInfo;
@@ -35,30 +34,24 @@ public class RepositoryManager {
     org.bukkit.plugin.Plugin main;
     RepoCache repocache;
 
-    public RepositoryManager(final org.bukkit.plugin.Plugin plugin) {
+    public RepositoryManager(org.bukkit.plugin.Plugin plugin) {
         this.main = plugin;
         repocache = new RepoCache();
     }
 
-    public boolean addPackage(final CommandSender sender, final String urlstring) {
-        final String json = HttpKit.get(urlstring);
-        if (json == null || json.isEmpty()) {
-            return false;
-        }
-        final PackageInfo pkg = jsonToPackage(json);
-        if (pkg == null) {
-            return false;
-        }
+    public boolean addPackage(CommandSender sender, String urlstring) {
+        String json = HttpKit.get(urlstring);
+        if (json == null || json.isEmpty()) { return false; }
+        PackageInfo pkg = jsonToPackage(json);
+        if (pkg == null) { return false; }
         updatePackage(sender, pkg);
         return true;
     }
 
-    public boolean addRepositories(final CommandSender sender, final String urlstring) {
-        final String url = handerRepoUrl(urlstring);
-        final Repositories repo = repocache.addRepo(url);
-        if (repo == null) {
-            return false;
-        }
+    public boolean addRepositories(CommandSender sender, String urlstring) {
+        String url = handerRepoUrl(urlstring);
+        Repositories repo = repocache.addRepo(url);
+        if (repo == null) { return false; }
         return updateRepositories(sender, repo);
     }
 
@@ -66,56 +59,57 @@ public class RepositoryManager {
         repocache.getPlugins().clear();
     }
 
-    public boolean delRepositories(final CommandSender sender, final String urlstring) {
+    public boolean delRepositories(CommandSender sender, String urlstring) {
         return repocache.removeRepo(handerRepoUrl(urlstring));
     }
 
     public List<PluginInfo> getAllPlugin() {
-        final List<PluginInfo> li = new ArrayList<>();
-        for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
+        List<PluginInfo> li = new ArrayList<>();
+        for (Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             li.add(plugin.getValue());
         }
         return li;
     }
 
     public List<String> getAllPluginName() {
-        final List<String> li = new ArrayList<>();
-        for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
+        List<String> li = new ArrayList<>();
+        for (Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             li.add(plugin.getValue().name);
         }
         return li;
     }
 
     public List<String> getAllPluginsInfo() {
-        final List<String> li = new ArrayList<>();
+        List<String> li = new ArrayList<>();
         li.add("§d仓库名称  §a插件名称  §e插件描述");
-        for (final Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
-            final Plugin plugin = pi.getValue().plugin;
+        for (Entry<String, PluginInfo> pi : repocache.getPlugins().entrySet()) {
+            Plugin plugin = pi.getValue().plugin;
             li.add(String.format("§d%s §a%s §6- §e%s", pi.getValue().repo, pi.getValue().name, plugin.description));
             if (plugin.tags != null) {
                 li.add(" §b┗Tags  §c标签    §a版本    §e类型");
-                final List<TagInfo> taglist = plugin.tags;
+                List<TagInfo> taglist = plugin.tags;
                 for (int i = 0; i < taglist.size(); i++) {
-                    final TagInfo tag = taglist.get(i);
-                    li.add("    §b" + (i == taglist.size() - 1 ? "┗ " : "┣ ") + String.format("§c%s  §a%s  §e%s", tag.tag, tag.version, tag.type != null ? tag.type : URLType.Maven));
+                    TagInfo tag = taglist.get(i);
+                    li.add("    §b" + (i == taglist.size() - 1 ? "┗ " : "┣ ") + String.format("§c%s  §a%s  §e%s",
+                            tag.tag,
+                            tag.version,
+                            tag.type != null ? tag.type : URLType.Maven));
                 }
             }
         }
         return li;
     }
 
-    public PluginInfo getPlugin(final String name) {
-        for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
-            if (plugin.getValue().name.equalsIgnoreCase(name)) {
-                return plugin.getValue();
-            }
+    public PluginInfo getPlugin(String name) {
+        for (Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
+            if (plugin.getValue().name.equalsIgnoreCase(name)) { return plugin.getValue(); }
         }
         return null;
     }
 
-    public List<PluginInfo> getPluginInfo(final String name) {
-        final List<PluginInfo> li = new ArrayList<>();
-        for (final Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
+    public List<PluginInfo> getPluginInfo(String name) {
+        List<PluginInfo> li = new ArrayList<>();
+        for (Entry<String, PluginInfo> plugin : repocache.getPlugins().entrySet()) {
             if (plugin.getValue().name.equalsIgnoreCase(name)) {
                 li.add(plugin.getValue());
             }
@@ -123,7 +117,7 @@ public class RepositoryManager {
         return li;
     }
 
-    public PluginInfo getPluginInfo(final String groupId, final String artifactId) {
+    public PluginInfo getPluginInfo(String groupId, String artifactId) {
         return repocache.getPlugins().get(groupId + "." + artifactId);
     }
 
@@ -135,7 +129,7 @@ public class RepositoryManager {
         return repocache;
     }
 
-    public Repositories getRepoCache(final String urlstring) {
+    public Repositories getRepoCache(String urlstring) {
         return repocache.getRepos().get(handerRepoUrl(urlstring));
     }
 
@@ -143,28 +137,26 @@ public class RepositoryManager {
         return repocache.getRepos();
     }
 
-    public boolean getRepositories(final CommandSender sender, final String urlstring) {
-        final int urllength = urlstring.length();
-        final String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
+    public boolean getRepositories(CommandSender sender, String urlstring) {
+        int urllength = urlstring.length();
+        String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
         handerRepoUrl(url);
-        final Repositories repo = repocache.addRepo(urlstring);
-        if (repo == null) {
-            return false;
-        }
+        Repositories repo = repocache.addRepo(urlstring);
+        if (repo == null) { return false; }
         return updateRepositories(sender, repo);
     }
 
-    public PackageInfo jsonToPackage(final String json) {
+    public PackageInfo jsonToPackage(String json) {
         return new PackageInfo((JSONObject) JSONValue.parse(json));
     }
 
-    public void updatePackage(final CommandSender sender, final PackageInfo pkg) {
-        for (final Plugin plugin : pkg.plugins) {
-            final PluginInfo pi = new PluginInfo();
-            pi.name = StrKit.getNotNull(plugin.name, plugin.artifactId);
-            pi.branch = StrKit.getNotNull(plugin.branch, "master");
-            pi.pom = StrKit.getNotNull(plugin.pom, pkg.pom);
-            pi.url = StrKit.getNotNull(plugin.url, pkg.url);
+    public void updatePackage(CommandSender sender, PackageInfo pkg) {
+        for (Plugin plugin : pkg.plugins) {
+            PluginInfo pi = new PluginInfo();
+            pi.name = getNotNull(plugin.name, plugin.artifactId);
+            pi.branch = getNotNull(plugin.branch, "master");
+            pi.pom = getNotNull(plugin.pom, pkg.pom);
+            pi.url = getNotNull(plugin.url, pkg.url);
             pi.type = plugin.type != null ? plugin.type : pkg.type;
             pi.type = pi.type != null ? pi.type : URLType.Maven;
             pi.plugin = plugin;
@@ -174,15 +166,19 @@ public class RepositoryManager {
         sender.sendMessage("§6仓库: §e" + pkg.name + " §a更新成功!");
     }
 
-    public boolean updateRepositories(final CommandSender sender) {
+    public static String getNotNull(final String vault, final String def) {
+        return (vault == null || vault.isEmpty() || vault.equalsIgnoreCase("null")) ? def : vault;
+    }
+
+    public boolean updateRepositories(CommandSender sender) {
         repocache.getPlugins().clear();
         if (repocache.getRepos().isEmpty()) {
             repocache.addRepo("http://data.yumc.pw/yumcenter/repo.info");
         }
-        final Iterator<Entry<String, Repositories>> keys = repocache.getRepos().entrySet().iterator();
+        Iterator<Entry<String, Repositories>> keys = repocache.getRepos().entrySet().iterator();
         while (keys.hasNext()) {
-            final Entry<String, Repositories> string = keys.next();
-            final Repositories repo = repocache.getRepo(string.getKey());
+            Entry<String, Repositories> string = keys.next();
+            Repositories repo = repocache.getRepo(string.getKey());
             if (updateRepositories(sender, repo)) {
                 sender.sendMessage("§6源: §e" + repo.name + " §a更新成功!");
             } else {
@@ -193,7 +189,7 @@ public class RepositoryManager {
         return true;
     }
 
-    public boolean updateRepositories(CommandSender sender, final Repositories repocenter) {
+    public boolean updateRepositories(CommandSender sender, Repositories repocenter) {
         if (sender == null) {
             sender = Bukkit.getConsoleSender();
         }
@@ -201,14 +197,14 @@ public class RepositoryManager {
             sender.sendMessage(String.format("§6[§bYum§6] 源 %s 数据为空或列表为空!", repocenter.name));
             return false;
         }
-        for (final Repository repo : repocenter.repos) {
+        for (Repository repo : repocenter.repos) {
             addPackage(sender, repo.url);
         }
         return true;
     }
 
     private String handerRepoUrl(String url) {
-        final int urllength = url.length();
+        int urllength = url.length();
         url = url.substring(0, url.endsWith("/") ? urllength - 1 : urllength);
         if (!url.startsWith("http://")) {
             url = "http://" + url;

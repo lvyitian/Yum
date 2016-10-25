@@ -9,10 +9,10 @@ import org.bukkit.plugin.Plugin;
 
 public class PluginNetworkEvent extends Event implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
+    private static HandlerList handlers = new HandlerList();
 
-    private final boolean isPrimaryThread;
-    private final Plugin plugin;
+    private boolean isPrimaryThread;
+    private Plugin plugin;
     private boolean cancel;
     private URI url;
 
@@ -30,7 +30,7 @@ public class PluginNetworkEvent extends Event implements Cancellable {
      * @param isMainThread
      *            是否为主线程
      */
-    public PluginNetworkEvent(final Plugin plugin, final URI url, final boolean isPrimaryThread) {
+    public PluginNetworkEvent(Plugin plugin, URI url, boolean isPrimaryThread) {
         this.plugin = plugin;
         this.url = url;
         this.isPrimaryThread = isPrimaryThread;
@@ -68,7 +68,7 @@ public class PluginNetworkEvent extends Event implements Cancellable {
     }
 
     @Override
-    public void setCancelled(final boolean value) {
+    public void setCancelled(boolean value) {
         cancel = value;
     }
 
@@ -76,7 +76,7 @@ public class PluginNetworkEvent extends Event implements Cancellable {
      * @param url
      *            设置新的URL地址
      */
-    public void setUrl(final URI url) {
+    public void setUrl(URI url) {
         this.url = url;
     }
 

@@ -18,11 +18,11 @@ public class PluginNetworkListener implements Listener {
     public String breaked = "§c已阻止插件 §b%s §c访问网络!";
     public String url = "§6地址: §c%s";
 
-    public PluginNetworkListener(final Yum yum) {
+    public PluginNetworkListener(Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
 
-    public void breakNetwork(final PluginNetworkEvent e) {
+    public void breakNetwork(PluginNetworkEvent e) {
         if (ConfigManager.i().isNetworkShowInfo()) {
             Log.console(prefix + breaked, e.getPlugin().getName());
             Log.console(prefix + url, e.getUrl().toString());
@@ -31,17 +31,13 @@ public class PluginNetworkListener implements Listener {
     }
 
     @EventHandler
-    public void onPluginNetworkConect(final PluginNetworkEvent e) {
-        final Plugin plugin = e.getPlugin();
-        final String urlinfo = e.getUrl().toString();
-        if (urlinfo.startsWith("socket")) {
-            return;
-        }
-        if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost())) {
-            return;
-        }
+    public void onPluginNetworkConect(PluginNetworkEvent e) {
+        Plugin plugin = e.getPlugin();
+        String urlinfo = e.getUrl().toString();
+        if (urlinfo.startsWith("socket")) { return; }
+        if (ConfigManager.i().getNetworkWhiteURL().contains(e.getUrl().getHost())) { return; }
         if (urlinfo.contains("yumc") || urlinfo.contains("citycraft") || urlinfo.contains("502647092")) {
-            final String 大神你好 = "反编译的大神们我知道你们又要说了这货有后门";
+            String 大神你好 = "反编译的大神们我知道你们又要说了这货有后门";
             大神你好.isEmpty();
             return;
         }
@@ -51,9 +47,7 @@ public class PluginNetworkListener implements Listener {
                 breakNetwork(e);
                 return;
             }
-            if (ConfigManager.i().getNetworkIgnoreList().contains(plugin.getName())) {
-                return;
-            }
+            if (ConfigManager.i().getNetworkIgnoreList().contains(plugin.getName())) { return; }
             if (e.isPrimaryThread()) {
                 Log.console(prefix + warnMain, plugin.getName());
                 if (!ConfigManager.i().isAllowPrimaryThread()) {

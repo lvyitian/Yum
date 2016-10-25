@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import cn.citycraft.PluginHelper.callback.CallBack.One;
+import pw.yumc.YumCore.callback.CallBack.One;
 
 /**
  * 下载管理类
@@ -25,7 +25,7 @@ import cn.citycraft.PluginHelper.callback.CallBack.One;
 public class DownloadManager {
     Plugin plugin;
 
-    public DownloadManager(final Plugin main) {
+    public DownloadManager(Plugin main) {
         this.plugin = main;
     }
 
@@ -36,8 +36,8 @@ public class DownloadManager {
      *            - 地址
      * @return 文件名称
      */
-    public String getFileName(final String url) {
-        final int end = url.lastIndexOf('/');
+    public String getFileName(String url) {
+        int end = url.lastIndexOf('/');
         return url.substring(end + 1);
     }
 
@@ -48,7 +48,7 @@ public class DownloadManager {
      *            - 地址
      * @return 文件名称
      */
-    public String getFileName(final URL url) {
+    public String getFileName(URL url) {
         return getFileName(url.getFile());
     }
 
@@ -61,7 +61,7 @@ public class DownloadManager {
      *            - 下载地址
      * @return 是否成功
      */
-    public boolean run(final CommandSender sender, final String urlstring) {
+    public boolean run(CommandSender sender, String urlstring) {
         return run(sender, urlstring, new File("plugins", getFileName(urlstring)), null);
     }
 
@@ -76,11 +76,11 @@ public class DownloadManager {
      *            - 保存文件
      * @return 是否成功
      */
-    public boolean run(final CommandSender sender, final String urlstring, final File file) {
+    public boolean run(CommandSender sender, String urlstring, File file) {
         try {
-            final URL url = new URL(urlstring);
+            URL url = new URL(urlstring);
             return run(sender, url, file);
-        } catch (final MalformedURLException e) {
+        } catch (MalformedURLException e) {
             sender.sendMessage("§4错误: §c无法识别的URL地址...");
             sender.sendMessage("§4地址: §c" + urlstring);
             return false;
@@ -100,11 +100,11 @@ public class DownloadManager {
      *            -回调函数
      * @return 是否成功
      */
-    public boolean run(final CommandSender sender, final String urlstring, final File file, final One<File> callback) {
+    public boolean run(CommandSender sender, String urlstring, File file, One<File> callback) {
         try {
-            final URL url = new URL(urlstring);
+            URL url = new URL(urlstring);
             return run(sender, url, file, callback);
-        } catch (final MalformedURLException e) {
+        } catch (MalformedURLException e) {
             sender.sendMessage("§4错误: §c无法识别的URL地址...");
             sender.sendMessage("§4地址: §c" + urlstring);
             return false;
@@ -122,7 +122,7 @@ public class DownloadManager {
      *            - 保存文件
      * @return 是否成功
      */
-    public boolean run(final CommandSender sender, final URL url, final File file) {
+    public boolean run(CommandSender sender, URL url, File file) {
         return run(sender, url, file, null);
     }
 
@@ -139,7 +139,7 @@ public class DownloadManager {
      *            -回调函数
      * @return 是否成功
      */
-    public boolean run(CommandSender sender, final URL url, final File file, final One<File> callback) {
+    public boolean run(CommandSender sender, URL url, File file, One<File> callback) {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         if (sender == null) {
@@ -148,8 +148,8 @@ public class DownloadManager {
         try {
             sender.sendMessage("§6开始下载: §3" + getFileName(url));
             sender.sendMessage("§6下载地址: §3" + url.toString());
-            final URLConnection uc = reload(sender, url.openConnection());
-            final int status = ((HttpURLConnection) uc).getResponseCode();
+            URLConnection uc = reload(sender, url.openConnection());
+            int status = ((HttpURLConnection) uc).getResponseCode();
             if (status != HttpURLConnection.HTTP_OK) {
                 switch (status) {
                 case HttpURLConnection.HTTP_NOT_FOUND:
@@ -160,8 +160,8 @@ public class DownloadManager {
                     throw new IllegalStateException(status + " 无效的网关!");
                 }
             }
-            final int fileLength = uc.getContentLength();
-            final boolean dyml = "chunked".equalsIgnoreCase(uc.getHeaderField("Transfer-Encoding"));
+            int fileLength = uc.getContentLength();
+            boolean dyml = "chunked".equalsIgnoreCase(uc.getHeaderField("Transfer-Encoding"));
             if (fileLength < 0 && !dyml) {
                 sender.sendMessage("§6下载: §c文件 " + file.getName() + " 获取长度错误(可能是网络问题)!");
                 sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
@@ -179,7 +179,7 @@ public class DownloadManager {
             file.createNewFile();
             sender.sendMessage("§6创建新文件: §d" + file.getAbsolutePath());
             fout = new FileOutputStream(file);
-            final byte[] data = new byte[1024];
+            byte[] data = new byte[1024];
             long downloaded = 0L;
             int count;
             long time = System.currentTimeMillis();
@@ -192,7 +192,7 @@ public class DownloadManager {
                         time = System.currentTimeMillis();
                     }
                 } else {
-                    final int percent = (int) (downloaded * 100L / fileLength);
+                    int percent = (int) (downloaded * 100L / fileLength);
                     if (percent % 10 == 0) {
                         if (System.currentTimeMillis() - time > 500) {
                             sender.sendMessage(String.format("§6已下载: §a" + getPer(percent / 10) + " %s%%", percent));
@@ -203,13 +203,14 @@ public class DownloadManager {
             }
             String pVer = null;
             try {
-                final PluginDescriptionFile desc = plugin.getPluginLoader().getPluginDescription(file);
+                PluginDescriptionFile desc = plugin.getPluginLoader().getPluginDescription(file);
                 pVer = StringUtils.substring(desc.getVersion(), 0, 15);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 pVer = "";
             }
-            sender.sendMessage("§6" + (pVer.isEmpty() ? "文件" : "插件") + ": §b" + file.getName() + (pVer.isEmpty() ? "" : " §a版本 §e" + pVer) + " §a下载完成!");
-        } catch (final Exception ex) {
+            sender.sendMessage("§6" + (pVer.isEmpty() ? "文件" : "插件") + ": §b" + file.getName()
+                    + (pVer.isEmpty() ? "" : " §a版本 §e" + pVer) + " §a下载完成!");
+        } catch (Exception ex) {
             sender.sendMessage("§6异常: §c" + ex.getMessage());
             sender.sendMessage("§6文件: §c" + file.getName() + " 下载失败!");
             return false;
@@ -221,7 +222,7 @@ public class DownloadManager {
                 if (fout != null) {
                     fout.close();
                 }
-            } catch (final Exception ex) {
+            } catch (Exception ex) {
             }
         }
         if (callback != null) {
@@ -237,7 +238,7 @@ public class DownloadManager {
      *            - 下载地址
      * @return 是否成功
      */
-    public boolean run(final String urlstring) {
+    public boolean run(String urlstring) {
         return run(null, urlstring);
     }
 
@@ -250,7 +251,7 @@ public class DownloadManager {
      *            - 保存文件
      * @return 是否成功
      */
-    public boolean run(final String urlstring, final File file) {
+    public boolean run(String urlstring, File file) {
         return run(null, urlstring, file, null);
     }
 
@@ -263,12 +264,12 @@ public class DownloadManager {
      *            - 保存文件
      * @return 是否成功
      */
-    public boolean run(final URL url, final File file) {
+    public boolean run(URL url, File file) {
         return run(null, url, file, null);
     }
 
-    private String getPer(final int per) {
-        final StringBuilder sb = new StringBuilder();
+    private String getPer(int per) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 11; i++) {
             if (per > i) {
                 sb.append("==");
@@ -288,11 +289,12 @@ public class DownloadManager {
      * @return 最终地址
      * @throws Exception
      */
-    private URLConnection reload(final CommandSender sender, final URLConnection uc) throws Exception {
-        final HttpURLConnection huc = (HttpURLConnection) uc;
+    private URLConnection reload(CommandSender sender, URLConnection uc) throws Exception {
+        HttpURLConnection huc = (HttpURLConnection) uc;
         // 302, 301, 307
-        if (huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || huc.getResponseCode() == 307) {
-            final String url = huc.getHeaderField("Location");
+        if (huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP
+                || huc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || huc.getResponseCode() == 307) {
+            String url = huc.getHeaderField("Location");
             sender.sendMessage("§6跳转至地址: §3" + url);
             return reload(sender, new URL(url).openConnection());
         }

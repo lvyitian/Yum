@@ -12,16 +12,15 @@ import java.nio.file.StandardCopyOption;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import cn.citycraft.PluginHelper.kit.StrKit;
-import cn.citycraft.PluginHelper.utils.FileUtil;
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
-import pw.yumc.YumCore.commands.CommandArgument;
-import pw.yumc.YumCore.commands.CommandExecutor;
 import pw.yumc.YumCore.commands.CommandManager;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
+import pw.yumc.YumCore.commands.annotation.KeyValue;
+import pw.yumc.YumCore.commands.interfaces.CommandExecutor;
+import pw.yumc.YumCore.kit.FileKit;
 
 /**
  * File命令基类
@@ -43,13 +42,13 @@ public class FileCommand implements CommandExecutor {
     private static String noResult = prefix + "§d当前命令没有返回结果!";
     private static String runError = prefix + "§c命令运行错误: %s %s";
 
-    private static String addStartupSuccess = "§a成功添加开机自动启...";
-    private static String addStartupFailed = "§c添加开机自动启失败!";
+    private static String addStartupSuccess = "§e %s §a成功添加开机自动启...";
+    private static String addStartupFailed = "§c添加开机自动启失败 %s %s!";
     private static String STARTPATH = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp";
 
     Yum plugin;
 
-    public FileCommand(final Yum yum) {
+    public FileCommand(Yum yum) {
         plugin = yum;
         new CommandManager("file", this, PluginTabComplete.instence);
     }
@@ -57,34 +56,23 @@ public class FileCommand implements CommandExecutor {
     @Cmd(aliases = "cp", minimumArguments = 2)
     @Help(value = "复制文件", possibleArguments = "<源文件> <目标目录>")
     @Async
-    public void copy(final CommandArgument e) throws FileNotFoundException, IOException {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
-        final File src = new File(args[0]);
-        final File des = new File(args[1]);
-        if (!src.exists()) {
-            sender.sendMessage(String.format(file_not_found, args[0]));
-            return;
-        }
+    public void copy(CommandSender sender, @KeyValue(key = "check") File src, File des) throws FileNotFoundException, IOException {
         if (src.isDirectory()) {
-            sender.sendMessage(String.format(file_is_dir, args[0]));
+            sender.sendMessage(String.format(file_is_dir, src.getPath()));
             return;
         }
         if (Files.copy(new FileInputStream(src), des.toPath(), StandardCopyOption.REPLACE_EXISTING) != 0) {
-            sender.sendMessage(String.format(copySuccess, args[0]));
+            sender.sendMessage(String.format(copySuccess, src.getPath()));
         } else {
-            sender.sendMessage(String.format(copyFailed, args[0]));
+            sender.sendMessage(String.format(copyFailed, src.getPath()));
         }
     }
 
     @Cmd(aliases = "del", minimumArguments = 1)
     @Help(value = "删除文件(服务器JAR为根目录)", possibleArguments = "<文件相对目录>")
     @Async
-    public void delete(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        String fpath = args[0];
-        final File file = new File(fpath);
-        final CommandSender sender = e.getSender();
+    public void delete(CommandSender sender, String fpath) {
+        File file = new File(fpath);
         fpath = file.getAbsolutePath();
         if (!file.exists()) {
             sender.sendMessage(String.format(file_not_found, fpath));
@@ -95,7 +83,7 @@ public class FileCommand implements CommandExecutor {
             }
             try {
                 sender.sendMessage("§d文件 §e" + fpath + " " + (file.delete() ? "§a删除成功!" : "§c删除失败!"));
-            } catch (final Exception ex) {
+            } catch (Exception ex) {
                 sender.sendMessage("§d文件 §e" + fpath + " 删除失败: " + ex.getMessage());
             }
         }
@@ -104,37 +92,33 @@ public class FileCommand implements CommandExecutor {
     @Cmd(aliases = "d", minimumArguments = 1)
     @Help(value = "下载文件(默认保存到服务器更新文件夹)", possibleArguments = "<下载地址> [保存文件路径]")
     @Async
-    public void download(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        String urlstr = args[0];
+    public void download(CommandSender sender, String urlstr, String path) {
         if (!urlstr.startsWith("http")) {
             urlstr = "http://" + urlstr;
         }
         File file = null;
-        if (args.length == 2) {
-            file = new File(args[1]);
+        if (path != null) {
+            file = new File(path);
         } else {
             file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(urlstr));
         }
-        YumAPI.getDownload().run(e.getSender(), urlstr, file);
+        YumAPI.getDownload().run(sender, urlstr, file);
     }
 
     @Cmd(aliases = "ls")
     @Help(value = "列出当前目录(服务器JAR为根目录)", possibleArguments = "<相对目录>")
     @Async
-    public void ls(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
+    public void ls(CommandSender sender, String filename) {
         File dir = new File(".");
-        if (args.length == 1) {
-            dir = new File(args[0]);
+        if (filename != null) {
+            dir = new File(filename);
         }
         if (!dir.isDirectory()) {
             sender.sendMessage("§6路径: §e " + dir.getAbsolutePath() + " §c不是一个目录!");
             return;
         }
-        final StringBuffer sb = new StringBuffer();
-        for (final File file : dir.listFiles()) {
+        StringBuffer sb = new StringBuffer();
+        for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
                 sb.append("§b");
             } else {
@@ -142,7 +126,7 @@ public class FileCommand implements CommandExecutor {
             }
             sb.append(file.getName() + " ");
         }
-        final String filelist = sb.toString();
+        String filelist = sb.toString();
         if (filelist.isEmpty()) {
             sender.sendMessage("§6目录: §e" + dir.getAbsolutePath() + " §c下没有文件或文件夹!");
         } else {
@@ -154,19 +138,16 @@ public class FileCommand implements CommandExecutor {
     @Cmd(aliases = "rn", minimumArguments = 2)
     @Help(value = "重命名文件(服务器JAR为根目录)", possibleArguments = "<文件相对路径> <文件名称>")
     @Async
-    public void rename(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
-        final String fpath = args[0];
-        final File file = new File(fpath);
+    public void rename(CommandSender sender, String fpath, String des) {
+        File file = new File(fpath);
         if (!file.exists()) {
             sender.sendMessage("§c文件 " + file.getAbsolutePath() + " 不存在!");
         } else {
             try {
-                final File newFile = new File(file.getParentFile(), args[1]);
+                File newFile = new File(file.getParentFile(), des);
                 file.renameTo(newFile);
                 sender.sendMessage("§a文件 §e" + file.getAbsolutePath() + " §a重命名为 §d" + newFile.getAbsolutePath());
-            } catch (final Exception ex) {
+            } catch (Exception ex) {
                 sender.sendMessage("§c文件 §e" + file.getAbsolutePath() + " §c重命名失败: " + ex.getMessage());
             }
         }
@@ -175,11 +156,8 @@ public class FileCommand implements CommandExecutor {
     @Cmd(minimumArguments = 1)
     @Help(value = "删除文件夹(服务器JAR为根目录)", possibleArguments = "<相对目录>")
     @Async
-    public void rm(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
-        final String fpath = args[0];
-        final File file = new File(fpath);
+    public void rm(CommandSender sender, String fpath, String option) {
+        File file = new File(fpath);
         if (!file.exists()) {
             sender.sendMessage("§c目录 " + file.getAbsolutePath() + " 不存在!");
         } else {
@@ -187,33 +165,32 @@ public class FileCommand implements CommandExecutor {
                 sender.sendMessage("§d路径 §e" + file.getAbsolutePath() + " §c是一个文件 请使用file delete!");
                 return;
             }
-            for (final String name : plugin.getConfig().getStringList("blacklist")) {
+            for (String name : plugin.getConfig().getStringList("blacklist")) {
                 if (file.getAbsolutePath().toLowerCase().endsWith(name)) {
                     sender.sendMessage("§d路径 §e" + file.getAbsolutePath() + " §c不允许被删除!");
                     return;
                 }
             }
-            if (file.listFiles().length != 0 && !(args.length > 1 && args[1].equalsIgnoreCase("-rf"))) {
+            if (file.listFiles().length != 0 && !(option != null && option.equalsIgnoreCase("-rf"))) {
                 sender.sendMessage("§d目录 §e" + file.getAbsolutePath() + " §c不为空!");
                 sender.sendMessage("§c请使用 §a/file rm " + fpath + " -rf §c强行删除!");
                 return;
             }
-            sender.sendMessage("§d目录 §e" + file.getAbsolutePath() + " " + (FileUtil.deleteDir(sender, file) ? "§a删除成功!" : "§c删除失败!"));
+            sender.sendMessage("§d目录 §e" + file.getAbsolutePath() + " "
+                    + (FileKit.deleteDir(sender, file) ? "§a删除成功!" : "§c删除失败!"));
         }
     }
 
     @Cmd(aliases = "r", minimumArguments = 1)
     @Help(value = "运行一个命令或文件", possibleArguments = "<命令或文件绝对路径>")
     @Async
-    public void run(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
+    public void run(CommandSender sender, String args) {
         try {
-            final Process process = Runtime.getRuntime().exec(StrKit.join(args, " "));
+            Process process = Runtime.getRuntime().exec(args);
             sender.sendMessage(waitCommand);
-            final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = null;
-            final StringBuilder build = new StringBuilder();
+            StringBuilder build = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 build.append(line);
                 build.append("\n");
@@ -224,7 +201,7 @@ public class FileCommand implements CommandExecutor {
                 sender.sendMessage(runResult);
                 sender.sendMessage(build.toString().split("\n"));
             }
-        } catch (final Exception e2) {
+        } catch (Exception e2) {
             sender.sendMessage(String.format(runError, e2.getClass().getSimpleName(), e2.getMessage()));
         }
     }
@@ -232,23 +209,22 @@ public class FileCommand implements CommandExecutor {
     @Cmd(minimumArguments = 1)
     @Help(value = "添加开机自启动", possibleArguments = "<文件绝对路径>")
     @Async
-    public void startup(final CommandArgument e) {
-        final String[] args = e.getArgs();
-        final CommandSender sender = e.getSender();
-        final File src = new File(args[0]);
-        final File des = new File(STARTPATH, src.getName());
+    public void startup(CommandSender sender, String filepath) {
+        File src = new File(filepath);
+        File des = new File(STARTPATH, src.getName());
         if (!src.exists()) {
-            sender.sendMessage(String.format(file_not_found, args[0]));
+            sender.sendMessage(String.format(file_not_found, filepath));
             return;
         }
         if (src.isDirectory()) {
-            sender.sendMessage(String.format(file_is_dir, args[0]));
+            sender.sendMessage(String.format(file_is_dir, filepath));
             return;
         }
-        if (FileUtil.copyFile(src, des)) {
-            sender.sendMessage(String.format(addStartupSuccess, args[0]));
-        } else {
-            sender.sendMessage(String.format(addStartupFailed, args[0]));
+        try {
+            Files.copy(new FileInputStream(src), des.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            sender.sendMessage(String.format(addStartupSuccess, filepath));
+        } catch (Exception e2) {
+            sender.sendMessage(String.format(addStartupFailed, e2.getClass().getName(), e2.getMessage()));
         }
     }
 }

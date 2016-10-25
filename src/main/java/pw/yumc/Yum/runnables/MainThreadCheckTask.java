@@ -1,13 +1,16 @@
 package pw.yumc.Yum.runnables;
 
 import java.lang.Thread.State;
+import java.lang.reflect.Method;
 import java.util.TimerTask;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.ServerKit;
 import pw.yumc.YumCore.bukkit.Log;
+import pw.yumc.YumCore.bukkit.compatible.C;
 import pw.yumc.YumCore.kit.PKit;
+import pw.yumc.YumCore.plugin.protocollib.PacketKit;
 
 /**
  * 线程安全检查任务
@@ -16,16 +19,25 @@ import pw.yumc.YumCore.kit.PKit;
  * @author 喵♂呜
  */
 public class MainThreadCheckTask extends TimerTask {
-    private final String prefix = "§6[§bYum §a线程管理§6] ";
-    private final String warnPNet = "§6插件 §b%s §c在主线程进行网络操作 §4服务器处于停止状态...";
-    private final String warnPIO = "§6插件 §b%s §c在主线程进行IO操作 §4服务器处于停止状态...";
-    private final String warnNet = "§c主线程存在网络操作 §4服务器处于停止状态...";
-    private final String warnIO = "§c主线程存在IO操作 §4服务器处于停止状态...";
-    private final String deliver = "§c服务器处于停止状态 已超过 %s 秒 激活心跳 防止线程关闭...";
+    private static Method tickMethod;
+    private String prefix = "§6[§bYum §a线程管理§6] ";
+    private String warnPNet = "§6插件 §b%s §c在主线程进行网络操作 §4服务器处于停止状态...";
+    private String warnPIO = "§6插件 §b%s §c在主线程进行IO操作 §4服务器处于停止状态...";
+    private String warnNet = "§c主线程存在网络操作 §4服务器处于停止状态...";
+    private String warnIO = "§c主线程存在IO操作 §4服务器处于停止状态...";
+    private String deliver = "§c服务器处于停止状态 已超过 %s 秒 激活心跳 防止线程关闭...";
     private int stopTime = 0;
-    private final Thread mainThread;
+    private Thread mainThread;
 
-    public MainThreadCheckTask(final Thread mainThread) {
+    static {
+        try {
+            Class clazz = Class.forName("org.spigotmc.WatchdogThread");
+            tickMethod = clazz.getDeclaredMethod("tick");
+        } catch (Exception e) {
+        }
+    }
+
+    public MainThreadCheckTask(Thread mainThread) {
         this.mainThread = mainThread;
     }
 
@@ -37,8 +49,8 @@ public class MainThreadCheckTask extends TimerTask {
         if (mainThread.getState() == State.RUNNABLE) {
             // Based on this post we have to check the top element of the stack
             // https://stackoverflow.com/questions/20891386/how-to-detect-thread-being-blocked-by-io
-            final StackTraceElement[] stackTrace = mainThread.getStackTrace();
-            final StackTraceElement topElement = stackTrace[0];
+            StackTraceElement[] stackTrace = mainThread.getStackTrace();
+            StackTraceElement topElement = stackTrace[0];
             if (topElement.isNativeMethod()) {
                 // Socket/SQL (connect) - java.net.DualStackPlainSocketImpl.connect0
                 // Socket/SQL (read) - java.net.SocketInputStream.socketRead0
@@ -46,7 +58,7 @@ public class MainThreadCheckTask extends TimerTask {
                 if (isElementEqual(topElement, "java.net.DualStackPlainSocketImpl", "connect0")
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
-                    final Plugin plugin = PKit.getOperatePlugin(stackTrace);
+                    Plugin plugin = PKit.getOperatePlugin(stackTrace);
                     if (plugin != null) {
                         Log.console(prefix + warnPNet, plugin.getName());
                     } else {
@@ -56,8 +68,9 @@ public class MainThreadCheckTask extends TimerTask {
                 }
                 // File (in) - java.io.FileInputStream.readBytes
                 // File (out) - java.io.FileOutputStream.writeBytes
-                else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes") || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
-                    final Plugin plugin = PKit.getOperatePlugin(stackTrace);
+                else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes")
+                        || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
+                    Plugin plugin = PKit.getOperatePlugin(stackTrace);
                     if (plugin != null) {
                         Log.console(prefix + warnPIO, plugin.getName());
                     } else {
@@ -73,7 +86,7 @@ public class MainThreadCheckTask extends TimerTask {
         }
     }
 
-    private boolean isElementEqual(final StackTraceElement traceElement, final String className, final String methodName) {
+    private boolean isElementEqual(StackTraceElement traceElement, String className, String methodName) {
         return traceElement.getClassName().equals(className) && traceElement.getMethodName().equals(methodName);
     }
 
@@ -81,7 +94,23 @@ public class MainThreadCheckTask extends TimerTask {
         stopTime += 5;
         if (stopTime >= 45) {
             Log.console(prefix + deliver, stopTime);
-            ServerKit.tick();
+            wttick();
+        }
+    }
+
+    /**
+     * 保持服务器心跳
+     */
+    public static void wttick() {
+        try {
+            if (tickMethod != null) {
+                tickMethod.invoke(null);
+            }
+            for (final Player player : C.Player.getOnlinePlayers()) {
+                player.sendMessage("§4注意: §c服务器主线程处于停止状态 请等待操作完成!");
+                PacketKit.keep_live(player);
+            }
+        } catch (final Throwable e) {
         }
     }
 }

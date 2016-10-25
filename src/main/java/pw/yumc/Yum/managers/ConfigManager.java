@@ -9,19 +9,19 @@ import pw.yumc.YumCore.config.FileConfig;
 import pw.yumc.YumCore.sql.DataBase;
 
 public class ConfigManager {
-    public final static String ENABLE = "Enable";
-    public final static String BLACK = "Black";
-    public final static String IGNORE = "Ignore";
+    public static String ENABLE = "Enable";
+    public static String BLACK = "Black";
+    public static String IGNORE = "Ignore";
 
-    private final static ConfigManager i = new ConfigManager(P.instance);
+    private static ConfigManager i = new ConfigManager(P.instance);
 
-    public final FileConfig config;
-    public final FileConfig setop;
-    public final FileConfig network;
-    public final FileConfig thread;
-    public final FileConfig monitor;
+    public FileConfig config;
+    public FileConfig setop;
+    public FileConfig network;
+    public FileConfig thread;
+    public FileConfig monitor;
 
-    public ConfigManager(final JavaPlugin plugin) {
+    public ConfigManager(JavaPlugin plugin) {
         config = new FileConfig();
         setop = new FileConfig("setop.yml");
         network = new FileConfig("network.yml");

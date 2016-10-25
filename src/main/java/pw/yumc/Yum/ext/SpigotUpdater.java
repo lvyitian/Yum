@@ -33,21 +33,22 @@ import com.google.common.io.Closer;
  * @author dmulloy2
  */
 
-public final class SpigotUpdater extends Updater {
-    private static final String PROTOCOL = "https://";
+public class SpigotUpdater extends Updater {
+    private static String PROTOCOL = "https://";
 
-    private static final String RESOURCE_URL = PROTOCOL + "www.spigotmc.org/resources/protocollib.1997/";
+    private static String RESOURCE_URL = PROTOCOL + "www.spigotmc.org/resources/protocollib.1997/";
 
-    private static final String API_URL = PROTOCOL + "www.spigotmc.org/api/general.php";
+    private static String API_URL = PROTOCOL + "www.spigotmc.org/api/general.php";
 
-    private static final String ACTION = "POST";
+    private static String ACTION = "POST";
 
-    private static final int ID = 1997;
+    private static int ID = 1997;
 
-    private static final byte[] API_KEY = ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=" + ID).getBytes(Charsets.UTF_8);
+    private static byte[] API_KEY = ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource="
+            + ID).getBytes(Charsets.UTF_8);
     private String remoteVersion;
 
-    public SpigotUpdater(final Plugin plugin, final UpdateType type, final boolean announce) {
+    public SpigotUpdater(Plugin plugin, UpdateType type, boolean announce) {
         super(plugin, type, announce);
     }
 
@@ -63,15 +64,15 @@ public final class SpigotUpdater extends Updater {
     }
 
     public String getSpigotVersion() throws IOException {
-        final Closer closer = Closer.create();
+        Closer closer = Closer.create();
         try {
-            final HttpURLConnection con = (HttpURLConnection) new URL(API_URL).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(API_URL).openConnection();
             con.setDoOutput(true);
             con.setRequestMethod(ACTION);
             con.getOutputStream().write(API_KEY);
 
-            final InputStreamReader isr = closer.register(new InputStreamReader(con.getInputStream()));
-            final BufferedReader br = closer.register(new BufferedReader(isr));
+            InputStreamReader isr = closer.register(new InputStreamReader(con.getInputStream()));
+            BufferedReader br = closer.register(new BufferedReader(isr));
             return br.readLine();
         } finally {
             closer.close();
@@ -79,7 +80,7 @@ public final class SpigotUpdater extends Updater {
     }
 
     @Override
-    public void start(final UpdateType type) {
+    public void start(UpdateType type) {
         waitForThread();
         this.type = type;
         this.thread = new Thread(new SpigotUpdateRunnable());
@@ -90,17 +91,17 @@ public final class SpigotUpdater extends Updater {
         @Override
         public void run() {
             try {
-                final String version = getSpigotVersion();
+                String version = getSpigotVersion();
                 remoteVersion = version;
                 if (versionCheck(version)) {
                     result = UpdateResult.SPIGOT_UPDATE_AVAILABLE;
                 } else {
                     result = UpdateResult.NO_UPDATE;
                 }
-            } catch (final Throwable ex) {
+            } catch (Throwable ex) {
             } finally {
                 // Invoke the listeners on the main thread
-                for (final Runnable listener : listeners) {
+                for (Runnable listener : listeners) {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, listener);
                 }
             }

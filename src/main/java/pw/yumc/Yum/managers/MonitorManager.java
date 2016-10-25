@@ -15,8 +15,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.PluginHelper.kit.LogKit;
 import pw.yumc.YumCore.bukkit.Log;
+import pw.yumc.YumCore.kit.LogKit;
 
 /**
  * 能耗监控管理
@@ -25,43 +25,43 @@ import pw.yumc.YumCore.bukkit.Log;
  * @author 喵♂呜
  */
 public class MonitorManager {
-    public final static String prefix = "§6[§bYum §a能耗监控§6] ";
-    private final static String errMsg = prefix + "§c命令执行异常 请反馈下列信息给腐竹!";
-    private final static String errP = "§6插件名称: §b%s";
-    private final static String errN = "§6异常名称: §c%s";
-    private final static String errM = "§6异常说明: §3%s";
-    private final static String errInfo = "§6简易错误信息如下:";
-    private final static String errStackTrace = "    §e位于 §c%s.%s(§4%s:%s§c)";
-    private final static String devInfo = "§c开发人员调试信息如下:";
+    public static String prefix = "§6[§bYum §a能耗监控§6] ";
+    private static String errMsg = prefix + "§c命令执行异常 请反馈下列信息给腐竹!";
+    private static String errP = "§6插件名称: §b%s";
+    private static String errN = "§6异常名称: §c%s";
+    private static String errM = "§6异常说明: §3%s";
+    private static String errInfo = "§6简易错误信息如下:";
+    private static String errStackTrace = "    §e位于 §c%s.%s(§4%s:%s§c)";
+    private static String devInfo = "§c开发人员调试信息如下:";
 
-    public final static int lagTime = 20;
-    public final static int um = 1000000;
-    public final static boolean debug = ConfigManager.i().isMonitorDebug();
-    public final static boolean log_to_file = ConfigManager.i().isLogToFile();
+    public static int lagTime = 20;
+    public static int um = 1000000;
+    public static boolean debug = ConfigManager.i().isMonitorDebug();
+    public static boolean log_to_file = ConfigManager.i().isLogToFile();
 
     private static double totalTime = 0;
 
-    private final static Map<String, Long> monitor = new ConcurrentHashMap<>();
-    private final static Map<String, Long> task = new ConcurrentHashMap<>();
-    private final static Map<String, Long> event = new ConcurrentHashMap<>();
-    private final static Map<String, Long> cmd = new ConcurrentHashMap<>();
+    private static Map<String, Long> monitor = new ConcurrentHashMap<>();
+    private static Map<String, Long> task = new ConcurrentHashMap<>();
+    private static Map<String, Long> event = new ConcurrentHashMap<>();
+    private static Map<String, Long> cmd = new ConcurrentHashMap<>();
 
-    private final static LogKit mlog = new LogKit("monitor.log");
-    private final static LogKit elog = new LogKit("error.log");
+    private static LogKit mlog = new LogKit("monitor.log");
+    private static LogKit elog = new LogKit("error.log");
 
-    public static void addCmd(final String pname, final long time) {
+    public static void addCmd(String pname, long time) {
         add(pname, time, monitor, cmd);
     }
 
-    public static void addEvent(final String pname, final long time) {
+    public static void addEvent(String pname, long time) {
         add(pname, time, monitor, event);
     }
 
-    public static void addTask(final String pname, final long time) {
+    public static void addTask(String pname, long time) {
         add(pname, time, monitor, task);
     }
 
-    public static void elog(final String message) {
+    public static void elog(String message) {
         if (log_to_file) {
             elog.logSender(message);
         } else {
@@ -73,22 +73,23 @@ public class MonitorManager {
         return sortMapByValue(monitor);
     }
 
-    public static MonitorInfo getMonitorInfo(final String pname) {
-        final double per = 100.00;
-        return new MonitorInfo(monitor.get(pname) / totalTime * per, cmd.get(pname) / totalTime * per, event.get(pname) / totalTime * per, task.get(pname) / totalTime * per);
+    public static MonitorInfo getMonitorInfo(String pname) {
+        double per = 100.00;
+        return new MonitorInfo(monitor.get(pname) / totalTime * per, cmd.get(pname) / totalTime * per, event.get(pname)
+                / totalTime * per, task.get(pname) / totalTime * per);
     }
 
     public static void init() {
-        for (final Plugin p : Bukkit.getPluginManager().getPlugins()) {
+        for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
             reset(p.getName());
         }
     }
 
-    public static void lagTip(final String message) {
+    public static void lagTip(String message) {
         log(prefix + message);
     }
 
-    public static void log(final String message) {
+    public static void log(String message) {
         if (log_to_file) {
             mlog.logSender(message);
         } else {
@@ -96,15 +97,19 @@ public class MonitorManager {
         }
     }
 
-    public static void printThrowable(final String title, final Throwable e) {
+    public static void printThrowable(String title, Throwable e) {
         elog(title);
         elog(String.format(errN, e.getClass().getName()));
         elog(String.format(errM, e.getMessage()));
         elog(errInfo);
-        final int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
+        int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
         for (int i = 0; i < l; i++) {
-            final StackTraceElement ste = e.getStackTrace()[i];
-            elog(String.format(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber()));
+            StackTraceElement ste = e.getStackTrace()[i];
+            elog(String.format(errStackTrace,
+                    ste.getClassName(),
+                    ste.getMethodName(),
+                    ste.getFileName(),
+                    ste.getLineNumber()));
         }
         if (debug) {
             Log.console(devInfo);
@@ -112,22 +117,27 @@ public class MonitorManager {
         }
     }
 
-    public static void reset(final String pname) {
+    public static void reset(String pname) {
         monitor.put(pname, 0L);
         task.put(pname, 0L);
         event.put(pname, 0L);
         cmd.put(pname, 0L);
     }
 
-    public static void sendError(final CommandSender sender, final Plugin plugin, final Throwable e) {
+    public static void sendError(CommandSender sender, Plugin plugin, Throwable e) {
         sender.sendMessage(errMsg);
         sender.sendMessage(String.format(errP, plugin.getName()));
         sender.sendMessage(String.format(errN, e.getClass().getName()));
         sender.sendMessage(String.format(errM, e.getMessage()));
     }
 
-    public static void sendObject(final CommandSender sender) {
-        sender.sendMessage(String.format("totalTime@%s monitor@%s cmd@%s event@%s task@%s", totalTime, sum(monitor.values()), sum(cmd.values()), sum(event.values()), sum(task.values())));
+    public static void sendObject(CommandSender sender) {
+        sender.sendMessage(String.format("totalTime@%s monitor@%s cmd@%s event@%s task@%s",
+                totalTime,
+                sum(monitor.values()),
+                sum(cmd.values()),
+                sum(event.values()),
+                sum(task.values())));
     }
 
     /**
@@ -136,14 +146,12 @@ public class MonitorManager {
      * @param map
      * @return
      */
-    public static Map<String, Long> sortMapByValue(final Map<String, Long> oriMap) {
-        if (oriMap == null || oriMap.isEmpty()) {
-            return oriMap;
-        }
-        final Map<String, Long> sortedMap = new LinkedHashMap<>();
-        final List<Map.Entry<String, Long>> entryList = new ArrayList<>(oriMap.entrySet());
+    public static Map<String, Long> sortMapByValue(Map<String, Long> oriMap) {
+        if (oriMap == null || oriMap.isEmpty()) { return oriMap; }
+        Map<String, Long> sortedMap = new LinkedHashMap<>();
+        List<Map.Entry<String, Long>> entryList = new ArrayList<>(oriMap.entrySet());
         Collections.sort(entryList, new MonitorComparator());
-        final Iterator<Map.Entry<String, Long>> iter = entryList.iterator();
+        Iterator<Map.Entry<String, Long>> iter = entryList.iterator();
         Entry<String, Long> tmpEntry = null;
         while (iter.hasNext()) {
             tmpEntry = iter.next();
@@ -153,16 +161,16 @@ public class MonitorManager {
     }
 
     @SafeVarargs
-    private static void add(final String pname, final long time, final Map<String, Long>... maps) {
+    private static void add(String pname, long time, Map<String, Long>... maps) {
         totalTime += time;
-        for (final Map<String, Long> map : maps) {
+        for (Map<String, Long> map : maps) {
             map.put(pname, map.get(pname) + time);
         }
     }
 
-    private static long sum(final Collection<? extends Long> numbers) {
+    private static long sum(Collection<? extends Long> numbers) {
         int result = 0;
-        for (final Long num : numbers) {
+        for (Long num : numbers) {
             result += num;
         }
         return result;
@@ -174,7 +182,7 @@ public class MonitorManager {
         public double event;
         public double task;
 
-        public MonitorInfo(final double monitor, final double cmd, final double event, final double task) {
+        public MonitorInfo(double monitor, double cmd, double event, double task) {
             this.monitor = monitor;
             this.cmd = cmd;
             this.event = event;
@@ -184,7 +192,7 @@ public class MonitorManager {
 
     static class MonitorComparator implements Comparator<Map.Entry<String, Long>> {
         @Override
-        public int compare(final Entry<String, Long> o1, final Entry<String, Long> o2) {
+        public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
             return o2.getValue().compareTo(o1.getValue());
         }
     }

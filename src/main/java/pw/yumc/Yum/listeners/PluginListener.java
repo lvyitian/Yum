@@ -26,15 +26,13 @@ public class PluginListener implements Listener {
     }
 
     @EventHandler
-    public void onPluginDisable(final PluginDisableEvent e) {
+    public void onPluginDisable(PluginDisableEvent e) {
         YumAPI.uninject(e.getPlugin());
     }
 
     @EventHandler
     public void onPluginEnable(final PluginEnableEvent e) {
-        if (ConfigManager.i().getMonitorIgnoreList().contains(e.getPlugin().getName())) {
-            return;
-        }
+        if (ConfigManager.i().getMonitorIgnoreList().contains(e.getPlugin().getName())) { return; }
         MonitorManager.reset(e.getPlugin().getName());
         PKit.runTaskLater(new Runnable() {
             @Override

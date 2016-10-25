@@ -27,69 +27,68 @@ import pw.yumc.YumCore.kit.PKit;
  */
 public class ThreadSafetyListener implements Listener {
 
-    public ThreadSafetyListener(final Yum yum) {
+    public ThreadSafetyListener(Yum yum) {
         Bukkit.getPluginManager().registerEvents(this, yum);
     }
 
     @EventHandler
-    public void onChunkLoad(final ChunkLoadEvent chunkLoadEvent) {
+    public void onChunkLoad(ChunkLoadEvent chunkLoadEvent) {
         checkSafety(chunkLoadEvent);
     }
 
     @EventHandler
-    public void onChunkUnload(final ChunkUnloadEvent chunkUnloadEvent) {
+    public void onChunkUnload(ChunkUnloadEvent chunkUnloadEvent) {
         checkSafety(chunkUnloadEvent);
     }
 
     @EventHandler
-    public void onCreatureSpawn(final CreatureSpawnEvent creatureSpawnEvent) {
+    public void onCreatureSpawn(CreatureSpawnEvent creatureSpawnEvent) {
         checkSafety(creatureSpawnEvent);
     }
 
-    public void onInventoryOpen(final InventoryOpenEvent inventoryOpenEvent) {
+    public void onInventoryOpen(InventoryOpenEvent inventoryOpenEvent) {
         checkSafety(inventoryOpenEvent);
     }
 
     @EventHandler
-    public void onItemSpawn(final ItemSpawnEvent itemSpawnEvent) {
+    public void onItemSpawn(ItemSpawnEvent itemSpawnEvent) {
         checkSafety(itemSpawnEvent);
     }
 
     @EventHandler
-    public void onPlayerMove(final PlayerMoveEvent moveEvent) {
+    public void onPlayerMove(PlayerMoveEvent moveEvent) {
         checkSafety(moveEvent);
     }
 
     @EventHandler
-    public void onPlayerQuit(final PlayerQuitEvent quitEvent) {
+    public void onPlayerQuit(PlayerQuitEvent quitEvent) {
         checkSafety(quitEvent);
     }
 
-    public void onPlayerTeleport(final PlayerTeleportEvent teleportEvent) {
+    public void onPlayerTeleport(PlayerTeleportEvent teleportEvent) {
         checkSafety(teleportEvent);
     }
 
     @EventHandler
-    public void onWorldLoad(final WorldLoadEvent worldLoadEvent) {
+    public void onWorldLoad(WorldLoadEvent worldLoadEvent) {
         checkSafety(worldLoadEvent);
     }
 
-    public void onWorldSave(final WorldSaveEvent worldSaveEvent) {
+    public void onWorldSave(WorldSaveEvent worldSaveEvent) {
         checkSafety(worldSaveEvent);
     }
 
     @EventHandler
-    public void onWorldUnload(final WorldUnloadEvent worldUnloadEvent) {
+    public void onWorldUnload(WorldUnloadEvent worldUnloadEvent) {
         checkSafety(worldUnloadEvent);
     }
 
-    private void checkSafety(final Event eventType) {
+    private void checkSafety(Event eventType) {
         if (Yum.mainThread != null && Thread.currentThread() != Yum.mainThread && !eventType.isAsynchronous()) {
-            final String eventName = eventType.getEventName();
-            final Plugin plugin = PKit.getOperatePlugin();
-            if (plugin != null) {
-                throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName + " 操作插件: " + plugin.getName());
-            }
+            String eventName = eventType.getEventName();
+            Plugin plugin = PKit.getOperatePlugin();
+            if (plugin != null) { throw new IllegalAccessError("[Yum 线程安全]: 请勿异步调用一个同步事件 " + eventName + " 操作插件: "
+                    + plugin.getName()); }
         }
     }
 }

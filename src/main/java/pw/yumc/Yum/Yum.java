@@ -10,8 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import cn.citycraft.CommonData.UpdatePlugin;
-import cn.citycraft.PluginHelper.ext.kit.Reflect;
 import pw.yumc.Yum.api.YumAPI;
 import pw.yumc.Yum.commands.FileCommand;
 import pw.yumc.Yum.commands.MonitorCommand;
@@ -26,6 +24,7 @@ import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.NetworkManager;
 import pw.yumc.Yum.runnables.MainThreadCheckTask;
 import pw.yumc.YumCore.bukkit.Log;
+import pw.yumc.YumCore.reflect.Reflect;
 import pw.yumc.YumCore.statistic.Statistics;
 import pw.yumc.YumCore.update.SubscribeTask;
 
@@ -73,7 +72,7 @@ public class Yum extends JavaPlugin {
         // 初始化配置
         ConfigManager.i();
         // 初始化更新列
-        UpdatePlugin.getUpdateList();
+        // UpdatePlugin.getUpdateList();
         // 启用网络注入
         NetworkManager.register(this);
     }
@@ -82,7 +81,7 @@ public class Yum extends JavaPlugin {
      * @return 主线程
      */
     private Thread getMainThread() {
-        final Object console = Reflect.on(Bukkit.getServer()).get("console");
+        Object console = Reflect.on(Bukkit.getServer()).get("console");
         return Reflect.on(console).get("primaryThread");
     }
 
@@ -102,15 +101,15 @@ public class Yum extends JavaPlugin {
     private void initListeners() {
         if (ConfigManager.i().isSetOpEnable()) {
             try {
-                final ClassLoader cl = Class.forName("pw.yumc.injected.event.SetOpEvent").getClassLoader();
+                ClassLoader cl = Class.forName("pw.yumc.injected.event.SetOpEvent").getClassLoader();
                 try {
                     cl.getClass().getDeclaredField("plugin");
                     throw new ClassNotFoundException();
-                } catch (final NoSuchFieldException | SecurityException e) {
+                } catch (NoSuchFieldException | SecurityException e) {
                     new SecurityListener(this);
                     Log.console("§a安全管理系统已启用...");
                 }
-            } catch (final ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 Log.console("§c服务端未注入安全拦截器 关闭功能...");
             }
         }

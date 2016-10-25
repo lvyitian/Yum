@@ -27,7 +27,7 @@ public class BukkitDev implements Serializable {
         public String md5;
         public String releaseType;
 
-        public Files(final JSONObject obj) {
+        public Files(JSONObject obj) {
             projectId = Integer.parseInt(obj.get("projectId").toString());
             name = obj.get("name").toString();
             fileUrl = obj.get("fileUrl").toString();
@@ -38,12 +38,10 @@ public class BukkitDev implements Serializable {
             releaseType = obj.get("releaseType").toString();
         }
 
-        public static List<Files> parseList(final String json) {
-            if (StrKit.isBlank(json) || json.equals("[]")) {
-                return Collections.emptyList();
-            }
-            final List<Files> temp = new ArrayList<>();
-            final JSONArray ja = (JSONArray) JSONValue.parse(json);
+        public static List<Files> parseList(String json) {
+            if (StrKit.isBlank(json) || json.equals("[]")) { return Collections.emptyList(); }
+            List<Files> temp = new ArrayList<>();
+            JSONArray ja = (JSONArray) JSONValue.parse(json);
             for (int i = 0; i < ja.size(); i++) {
                 temp.add(new Files((JSONObject) ja.get(i)));
             }
@@ -58,19 +56,17 @@ public class BukkitDev implements Serializable {
         public String slug;
         public String stage;
 
-        public Projects(final JSONObject obj) {
+        public Projects(JSONObject obj) {
             id = Integer.parseInt(obj.get("id").toString());
             name = obj.get("name").toString();
             slug = obj.get("slug").toString();
             stage = obj.get("stage").toString();
         }
 
-        public static List<Projects> parseList(final String json) {
-            if (StrKit.isBlank(json) || json.equals("[]")) {
-                return Collections.emptyList();
-            }
-            final List<Projects> temp = new ArrayList<>();
-            final JSONArray ja = (JSONArray) JSONValue.parse(json);
+        public static List<Projects> parseList(String json) {
+            if (StrKit.isBlank(json) || json.equals("[]")) { return Collections.emptyList(); }
+            List<Projects> temp = new ArrayList<>();
+            JSONArray ja = (JSONArray) JSONValue.parse(json);
             for (int i = 0; i < ja.size(); i++) {
                 temp.add(new Projects((JSONObject) ja.get(i)));
             }

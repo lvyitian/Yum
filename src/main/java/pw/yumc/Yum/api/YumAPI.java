@@ -4,13 +4,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import cn.citycraft.CommonData.UpdatePlugin;
 import pw.yumc.Yum.inject.CommandInjector;
 import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
@@ -55,7 +53,7 @@ public class YumAPI {
      * @param plugin
      *            插件实体
      */
-    public static void delete(final Plugin plugin) {
+    public static void delete(Plugin plugin) {
         plugman.deletePlugin(plugin);
     }
 
@@ -86,16 +84,16 @@ public class YumAPI {
         return repo;
     }
 
-    public static List<Plugin> getUpdateList(final CommandSender sender) {
-        final List<Plugin> ulist = new ArrayList<>();
-        try {
-            for (final Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
-                ulist.add(updateplugin.getValue());
-            }
-        } catch (final Exception | Error e) {
-            sender.sendMessage("§4错误: §c无法检索全体更新列表!");
-            sender.sendMessage("§4异常: §c" + e.getMessage());
-        }
+    public static List<Plugin> getUpdateList(CommandSender sender) {
+        List<Plugin> ulist = new ArrayList<>();
+        //        try {
+        //            for (Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
+        //                ulist.add(updateplugin.getValue());
+        //            }
+        //        } catch (Exception | Error e) {
+        //            sender.sendMessage("§4错误: §c无法检索全体更新列表!");
+        //            sender.sendMessage("§4异常: §c" + e.getMessage());
+        //        }
         return ulist;
     }
 
@@ -105,7 +103,7 @@ public class YumAPI {
      * @param plugin
      *            插件
      */
-    public static void inject(final Plugin plugin) {
+    public static void inject(Plugin plugin) {
         if (plugin.isEnabled() && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
             CommandInjector.inject(plugin);
             ListenerInjector.inject(plugin);
@@ -124,11 +122,9 @@ public class YumAPI {
      *            插件版本
      * @return 是否安装成功
      */
-    public static boolean install(final CommandSender sender, final String pluginname, final String url) {
-        final File pluginFile = new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar");
-        if (download.run(sender, url, pluginFile)) {
-            return plugman.load(sender, pluginFile);
-        }
+    public static boolean install(CommandSender sender, String pluginname, String url) {
+        File pluginFile = new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar");
+        if (download.run(sender, url, pluginFile)) { return plugman.load(sender, pluginFile); }
         return false;
     }
 
@@ -141,7 +137,7 @@ public class YumAPI {
      *            插件版本
      * @return 是否安装成功
      */
-    public static boolean install(final String pluginname, final String url) {
+    public static boolean install(String pluginname, String url) {
         return install(null, pluginname, url);
     }
 
@@ -154,7 +150,7 @@ public class YumAPI {
      *            插件名称
      * @return 是否安装成功
      */
-    public static boolean installFromYum(final CommandSender sender, final String pluginname) {
+    public static boolean installFromYum(CommandSender sender, String pluginname) {
         return installFromYum(sender, pluginname, null);
     }
 
@@ -169,11 +165,9 @@ public class YumAPI {
      *            插件版本
      * @return 是否安装成功
      */
-    public static boolean installFromYum(final CommandSender sender, final String pluginname, final String version) {
-        final PluginInfo pi = repo.getPlugin(pluginname);
-        if (pi != null) {
-            return install(sender, pi.name, pi.getUrl(sender, version));
-        }
+    public static boolean installFromYum(CommandSender sender, String pluginname, String version) {
+        PluginInfo pi = repo.getPlugin(pluginname);
+        if (pi != null) { return install(sender, pi.name, pi.getUrl(sender, version)); }
         sender.sendMessage("§4错误: §c仓库中未找到插件 §b" + pluginname + " §c安装失败!");
         return false;
     }
@@ -184,7 +178,7 @@ public class YumAPI {
      * @param pluginname
      *            插件名称
      */
-    public static void load(final File pluginFile) {
+    public static void load(File pluginFile) {
         plugman.load(pluginFile);
     }
 
@@ -194,7 +188,7 @@ public class YumAPI {
      * @param pluginname
      *            插件名称
      */
-    public static void load(final String pluginname) {
+    public static void load(String pluginname) {
         plugman.load(pluginname);
     }
 
@@ -204,7 +198,7 @@ public class YumAPI {
      * @param plugin
      *            插件实体
      */
-    public static void reload(final Plugin plugin) {
+    public static void reload(Plugin plugin) {
         plugman.reload(plugin);
     }
 
@@ -215,7 +209,7 @@ public class YumAPI {
      *            插件
      */
     public static void uninject() {
-        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             YumAPI.uninject(plugin);
         }
     }
@@ -226,7 +220,7 @@ public class YumAPI {
      * @param plugin
      *            插件
      */
-    public static void uninject(final Plugin plugin) {
+    public static void uninject(Plugin plugin) {
         CommandInjector.uninject(plugin);
         ListenerInjector.uninject(plugin);
         TaskInjector.uninject(plugin);
@@ -238,7 +232,7 @@ public class YumAPI {
      * @param plugin
      *            插件实体
      */
-    public static void unload(final Plugin plugin) {
+    public static void unload(Plugin plugin) {
         plugman.unload(plugin);
     }
 
@@ -253,8 +247,10 @@ public class YumAPI {
      *            新插件的下载地址
      * @return 是否更新成功
      */
-    public static boolean update(final CommandSender sender, final Plugin plugin, final URL url) {
-        if (download.run(sender, url, new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
+    public static boolean update(CommandSender sender, Plugin plugin, URL url) {
+        if (download.run(sender,
+                url,
+                new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName()))) {
             sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
             sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
             return true;
@@ -271,7 +267,7 @@ public class YumAPI {
      *            新插件的下载地址
      * @return 是否更新成功
      */
-    public static boolean update(final Plugin plugin, final URL url) {
+    public static boolean update(Plugin plugin, URL url) {
         return update(null, plugin, url);
     }
 
@@ -291,10 +287,10 @@ public class YumAPI {
                 }
                 runlock = true;
                 int failed = 0;
-                final List<Plugin> ulist = getUpdateList(sender);
+                List<Plugin> ulist = getUpdateList(sender);
                 if (ulist.size() > 0) {
                     sender.sendMessage("§d开始更新服务器可更新插件");
-                    for (final Plugin updateplugin : ulist) {
+                    for (Plugin updateplugin : ulist) {
                         sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
                         if (!updateFromYum(sender, updateplugin, null, true)) {
                             failed++;
@@ -324,9 +320,10 @@ public class YumAPI {
         PKit.runTaskLaterAsync(new Runnable() {
             @Override
             public void run() {
-                final List<Plugin> ulist = getUpdateList(sender);
+                List<Plugin> ulist = getUpdateList(sender);
                 if (ulist.size() > 0) {
-                    sender.sendMessage("§6[§bYum§6]§e自动更新: §a发现 §e" + ulist.size() + " §a个可更新插件 请使用 §b/yum ua §a更新所有插件!");
+                    sender.sendMessage(
+                            "§6[§bYum§6]§e自动更新: §a发现 §e" + ulist.size() + " §a个可更新插件 请使用 §b/yum ua §a更新所有插件!");
                 }
             }
         }, 60);
@@ -341,7 +338,7 @@ public class YumAPI {
      *            插件实体
      * @return 是否更新成功
      */
-    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin) {
+    public static boolean updateFromYum(CommandSender sender, Plugin plugin) {
         return updateFromYum(sender, plugin, null);
     }
 
@@ -356,7 +353,7 @@ public class YumAPI {
      *            插件版本(null则自动获取)
      * @return
      */
-    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin, final String version) {
+    public static boolean updateFromYum(CommandSender sender, Plugin plugin, String version) {
         return updateFromYum(sender, plugin, version, false);
     }
 
@@ -373,16 +370,16 @@ public class YumAPI {
      *            是否一键更新
      * @return
      */
-    public static boolean updateFromYum(final CommandSender sender, final Plugin plugin, final String version, final boolean oneKeyUpdate) {
-        final PluginInfo pi = repo.getPlugin(plugin.getName());
+    public static boolean updateFromYum(CommandSender sender, Plugin plugin, String version, boolean oneKeyUpdate) {
+        PluginInfo pi = repo.getPlugin(plugin.getName());
         if (pi != null) {
-            final File pFile = new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName());
+            File pFile = new File(Bukkit.getUpdateFolderFile(), plugman.getPluginFile(plugin).getName());
             if (download.run(sender, pi.getUrl(sender, version), pFile)) {
                 if (!oneKeyUpdate) {
                     sender.sendMessage("§6更新: §e已下载 " + plugin.getName() + " 插件到服务器更新文件夹");
                     sender.sendMessage("§6更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
                 }
-                UpdatePlugin.getUpdateList().remove(plugin.getName());
+                //UpdatePlugin.getUpdateList().remove(plugin.getName());
                 return true;
             }
         } else {
@@ -398,7 +395,7 @@ public class YumAPI {
         PKit.runTaskLater(new Runnable() {
             @Override
             public void run() {
-                for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                     YumAPI.inject(plugin);
                 }
             }
@@ -423,7 +420,7 @@ public class YumAPI {
      * @param sender
      *            命令发送者
      */
-    public static void upgrade(final CommandSender sender) {
+    public static void upgrade(CommandSender sender) {
         plugman.upgrade(sender);
     }
 
@@ -435,7 +432,7 @@ public class YumAPI {
      * @param plugin
      *            插件实体
      */
-    public static void upgrade(final CommandSender sender, final Plugin plugin) {
+    public static void upgrade(CommandSender sender, Plugin plugin) {
         plugman.upgrade(sender, plugin);
     }
 }

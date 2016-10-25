@@ -45,7 +45,7 @@ public abstract class Updater {
 
     protected List<Runnable> listeners = new CopyOnWriteArrayList<Runnable>();
 
-    public static Updater create(final Plugin protocolLib, final int id, final File file, final UpdateType type, final boolean announce) {
+    public static Updater create(Plugin protocolLib, int id, File file, UpdateType type, boolean announce) {
         // if (Util.isUsingSpigot()) {
         return new SpigotUpdater(protocolLib, type, announce);
         // } else {
@@ -53,7 +53,7 @@ public abstract class Updater {
         // }
     }
 
-    protected Updater(final Plugin plugin, final UpdateType type, final boolean announce) {
+    protected Updater(Plugin plugin, UpdateType type, boolean announce) {
         this.plugin = plugin;
         this.type = type;
         this.announce = announce;
@@ -67,7 +67,7 @@ public abstract class Updater {
      * @param listener
      *            - the listener to add.
      */
-    public void addListener(final Runnable listener) {
+    public void addListener(Runnable listener) {
         listeners.add(Preconditions.checkNotNull(listener, "listener cannot be NULL"));
     }
 
@@ -129,7 +129,7 @@ public abstract class Updater {
      *            - the listener to remove.
      * @return TRUE if the listener was removed, FALSE otherwise.
      */
-    public boolean removeListener(final Runnable listener) {
+    public boolean removeListener(Runnable listener) {
         return listeners.remove(listener);
     }
 
@@ -146,7 +146,7 @@ public abstract class Updater {
 
     public abstract void start(UpdateType type);
 
-    public boolean versionCheck(final String title) {
+    public boolean versionCheck(String title) {
         if (this.type != UpdateType.NO_VERSION_CHECK) {
             String version = this.plugin.getDescription().getVersion();
 
@@ -156,7 +156,7 @@ public abstract class Updater {
                 version = version.substring(0, version.indexOf("-"));
             }
 
-            final String[] splitTitle = title.split(" ");
+            String[] splitTitle = title.split(" ");
             String remoteVersion;
 
             if (splitTitle.length == 2) {
@@ -165,9 +165,13 @@ public abstract class Updater {
                 remoteVersion = splitTitle[0];
             } else {
                 // The file's name did not contain the string 'vVersion'
-                final String authorInfo = this.plugin.getDescription().getAuthors().size() == 0 ? "" : " (" + this.plugin.getDescription().getAuthors().get(0) + ")";
-                this.plugin.getLogger().warning("The author of this plugin " + authorInfo + " has misconfigured their Auto Update system");
-                this.plugin.getLogger().warning("File versions should follow the format 'PluginName VERSION[-SNAPSHOT]'");
+                String authorInfo = this.plugin.getDescription().getAuthors().size() == 0 ? ""
+                        : " (" + this.plugin.getDescription().getAuthors().get(0) + ")";
+                this.plugin.getLogger().warning(
+                        "The author of this plugin " + authorInfo + " has misconfigured their Auto Update system");
+                this.plugin
+                        .getLogger()
+                        .warning("File versions should follow the format 'PluginName VERSION[-SNAPSHOT]'");
                 this.plugin.getLogger().warning("Please notify the author of this error.");
                 this.result = BukkitUpdater.UpdateResult.FAIL_NOVERSION;
                 return false;
@@ -178,7 +182,7 @@ public abstract class Updater {
                 remoteVersion = remoteVersion.substring(1);
             }
 
-            final String localVersion = plugin.getDescription().getVersion();
+            String localVersion = plugin.getDescription().getVersion();
 
             if (devBuild && remoteVersion.equals(localVersion)) {
                 // They're using a dev build and this version has been released
@@ -196,7 +200,7 @@ public abstract class Updater {
         if (thread != null && thread.isAlive()) {
             try {
                 thread.join();
-            } catch (final InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
@@ -255,9 +259,9 @@ public abstract class Updater {
          */
         SPIGOT_UPDATE_AVAILABLE("The updater found an update: %s (Running %s). Download at %s");
 
-        private final String description;
+        private String description;
 
-        private UpdateResult(final String description) {
+        private UpdateResult(String description) {
             this.description = description;
         }
 
