@@ -23,7 +23,7 @@ import pw.yumc.YumCore.kit.PKit;
 public class NetworkManager {
 
     public static void register(Yum plugin) {
-        Bukkit.getConsoleSender().sendMessage("§6[§bYum §a网络管理§6] §a注入网络管理系统 将托管服务器网络!");
+        Bukkit.getConsoleSender().sendMessage("§6[§a网络管理§6] §a注入网络管理系统 将托管服务器网络!");
         ProxySelector.setDefault(new YumProxySelector(ProxySelector.getDefault(), plugin));
     }
 
