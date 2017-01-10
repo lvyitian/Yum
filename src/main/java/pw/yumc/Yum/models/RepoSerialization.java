@@ -131,6 +131,6 @@ public class RepoSerialization {
     public enum URLType {
         Maven,
         maven,
-        DirectUrl;
+        DirectUrl
     }
 }

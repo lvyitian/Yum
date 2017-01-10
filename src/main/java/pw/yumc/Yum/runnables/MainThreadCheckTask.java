@@ -33,7 +33,7 @@ public class MainThreadCheckTask extends TimerTask {
         try {
             Class clazz = Class.forName("org.spigotmc.WatchdogThread");
             tickMethod = clazz.getDeclaredMethod("tick");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

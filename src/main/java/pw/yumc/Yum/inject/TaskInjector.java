@@ -69,7 +69,7 @@ public class TaskInjector implements Runnable {
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 

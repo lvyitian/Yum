@@ -63,7 +63,7 @@ public class MonitorManager {
 
     public static void elog(String message) {
         if (log_to_file) {
-            elog.logSender(message);
+            elog.console(message);
         } else {
             Log.console(message);
         }
@@ -91,7 +91,7 @@ public class MonitorManager {
 
     public static void log(String message) {
         if (log_to_file) {
-            mlog.logSender(message);
+            mlog.console(message);
         } else {
             Log.console(message);
         }
@@ -143,7 +143,7 @@ public class MonitorManager {
     /**
      * 使用 Map按value进行排序
      *
-     * @param map
+     * @param oriMap
      * @return
      */
     public static Map<String, Long> sortMapByValue(Map<String, Long> oriMap) {
@@ -152,7 +152,7 @@ public class MonitorManager {
         List<Map.Entry<String, Long>> entryList = new ArrayList<>(oriMap.entrySet());
         Collections.sort(entryList, new MonitorComparator());
         Iterator<Map.Entry<String, Long>> iter = entryList.iterator();
-        Entry<String, Long> tmpEntry = null;
+        Entry<String, Long> tmpEntry;
         while (iter.hasNext()) {
             tmpEntry = iter.next();
             sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());

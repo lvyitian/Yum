@@ -36,10 +36,6 @@ public class PluginInfo implements Serializable {
     /**
      * 获得下载直链
      *
-     * @param sender
-     *            命令发送者
-     * @param version
-     *            版本
      * @return 下载直链
      */
     public String getDirectUrl() {
@@ -49,8 +45,6 @@ public class PluginInfo implements Serializable {
     /**
      * 获得下载直链
      *
-     * @param sender
-     *            命令发送者
      * @param version
      *            版本
      * @return 下载直链
@@ -82,9 +76,7 @@ public class PluginInfo implements Serializable {
     /**
      * 获取Maven仓库指定插件的下载地址
      *
-     * @param sender
-     *            - 命令发送者
-     * @param version
+     * @param ver
      *            - 需要更新的版本
      * @return 更新地址
      */
@@ -148,7 +140,7 @@ public class PluginInfo implements Serializable {
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder builder = factory.newDocumentBuilder();
             result = builder.parse(url).getElementsByTagName(tag).item(0).getTextContent();
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
         }
         return result;
     }

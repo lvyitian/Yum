@@ -42,8 +42,8 @@ public class BukkitDev implements Serializable {
             if (StrKit.isBlank(json) || json.equals("[]")) { return Collections.emptyList(); }
             List<Files> temp = new ArrayList<>();
             JSONArray ja = (JSONArray) JSONValue.parse(json);
-            for (int i = 0; i < ja.size(); i++) {
-                temp.add(new Files((JSONObject) ja.get(i)));
+            for (Object aJa : ja) {
+                temp.add(new Files((JSONObject) aJa));
             }
             Collections.reverse(temp);
             return temp;
@@ -67,8 +67,8 @@ public class BukkitDev implements Serializable {
             if (StrKit.isBlank(json) || json.equals("[]")) { return Collections.emptyList(); }
             List<Projects> temp = new ArrayList<>();
             JSONArray ja = (JSONArray) JSONValue.parse(json);
-            for (int i = 0; i < ja.size(); i++) {
-                temp.add(new Projects((JSONObject) ja.get(i)));
+            for (Object aJa : ja) {
+                temp.add(new Projects((JSONObject) aJa));
             }
             return temp;
         }

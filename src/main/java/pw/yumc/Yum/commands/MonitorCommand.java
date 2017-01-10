@@ -27,11 +27,11 @@ import pw.yumc.Yum.inject.ListenerInjector;
 import pw.yumc.Yum.inject.TaskInjector;
 import pw.yumc.Yum.managers.MonitorManager;
 import pw.yumc.Yum.managers.MonitorManager.MonitorInfo;
-import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.CommandSub;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
-import pw.yumc.YumCore.commands.interfaces.CommandExecutor;
+import pw.yumc.YumCore.commands.interfaces.Executor;
 import pw.yumc.YumCore.kit.PKit;
 import pw.yumc.YumCore.kit.StrKit;
 import pw.yumc.YumCore.reflect.Reflect;
@@ -41,7 +41,7 @@ import pw.yumc.YumCore.reflect.Reflect;
  * @since 2016年7月6日 下午5:13:32
  * @author 喵♂呜
  */
-public class MonitorCommand implements CommandExecutor {
+public class MonitorCommand implements Executor {
     public static Throwable lastError = null;
 
     private String prefix = "§6[§bYum §a能耗监控§6] ";
@@ -70,7 +70,7 @@ public class MonitorCommand implements CommandExecutor {
     private double um = 1000000.00;
 
     public MonitorCommand(Yum yum) {
-        new CommandManager("monitor", this, PluginTabComplete.instence);
+        new CommandSub("monitor", this, PluginTabComplete.instence);
     }
 
     @Cmd(aliases = "c", minimumArguments = 1)
@@ -105,17 +105,9 @@ public class MonitorCommand implements CommandExecutor {
                 CommandInjector injected = (CommandInjector) executor;
                 if (injected.count != 0) {
                     double avgTime = injected.totalTime / um / injected.count;
-                    sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist,
-                            command.getValue().getName(),
-                            injected.totalTime / um,
-                            injected.count,
-                            avgTime));
+                    sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, command.getValue().getName(), injected.totalTime / um, injected.count, avgTime));
                 } else {
-                    sender.sendMessage(String.format(milist,
-                            command.getValue().getName(),
-                            injected.totalTime / um,
-                            injected.count,
-                            0D));
+                    sender.sendMessage(String.format(milist, command.getValue().getName(), injected.totalTime / um, injected.count, 0D));
                 }
             }
         }
@@ -167,11 +159,7 @@ public class MonitorCommand implements CommandExecutor {
         sender.sendMessage(mieprefix);
         for (String event : MonitorManager.sortMapByValue(eventTotalTime).keySet()) {
             double avgTime = eventTotalTime.get(event) / um / eventCount.get(event);
-            sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist,
-                    event,
-                    eventTotalTime.get(event) / um,
-                    eventCount.get(event),
-                    avgTime));
+            sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, event, eventTotalTime.get(event) / um, eventCount.get(event), avgTime));
         }
     }
 
@@ -204,13 +192,7 @@ public class MonitorCommand implements CommandExecutor {
                 break;
             }
             MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
-            sender.sendMessage(String.format(laglist,
-                    size,
-                    entry.getKey(),
-                    getPer(sender, mi.monitor),
-                    mi.cmd,
-                    mi.event,
-                    mi.task));
+            sender.sendMessage(String.format(laglist, size, entry.getKey(), getPer(sender, mi.monitor), mi.cmd, mi.event, mi.task));
         }
     }
 
@@ -269,17 +251,9 @@ public class MonitorCommand implements CommandExecutor {
                     TaskInjector executor = (TaskInjector) task;
                     if (executor.count != 0) {
                         double avgTime = executor.totalTime / um / executor.count;
-                        sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist,
-                                getClassName(executor.getOriginalTask().getClass()),
-                                executor.totalTime / um,
-                                executor.count,
-                                avgTime));
+                        sender.sendMessage(String.format(avgTime < 10 ? milist : miwlist, getClassName(executor.getOriginalTask().getClass()), executor.totalTime / um, executor.count, avgTime));
                     } else {
-                        sender.sendMessage(String.format(milist,
-                                getClassName(executor.getOriginalTask().getClass()),
-                                executor.totalTime / um,
-                                executor.count,
-                                0D));
+                        sender.sendMessage(String.format(milist, getClassName(executor.getOriginalTask().getClass()), executor.totalTime / um, executor.count, 0D));
                     }
                 }
             }
@@ -301,8 +275,7 @@ public class MonitorCommand implements CommandExecutor {
     }
 
     private String getClassName(Class<?> clazz) {
-        return StrKit.isBlank(clazz.getSimpleName()) ? clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
-                : clazz.getSimpleName();
+        return StrKit.isBlank(clazz.getSimpleName()) ? clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1) : clazz.getSimpleName();
     }
 
     private String getPer(CommandSender sender, double per) {

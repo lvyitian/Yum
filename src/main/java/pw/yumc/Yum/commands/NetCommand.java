@@ -8,13 +8,13 @@ import org.bukkit.command.CommandSender;
 
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.managers.ConfigManager;
-import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.CommandSub;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
-import pw.yumc.YumCore.commands.interfaces.CommandExecutor;
+import pw.yumc.YumCore.commands.interfaces.Executor;
 
-public class NetCommand implements CommandExecutor {
+public class NetCommand implements Executor {
     public static HashMap<String, Integer> netlist = new HashMap<>();
 
     private String prefix = "§6[§bYum §a网络管理§6] ";
@@ -28,7 +28,7 @@ public class NetCommand implements CommandExecutor {
     private String p_n_f = prefix + "§c插件 §b%s §c不存在!";
 
     public NetCommand(Yum yum) {
-        new CommandManager("net", this, PluginTabComplete.instence);
+        new CommandSub("net", this, PluginTabComplete.instence);
     }
 
     public static void addNetCount(String pname) {

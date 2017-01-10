@@ -42,6 +42,9 @@ public class PluginNetworkListener implements Listener {
             return;
         }
         if (plugin != null) {
+            if (ConfigManager.i().isNetworkDebug() && ConfigManager.i().getNetWorkDebug().contains(plugin.getName())) {
+                new Exception().printStackTrace();
+            }
             NetCommand.addNetCount(plugin.getName());
             if (ConfigManager.i().getNetworkBlackList().contains(plugin.getName())) {
                 breakNetwork(e);

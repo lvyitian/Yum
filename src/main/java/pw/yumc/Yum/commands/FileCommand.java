@@ -3,7 +3,6 @@ package pw.yumc.Yum.commands;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -14,12 +13,12 @@ import org.bukkit.command.CommandSender;
 
 import pw.yumc.Yum.Yum;
 import pw.yumc.Yum.api.YumAPI;
-import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.CommandSub;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
-import pw.yumc.YumCore.commands.annotation.KeyValue;
-import pw.yumc.YumCore.commands.interfaces.CommandExecutor;
+import pw.yumc.YumCore.commands.annotation.Option;
+import pw.yumc.YumCore.commands.interfaces.Executor;
 import pw.yumc.YumCore.kit.FileKit;
 
 /**
@@ -28,7 +27,7 @@ import pw.yumc.YumCore.kit.FileKit;
  * @since 2016年1月9日 上午10:02:39
  * @author 喵♂呜
  */
-public class FileCommand implements CommandExecutor {
+public class FileCommand implements Executor {
     private static String prefix = "§6[§bYum §a文件管理§6] ";
 
     private static String file_not_found = prefix + "§b%s §c文件未找到!";
@@ -50,13 +49,13 @@ public class FileCommand implements CommandExecutor {
 
     public FileCommand(Yum yum) {
         plugin = yum;
-        new CommandManager("file", this, PluginTabComplete.instence);
+        new CommandSub("file", this, PluginTabComplete.instence);
     }
 
     @Cmd(aliases = "cp", minimumArguments = 2)
     @Help(value = "复制文件", possibleArguments = "<源文件> <目标目录>")
     @Async
-    public void copy(CommandSender sender, @KeyValue(key = "check") File src, File des) throws FileNotFoundException, IOException {
+    public void copy(CommandSender sender, @Option(value = "check") File src, File des) throws IOException {
         if (src.isDirectory()) {
             sender.sendMessage(String.format(file_is_dir, src.getPath()));
             return;

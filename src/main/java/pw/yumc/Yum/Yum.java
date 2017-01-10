@@ -64,7 +64,6 @@ public class Yum extends JavaPlugin {
         new Statistics();
         new SubscribeTask();
         YumAPI.updateRepo(Bukkit.getConsoleSender());
-        YumAPI.updateCheck(Bukkit.getConsoleSender());
     }
 
     @Override

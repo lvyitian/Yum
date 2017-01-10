@@ -41,7 +41,7 @@ public class RepositoryManager {
 
     public boolean addPackage(CommandSender sender, String urlstring) {
         String json = HttpKit.get(urlstring);
-        if (json == null || json.isEmpty()) { return false; }
+        if (json.isEmpty()) { return false; }
         PackageInfo pkg = jsonToPackage(json);
         if (pkg == null) { return false; }
         updatePackage(sender, pkg);
@@ -51,8 +51,7 @@ public class RepositoryManager {
     public boolean addRepositories(CommandSender sender, String urlstring) {
         String url = handerRepoUrl(urlstring);
         Repositories repo = repocache.addRepo(url);
-        if (repo == null) { return false; }
-        return updateRepositories(sender, repo);
+        return repo != null && updateRepositories(sender, repo);
     }
 
     public void clean() {
@@ -90,10 +89,7 @@ public class RepositoryManager {
                 List<TagInfo> taglist = plugin.tags;
                 for (int i = 0; i < taglist.size(); i++) {
                     TagInfo tag = taglist.get(i);
-                    li.add("    §b" + (i == taglist.size() - 1 ? "┗ " : "┣ ") + String.format("§c%s  §a%s  §e%s",
-                            tag.tag,
-                            tag.version,
-                            tag.type != null ? tag.type : URLType.Maven));
+                    li.add("    §b" + (i == taglist.size() - 1 ? "┗ " : "┣ ") + String.format("§c%s  §a%s  §e%s", tag.tag, tag.version, tag.type != null ? tag.type : URLType.Maven));
                 }
             }
         }
@@ -142,8 +138,7 @@ public class RepositoryManager {
         String url = urlstring.substring(0, urlstring.endsWith("/") ? urllength - 1 : urllength);
         handerRepoUrl(url);
         Repositories repo = repocache.addRepo(urlstring);
-        if (repo == null) { return false; }
-        return updateRepositories(sender, repo);
+        return repo != null && updateRepositories(sender, repo);
     }
 
     public PackageInfo jsonToPackage(String json) {
@@ -194,7 +189,7 @@ public class RepositoryManager {
             sender = Bukkit.getConsoleSender();
         }
         if (repocenter == null || repocenter.repos.isEmpty()) {
-            sender.sendMessage(String.format("§6[§bYum§6] 源 %s 数据为空或列表为空!", repocenter.name));
+            sender.sendMessage(String.format("§6[§bYum§6] 源 %s 数据为空或列表为空!", repocenter == null ? "null" : repocenter.name));
             return false;
         }
         for (Repository repo : repocenter.repos) {

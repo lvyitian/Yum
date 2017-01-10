@@ -109,6 +109,10 @@ public class ConfigManager {
         return thread.getBoolean("ThreadSafe", true);
     }
 
+    public List<String> getNetWorkDebug() {
+        return network.getStringList("Debug");
+    }
+
     public void reload() {
         setop.reload();
         network.reload();

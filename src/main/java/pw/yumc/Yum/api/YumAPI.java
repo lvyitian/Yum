@@ -2,8 +2,6 @@ package pw.yumc.Yum.api;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -35,9 +33,6 @@ public class YumAPI {
 
     /**
      * 初始化Yum管理中心
-     *
-     * @param plugin
-     *            插件实体
      */
     public YumAPI() {
         YumAPI.main = P.instance;
@@ -84,19 +79,6 @@ public class YumAPI {
         return repo;
     }
 
-    public static List<Plugin> getUpdateList(CommandSender sender) {
-        List<Plugin> ulist = new ArrayList<>();
-        //        try {
-        //            for (Entry<String, Plugin> updateplugin : UpdatePlugin.getUpdateList().entrySet()) {
-        //                ulist.add(updateplugin.getValue());
-        //            }
-        //        } catch (Exception | Error e) {
-        //            sender.sendMessage("§4错误: §c无法检索全体更新列表!");
-        //            sender.sendMessage("§4异常: §c" + e.getMessage());
-        //        }
-        return ulist;
-    }
-
     /**
      * 注入性能监控器
      *
@@ -118,14 +100,11 @@ public class YumAPI {
      *            命令发送者
      * @param pluginname
      *            插件名称
-     * @param version
-     *            插件版本
      * @return 是否安装成功
      */
     public static boolean install(CommandSender sender, String pluginname, String url) {
         File pluginFile = new File(Bukkit.getUpdateFolderFile().getParentFile(), pluginname + ".jar");
-        if (download.run(sender, url, pluginFile)) { return plugman.load(sender, pluginFile); }
-        return false;
+        return download.run(sender, url, pluginFile) && plugman.load(sender, pluginFile);
     }
 
     /**
@@ -133,8 +112,6 @@ public class YumAPI {
      *
      * @param pluginname
      *            插件名称
-     * @param version
-     *            插件版本
      * @return 是否安装成功
      */
     public static boolean install(String pluginname, String url) {
@@ -174,9 +151,6 @@ public class YumAPI {
 
     /**
      * 载入插件
-     *
-     * @param pluginname
-     *            插件名称
      */
     public static void load(File pluginFile) {
         plugman.load(pluginFile);
@@ -204,9 +178,6 @@ public class YumAPI {
 
     /**
      * 取消注入
-     *
-     * @param plugin
-     *            插件
      */
     public static void uninject() {
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -269,64 +240,6 @@ public class YumAPI {
      */
     public static boolean update(Plugin plugin, URL url) {
         return update(null, plugin, url);
-    }
-
-    /**
-     * 更新支持Yum的插件
-     *
-     * @param sender
-     *            命令发送者
-     */
-    public static void updateAll(final CommandSender sender) {
-        main.getServer().getScheduler().runTaskAsynchronously(main, new Runnable() {
-            @Override
-            public void run() {
-                if (runlock) {
-                    sender.sendMessage("§d一键更新: §c一键更新运行中 请稍候重试...");
-                    return;
-                }
-                runlock = true;
-                int failed = 0;
-                List<Plugin> ulist = getUpdateList(sender);
-                if (ulist.size() > 0) {
-                    sender.sendMessage("§d开始更新服务器可更新插件");
-                    for (Plugin updateplugin : ulist) {
-                        sender.sendMessage("§d一键更新: §a开始更新" + updateplugin.getName() + "!");
-                        if (!updateFromYum(sender, updateplugin, null, true)) {
-                            failed++;
-                        }
-                    }
-                    if (failed != 0) {
-                        sender.sendMessage("§d一键更新: §c升级过程中 §4" + failed + " §c个插件更新失败!");
-                    }
-                    sender.sendMessage("§d一键更新: §e已下载所有需要升级的插件到 服务器更新 文件夹");
-                    sender.sendMessage("§d一键更新: §e插件将在重启后自动更新(或使用§b/yum upgrade§e直接升级)!");
-                    updateCheck(sender);
-                } else {
-                    sender.sendMessage("§6更新: §e未找到需要更新且可以用Yum处理的插件!");
-                }
-                runlock = false;
-            }
-        });
-    }
-
-    /**
-     * 检查是否有可更新插件
-     *
-     * @param sender
-     *            命令发送者
-     */
-    public static void updateCheck(final CommandSender sender) {
-        PKit.runTaskLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                List<Plugin> ulist = getUpdateList(sender);
-                if (ulist.size() > 0) {
-                    sender.sendMessage(
-                            "§6[§bYum§6]§e自动更新: §a发现 §e" + ulist.size() + " §a个可更新插件 请使用 §b/yum ua §a更新所有插件!");
-                }
-            }
-        }, 60);
     }
 
     /**

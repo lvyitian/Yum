@@ -87,7 +87,7 @@ public class CommandInjector implements TabExecutor {
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -111,13 +111,7 @@ public class CommandInjector implements TabExecutor {
             long lagms = lag / MonitorManager.um;
             long avglagms = totalTime / count / MonitorManager.um;
             if (Bukkit.isPrimaryThread() && lagms > MonitorManager.lagTime && avglagms > MonitorManager.lagTime) {
-                MonitorManager.lagTip(String.format(warn,
-                        sender.getName(),
-                        plugin.getName(),
-                        label,
-                        StrKit.join(args, " "),
-                        lagms,
-                        avglagms));
+                MonitorManager.lagTip(String.format(warn, sender.getName(), plugin.getName(), label, StrKit.join(args, " "), lagms, avglagms));
             }
             MonitorManager.addCmd(plugin.getName(), lag);
             return result;
@@ -127,8 +121,7 @@ public class CommandInjector implements TabExecutor {
             }
             MonitorCommand.lastError = e;
             MonitorManager.sendError(sender, plugin, e);
-            MonitorManager.printThrowable(
-                    String.format(err, sender.getName(), plugin.getName(), label, StrKit.join(args, " ")), e);
+            MonitorManager.printThrowable(String.format(err, sender.getName(), plugin.getName(), label, StrKit.join(args, " ")), e);
         }
         return false;
     }

@@ -76,7 +76,7 @@ public class ListenerInjector implements EventExecutor {
                     Reflect.on(listener).set("executor", ((ListenerInjector) executor).getOriginalExecutor());
                 }
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -98,8 +98,7 @@ public class ListenerInjector implements EventExecutor {
                 }
                 long lagms = lag / MonitorManager.um;
                 long avglagms = eventTotalTime.get(en) / eventCount.get(en) / MonitorManager.um;
-                if (avglagms > MonitorManager.lagTime && lagms > MonitorManager.lagTime
-                        && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
+                if (avglagms > MonitorManager.lagTime && lagms > MonitorManager.lagTime && !ConfigManager.i().getMonitorIgnoreList().contains(plugin.getName())) {
                     MonitorManager.lagTip(String.format(warn, plugin.getName(), event.getEventName(), lagms, avglagms));
                 }
                 MonitorManager.addEvent(plugin.getName(), lag);

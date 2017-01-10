@@ -13,6 +13,9 @@ ShowInfo: true
 NetworkDebug: false
 #是否允许插件主线程访问网络
 AllowPrimaryThread: false
+#调试列表
+Debug:
+- AAC
 #黑名单列表
 Black:
 - BukkitInjectedTools

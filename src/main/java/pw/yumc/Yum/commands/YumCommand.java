@@ -11,9 +11,6 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -27,15 +24,14 @@ import pw.yumc.Yum.models.BukkitDev.Files;
 import pw.yumc.Yum.models.BukkitDev.Projects;
 import pw.yumc.Yum.models.RepoSerialization.Repositories;
 import pw.yumc.YumCore.callback.CallBack.One;
-import pw.yumc.YumCore.commands.CommandManager;
+import pw.yumc.YumCore.commands.CommandSub;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
 import pw.yumc.YumCore.commands.annotation.Sort;
-import pw.yumc.YumCore.commands.interfaces.CommandExecutor;
+import pw.yumc.YumCore.commands.interfaces.Executor;
 import pw.yumc.YumCore.kit.FileKit;
 import pw.yumc.YumCore.kit.HttpKit;
-import pw.yumc.YumCore.kit.PKit;
 import pw.yumc.YumCore.kit.ZipKit;
 import pw.yumc.YumCore.tellraw.Tellraw;
 
@@ -45,7 +41,7 @@ import pw.yumc.YumCore.tellraw.Tellraw;
  * @since 2016年1月9日 上午10:02:24
  * @author 喵♂呜
  */
-public class YumCommand implements Listener, CommandExecutor {
+public class YumCommand implements Executor {
     private String prefix = "§6[§bYum §a插件管理§6] ";
 
     private String searchlimit = prefix + "§c为保证搜索速度和准确性 关键词必须大于 3 个字符!";
@@ -77,87 +73,82 @@ public class YumCommand implements Listener, CommandExecutor {
 
     public YumCommand(Yum yum) {
         main = yum;
-        Bukkit.getPluginManager().registerEvents(this, yum);
-        new CommandManager("yum", this, PluginTabComplete.instence);
+        new CommandSub("yum", this, PluginTabComplete.instence);
     }
 
+    @Async
     @Cmd(aliases = "br", minimumArguments = 2)
     @Help(value = "从BukkitDev查看安装插件", possibleArguments = "<操作符> <项目ID|项目名称> [地址]")
-    public void bukkitrepo(final CommandSender sender, final String opt, final String id, final String url) {
-        PKit.runTaskAsync(new Runnable() {
-            @Override
-            public void run() {
-                switch (opt) {
-                case "look": {
-                    sender.sendMessage(String.format(fsearching, id));
-                    List<Files> lf = Files.parseList(HttpKit.get(String.format(BukkitDev.PLUGIN, id)));
-                    if (lf.isEmpty()) {
-                        sender.sendMessage(String.format(not_found_id_from_bukkit, id));
-                        return;
-                    }
-                    sender.sendMessage(filelistprefix);
-                    for (int i = 0; i < lf.size() || i < 8; i++) {
-                        Files f = lf.get(i);
-                        Tellraw tr = Tellraw.create();
-                        tr.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
-                        tr.then(" ");
-                        tr.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
-                        tr.tip(install_tip);
-                        tr.send(sender);
-                    }
-                    break;
-                }
-                case "ai": {
-                    if (url == null) { return; }
-                    File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
-                    YumAPI.getDownload().run(sender, url, file, new One<File>() {
-                        @Override
-                        public void run(File file) {
-                            if (file.getName().endsWith(".zip")) {
-                                try {
-                                    ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
-                                    file.delete();
-                                } catch (IOException e) {
-                                    sender.sendMessage(unzip_error);
-                                }
-                            }
-                            YumAPI.upgrade(sender);
-                        }
-                    });
-                    break;
-                }
-                case "i":
-                case "install": {
-                    sender.sendMessage(String.format(fsearching, id));
-                    List<Files> lf = Files.parseList(HttpKit.get(String.format(BukkitDev.PLUGIN, id)));
-                    if (lf.isEmpty()) {
-                        sender.sendMessage(String.format(not_found_id_from_bukkit, id));
-                        return;
-                    }
-                    Files f = lf.get(0);
-                    String url = f.downloadUrl;
-                    File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
-                    YumAPI.getDownload().run(sender, url, file, new One<File>() {
-                        @Override
-                        public void run(File file) {
-                            if (file.getName().endsWith(".zip")) {
-                                try {
-                                    ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
-                                } catch (IOException e) {
-                                    sender.sendMessage(unzip_error);
-                                }
-                            }
-                            YumAPI.upgrade(sender);
-                        }
-                    });
-                    break;
-                }
-                default:
-                    break;
-
-                }
+    public void bukkitrepo(final CommandSender sender, final String opt, final String id, String url) {
+        switch (opt) {
+        case "look": {
+            sender.sendMessage(String.format(fsearching, id));
+            List<Files> lf = Files.parseList(HttpKit.get(String.format(BukkitDev.PLUGIN, id)));
+            if (lf.isEmpty()) {
+                sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                return;
             }
-        });
+            sender.sendMessage(filelistprefix);
+            for (int i = 0; i < lf.size() || i < 8; i++) {
+                Files f = lf.get(i);
+                Tellraw tr = Tellraw.create();
+                tr.text(String.format(filelist, f.name, f.gameVersion, f.releaseType));
+                tr.then(" ");
+                tr.then(install).command(String.format("/yum br ai %s %s", f.name, f.downloadUrl));
+                tr.tip(install_tip);
+                tr.send(sender);
+            }
+            break;
+        }
+        case "ai": {
+            if (url == null) { return; }
+            File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
+            YumAPI.getDownload().run(sender, url, file, new One<File>() {
+                @Override
+                public void run(File file) {
+                    if (file.getName().endsWith(".zip")) {
+                        try {
+                            ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
+                            file.delete();
+                        } catch (IOException e) {
+                            sender.sendMessage(unzip_error);
+                        }
+                    }
+                    YumAPI.upgrade(sender);
+                }
+            });
+            break;
+        }
+        case "i":
+        case "install": {
+            sender.sendMessage(String.format(fsearching, id));
+            List<Files> lf = Files.parseList(HttpKit.get(String.format(BukkitDev.PLUGIN, id)));
+            if (lf.isEmpty()) {
+                sender.sendMessage(String.format(not_found_id_from_bukkit, id));
+                return;
+            }
+            Files f = lf.get(0);
+            url = f.downloadUrl;
+            File file = new File(Bukkit.getUpdateFolderFile(), YumAPI.getDownload().getFileName(url));
+            YumAPI.getDownload().run(sender, url, file, new One<File>() {
+                @Override
+                public void run(File file) {
+                    if (file.getName().endsWith(".zip")) {
+                        try {
+                            ZipKit.unzip(file, Bukkit.getUpdateFolderFile(), ".jar");
+                        } catch (IOException e) {
+                            sender.sendMessage(unzip_error);
+                        }
+                    }
+                    YumAPI.upgrade(sender);
+                }
+            });
+            break;
+        }
+        default:
+            break;
+
+        }
     }
 
     @Cmd(aliases = "del", minimumArguments = 1)
@@ -200,8 +191,7 @@ public class YumCommand implements Listener, CommandExecutor {
             Plugin plugin = (JavaPlugin) field.get(clazz.getClassLoader());
             Bukkit.dispatchCommand(sender, "yum info " + plugin.getName());
         } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e2) {
-            sender.sendMessage("§4错误: 无法找到类 " + classname + " 所对应的插件信息 异常:" + e2.getClass().getSimpleName() + " "
-                    + e2.getMessage() + "!");
+            sender.sendMessage("§4错误: 无法找到类 " + classname + " 所对应的插件信息 异常:" + e2.getClass().getSimpleName() + " " + e2.getMessage() + "!");
         }
     }
 
@@ -253,8 +243,7 @@ public class YumCommand implements Listener, CommandExecutor {
             if (plist != null) {
                 sender.sendMessage("§6插件注册权限: " + (plist.isEmpty() ? "无" : ""));
                 for (Permission perm : plist) {
-                    sender.sendMessage("§6 - §a" + perm.getName() + "§6 - §e"
-                            + (perm.getDescription().isEmpty() ? "无描述" : perm.getDescription()));
+                    sender.sendMessage("§6 - §a" + perm.getName() + "§6 - §e" + (perm.getDescription().isEmpty() ? "无描述" : perm.getDescription()));
                 }
             }
             sender.sendMessage("§6插件物理路径: §3" + YumAPI.getPlugman().getPluginFile(plugin).getAbsolutePath());
@@ -315,13 +304,6 @@ public class YumCommand implements Listener, CommandExecutor {
             YumAPI.getPlugman().load(sender, pluginname);
         } else {
             sender.sendMessage("§c错误: §a插件 §b" + pluginname + " §c已加载到服务器!");
-        }
-    }
-
-    @EventHandler
-    public void onAdminJoin(PlayerJoinEvent e) {
-        if (e.getPlayer().isOp()) {
-            YumAPI.updateCheck(e.getPlayer());
         }
     }
 
@@ -469,13 +451,6 @@ public class YumCommand implements Listener, CommandExecutor {
         }
     }
 
-    @Cmd(aliases = "ua")
-    @Help("更新所有可更新插件")
-    @Sort(14)
-    public void updateall(CommandSender sender) {
-        YumAPI.updateAll(sender);
-    }
-
     @Cmd(aliases = "ug")
     @Help(value = "升级或安装插件", possibleArguments = "[插件名称]")
     @Sort(15)
@@ -488,8 +463,7 @@ public class YumCommand implements Listener, CommandExecutor {
             if (plugin != null) {
                 YumAPI.upgrade(sender, plugin);
             } else {
-                sender.sendMessage(
-                        "§c错误: §b插件 " + pluginname + " §c未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
+                sender.sendMessage("§c错误: §b插件 " + pluginname + " §c未安装或已卸载 需要安装请使用 §b/yum install " + pluginname + "!");
             }
         }
     }

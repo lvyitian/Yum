@@ -44,7 +44,7 @@ public class RepoCache implements Serializable {
 
     public Repositories getRepo(String repo) {
         String json = HttpKit.get(repo);
-        if (json == null || json.isEmpty()) {
+        if (json.isEmpty()) {
             Log.console("§c源地址获取数据为空 §b" + repo);
             return null;
         }
