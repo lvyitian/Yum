@@ -81,6 +81,10 @@ public class ConfigManager {
         return thread.getBoolean("MainThreadCheck", true);
     }
 
+    public boolean isMainThreadDebug() {
+        return thread.getBoolean("Debug");
+    }
+
     public boolean isMonitorDebug() {
         return monitor.getBoolean("Debug");
     }

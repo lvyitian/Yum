@@ -70,8 +70,6 @@ public class Yum extends JavaPlugin {
     public void onLoad() {
         // 初始化配置
         ConfigManager.i();
-        // 初始化更新列
-        // UpdatePlugin.getUpdateList();
         // 启用网络注入
         NetworkManager.register(this);
     }
@@ -135,7 +133,7 @@ public class Yum extends JavaPlugin {
             if (tt != null) {
                 tt.cancel();
             }
-            task.scheduleAtFixedRate(tt = new MainThreadCheckTask(mainThread), 0, 5000);
+            task.scheduleAtFixedRate(tt = new MainThreadCheckTask(mainThread), 0, 500);
         }
     }
 }

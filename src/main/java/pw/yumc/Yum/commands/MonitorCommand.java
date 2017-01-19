@@ -11,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
@@ -31,6 +30,7 @@ import pw.yumc.YumCore.commands.CommandSub;
 import pw.yumc.YumCore.commands.annotation.Async;
 import pw.yumc.YumCore.commands.annotation.Cmd;
 import pw.yumc.YumCore.commands.annotation.Help;
+import pw.yumc.YumCore.commands.annotation.Option;
 import pw.yumc.YumCore.commands.interfaces.Executor;
 import pw.yumc.YumCore.kit.PKit;
 import pw.yumc.YumCore.kit.StrKit;
@@ -60,7 +60,7 @@ public class MonitorCommand implements Executor {
 
     private String lag = prefix + "§a当前服务器插件能耗如下§6(单位: %)";
     private String lagprefix = "   §6插件名称             §c主线程                  §a命令  §b事件  §d任务";
-    private String laglist = "§6%-2s §b%-20s §c%-25s §a%-5.2f §b%-5.2f §d%-5.2f";
+    private String laglist = "§6%-2s §b%-18s §c%-25s §a%-5.2f §b%-5.2f §d%-5.2f";
 
     private String no_error = prefix + "§a自服务器启动以来尚未发现报错!";
     private String last_error = prefix + "§c最后一次错误异常由 §b%s §c造成 详细如下:";
@@ -182,17 +182,19 @@ public class MonitorCommand implements Executor {
     @Cmd(aliases = "l")
     @Help("查看插件总耗时")
     @Async
-    public void lag(CommandSender sender, int size) {
+    public void lag(CommandSender sender, @Option("def:8") int size) {
         Map<String, Long> mm = MonitorManager.getMonitor();
-        int max = 8;
         sender.sendMessage(lag);
         sender.sendMessage(lagprefix);
+        int index = 0;
         for (Entry<String, Long> entry : mm.entrySet()) {
-            if (++size > max) {
+            if (++index > size) {
                 break;
             }
             MonitorInfo mi = MonitorManager.getMonitorInfo(entry.getKey());
-            sender.sendMessage(String.format(laglist, size, entry.getKey(), getPer(sender, mi.monitor), mi.cmd, mi.event, mi.task));
+            if (mi.monitor != 0) {
+                sender.sendMessage(String.format(laglist, index, StrKit.substring(entry.getKey(), 0, 18), getPer(sender, mi.monitor), mi.cmd, mi.event, mi.task));
+            }
         }
     }
 
@@ -207,11 +209,6 @@ public class MonitorCommand implements Executor {
         Plugin plugin = PKit.getOperatePlugin(lastError.getStackTrace());
         sender.sendMessage(String.format(last_error, plugin != null ? plugin.getName() : "未知"));
         lastError.printStackTrace();
-    }
-
-    @Cmd
-    public void lk(CommandSender sender) {
-        MonitorManager.sendObject(sender);
     }
 
     @Cmd(aliases = "ri")
@@ -279,7 +276,7 @@ public class MonitorCommand implements Executor {
     }
 
     private String getPer(CommandSender sender, double per) {
-        String ps = sender instanceof Player ? "||" : "|";
+        String ps = "≡";
         double p = per / 5;
         StringBuilder sb = new StringBuilder();
         if (p < 3) {

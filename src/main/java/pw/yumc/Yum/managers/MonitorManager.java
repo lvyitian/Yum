@@ -25,7 +25,7 @@ import pw.yumc.YumCore.kit.LogKit;
  * @author 喵♂呜
  */
 public class MonitorManager {
-    public static String prefix = "§6[§a能耗监控§6] ";
+    public static String prefix = "§6[§bYum §a能耗监控§6] ";
     private static String errMsg = prefix + "§c命令执行异常 请反馈下列信息给腐竹!";
     private static String errP = "§6插件名称: §b%s";
     private static String errN = "§6异常名称: §c%s";
@@ -104,7 +104,7 @@ public class MonitorManager {
         int l = e.getStackTrace().length > 5 ? 5 : e.getStackTrace().length;
         for (int i = 0; i < l; i++) {
             StackTraceElement ste = e.getStackTrace()[i];
-            elog(String.format(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber()));
+            elog(String.format(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName() == null ? "未知" : ste.getFileName(), ste.getLineNumber()));
         }
         if (debug) {
             Log.console(devInfo);
@@ -124,10 +124,6 @@ public class MonitorManager {
         sender.sendMessage(String.format(errP, plugin.getName()));
         sender.sendMessage(String.format(errN, e.getClass().getName()));
         sender.sendMessage(String.format(errM, e.getMessage()));
-    }
-
-    public static void sendObject(CommandSender sender) {
-        sender.sendMessage(String.format("totalTime@%s monitor@%s cmd@%s event@%s task@%s", totalTime, sum(monitor.values()), sum(cmd.values()), sum(event.values()), sum(task.values())));
     }
 
     /**
