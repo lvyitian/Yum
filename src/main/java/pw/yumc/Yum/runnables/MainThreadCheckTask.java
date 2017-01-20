@@ -71,17 +71,7 @@ public class MainThreadCheckTask extends TimerTask {
                 }
             }
             if (tip != null) {
-                tick();
-                if (stopTime > 1) {
-                    Log.console(prefix + tip);
-                    if (ConfigManager.i().isMainThreadDebug()) {
-                        int l = stackTrace.length > 10 ? 10 : stackTrace.length;
-                        for (int i = 0; i < l; i++) {
-                            StackTraceElement ste = stackTrace[i];
-                            Log.console(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName() == null ? "未知" : ste.getFileName(), ste.getLineNumber());
-                        }
-                    }
-                }
+                tick(tip, stackTrace);
             } else {
                 stopTime = 0;
             }
@@ -92,10 +82,19 @@ public class MainThreadCheckTask extends TimerTask {
         return traceElement.getClassName().equals(className) && traceElement.getMethodName().equals(methodName);
     }
 
-    private void tick() {
+    private void tick(String tip, StackTraceElement[] stackTrace) {
         stopTime += 0.5;
-        if (stopTime >= 45 && stopTime % 5 == 0) {
-            Log.console(prefix + deliver, stopTime);
+        if (stopTime > 1 && stopTime < 2) {
+            Log.console(prefix + tip);
+            if (ConfigManager.i().isMainThreadDebug()) {
+                for (StackTraceElement ste : stackTrace) {
+                    Log.console(errStackTrace, ste.getClassName(), ste.getMethodName(), ste.getFileName() == null ? "未知" : ste.getFileName(), ste.getLineNumber());
+                }
+            }
+        } else if (stopTime >= 45) {
+            if (stopTime < 46) {
+                Log.console(prefix + deliver, stopTime);
+            }
             wttick();
         }
     }

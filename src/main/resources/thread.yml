@@ -10,4 +10,4 @@ ThreadSafe: true
 #是否开启主线程IO检测
 MainThreadCheck: true
 #是否开启调试模式
-Debug: false
+Debug: true
