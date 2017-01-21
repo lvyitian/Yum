@@ -58,12 +58,21 @@
         <url>http://ci.yumc.pw/job/${project.artifactId}/</url>
     </ciManagement>
     <properties>
-        <update.description>§a全新 2.X 版本 更多守护与优化</update.description>
+        <update.description>§a本插件最后一次更新 2.7.8 版本</update.description>
         <update.changes>
-            §c注意 §6- §aYum更新需要§d重启服务器!§c重启服务器!§4重启服务器!;
-            §b2.7.7 §6- §c修复部分插件重载时提示Plugin already initialized的问题!;
-            §6- §c修复§eBukkitDev§c下载地址跳转问题...;
-            §6- §c修复§eBukkitDev§c下载为空时的异常...;
+            §6- §afeat: §7线程中断只显示一次调试信息;
+            §6- §afeat: §7更新线程检查 添加调试;
+            §6- §afeat: §7修改显示前缀;
+            §6- §afeat: §7更新类库版本 完善网络调试;
+            §6- §drefactor: §7使用新类库;
+            §6- §afeat: §7使用新版本API;
+            §6- §afeat: §7去除加载器注入 异步获取主线程;
+            §6- §afeat: §7添加网络状态详细错误;
+            §6- §afeat: §7新增307跳转支持;
+            §6- §cfix: §7修复lasterror命令显示问题;
+            §6- §afeat: §7使用SimpleJson解析仓库数据;
+            §6- §afeat: §7使用新的类库处理Tellraw;
+            §6- §cfix: §7当仓库未找到插件时没有提示的BUG;
         </update.changes>
         <env.GIT_COMMIT>DEV</env.GIT_COMMIT>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
