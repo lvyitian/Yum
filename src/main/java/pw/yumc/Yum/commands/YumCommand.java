@@ -425,12 +425,13 @@ public class YumCommand implements Executor {
     @Sort(13)
     @Async
     public void update(CommandSender sender, String argstring) {
-        String[] args = argstring.split(" ");
-        switch (args.length) {
-        case 0:
+        if (argstring == null) {
             YumAPI.getRepo().updateRepositories(sender);
             sender.sendMessage("§6仓库: §a仓库缓存数据已更新!");
-            break;
+            return;
+        }
+        String[] args = argstring.split(" ");
+        switch (args.length) {
         case 1:
         case 2:
             String pluginname = args[0];
@@ -503,7 +504,6 @@ public class YumCommand implements Executor {
      * @param key
      *            实体Key
      */
-    @SuppressWarnings("unchecked")
     private void sendEntryList(CommandSender sender, String prefix, Map<String, Object> map, String key) {
         List<String> values = (List<String>) map.get(key);
         if (values != null) {

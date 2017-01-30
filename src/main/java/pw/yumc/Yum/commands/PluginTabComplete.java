@@ -21,7 +21,7 @@ public class PluginTabComplete implements Executor {
 
     @Tab
     public List<String> listtab(CommandSender sender, String label, String[] args) {
-        if (args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
+        if (args.length > 1 && args[0].equalsIgnoreCase("install") || args[0].equalsIgnoreCase("i")) {
             return StrKit.copyPartialMatches(args[1], YumAPI.getRepo().getAllPluginName(), new ArrayList<String>());
         } else if (args[0].equalsIgnoreCase("repo") || args[0].equalsIgnoreCase("r")) {
             if (args.length == 2) { return StrKit.copyPartialMatches(args[1], Arrays.asList("add", "all", "list", "delall", "clean", "update", "del"), new ArrayList<String>()); }

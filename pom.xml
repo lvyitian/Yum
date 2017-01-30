@@ -58,8 +58,10 @@
         <url>http://ci.yumc.pw/job/${project.artifactId}/</url>
     </ciManagement>
     <properties>
-        <update.description>§a本插件最后一次更新 2.7.8 版本</update.description>
+        <update.description>§a补丁包 2.7.9 版本</update.description>
         <update.changes>
+            §6- §cfix: §7修复一个tab补全产生的错误;
+            §6- §btip: §a本插件最后一次更新 2.7.8 版本
             §6- §afeat: §7线程中断只显示一次调试信息;
             §6- §afeat: §7更新线程检查 添加调试;
             §6- §afeat: §7修改显示前缀;
