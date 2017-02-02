@@ -20,7 +20,7 @@ public class PluginInfo implements Serializable {
         try {
             NMSVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         } catch (Exception e) {
-            Log.warning("服务器NMS解析失败: " + Bukkit.getServer().getClass().getPackage().getName());
+            Log.w("服务器NMS解析失败: " + Bukkit.getServer().getClass().getPackage().getName());
             NMSVersion = "NONMS";
         }
     }
@@ -91,7 +91,7 @@ public class PluginInfo implements Serializable {
         String ver = version;
         if (ver == null) {
             if (plugin.tags != null) {
-                Log.debug("发现存在TAG标签 开始检索: " + NMSVersion);
+                Log.d("发现存在TAG标签 开始检索: " + NMSVersion);
                 for (TagInfo tagInfo : plugin.tags) {
                     if (tagInfo.tag.equalsIgnoreCase(NMSVersion)) {
                         sender.sendMessage("§6版本: §b从Tag标签中获取 §e" + NMSVersion + " §b的最新版本...");

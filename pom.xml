@@ -3,11 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pw.yumc</groupId>
     <artifactId>Yum</artifactId>
-    <version>2.7.8</version>
-    <name>Yum</name>
+    <version>2.7.9</version>
     <description>Minecraft 服务器插件管理系统</description>
     <build>
-        <finalName>${project.name}</finalName>
+        <finalName>${project.artifactId}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -43,14 +42,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <ciManagement>
@@ -60,8 +51,9 @@
     <properties>
         <update.description>§a补丁包 2.7.9 版本</update.description>
         <update.changes>
+            §6- §cfix: §7修复仓库数据读取错误的问题;
             §6- §cfix: §7修复一个tab补全产生的错误;
-            §6- §btip: §a本插件最后一次更新 2.7.8 版本
+            §6- §btip: §a本插件最后一次更新 2.7.8 版本;
             §6- §afeat: §7线程中断只显示一次调试信息;
             §6- §afeat: §7更新线程检查 添加调试;
             §6- §afeat: §7修改显示前缀;
@@ -74,7 +66,7 @@
             §6- §cfix: §7修复lasterror命令显示问题;
             §6- §afeat: §7使用SimpleJson解析仓库数据;
             §6- §afeat: §7使用新的类库处理Tellraw;
-            §6- §cfix: §7当仓库未找到插件时没有提示的BUG;
+            §6- §cfix: §7当仓库未找到插件时没有提示的BUG
         </update.changes>
         <env.GIT_COMMIT>DEV</env.GIT_COMMIT>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -99,7 +91,7 @@
             <groupId>pw.yumc</groupId>
             <artifactId>YumCore</artifactId>
             <type>jar</type>
-            <version>1.5</version>
+            <version>1.6</version>
         </dependency>
         <dependency>
             <groupId>pw.yumc</groupId>

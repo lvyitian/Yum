@@ -1,6 +1,3 @@
-/**
- *
- */
 package pw.yumc.Yum.managers;
 
 import java.util.ArrayList;

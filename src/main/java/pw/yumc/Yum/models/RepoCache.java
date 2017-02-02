@@ -43,17 +43,19 @@ public class RepoCache implements Serializable {
     }
 
     public Repositories getRepo(String repo) {
-        String json = HttpKit.get(repo);
-        if (json.isEmpty()) {
-            Log.console("§c源地址获取数据为空 §b" + repo);
+        try {
+            String json = HttpKit.get(repo);
+            Repositories reposes = new Repositories((JSONObject) JSONValue.parse(json));
+            if (reposes.repos.isEmpty()) {
+                Log.console("§c源地址解析Json为空 §b" + repo);
+                return null;
+            }
+            return reposes;
+        } catch (Exception e) {
+            Throwable ex = e.getCause();
+            Log.console("§c源地址获取数据为空 §b%s §c异常: %s: %s", repo, ex.getClass().getName(), ex.getLocalizedMessage());
             return null;
         }
-        Repositories reposes = new Repositories((JSONObject) JSONValue.parse(json));
-        if (reposes.repos.isEmpty()) {
-            Log.console("§c源地址解析Json为空 §b" + repo);
-            return null;
-        }
-        return reposes;
     }
 
     public Map<String, Repositories> getRepos() {
