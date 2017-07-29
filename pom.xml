@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.4.3</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <minimizeJar>true</minimizeJar>
@@ -100,7 +100,7 @@
             <groupId>pw.yumc</groupId>
             <artifactId>BukkitInjectedTools</artifactId>
             <type>jar</type>
-            <version>1.0</version>
+            <version>[1.1,)</version>
         </dependency>
     </dependencies>
 </project>
