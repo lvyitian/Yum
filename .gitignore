@@ -1,4 +1,7 @@
 # Eclipse stuff
+/.project
+/.classpath
+/.factorypath
 /.settings
 
 # netbeans

@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import pw.yumc.Yum.commands.MonitorCommand;
 import pw.yumc.Yum.managers.MonitorManager;
+import pw.yumc.YumCore.bukkit.P;
 import pw.yumc.YumCore.kit.StrKit;
 import pw.yumc.YumCore.reflect.Reflect;
 
@@ -19,6 +20,20 @@ public class TaskInjector implements Runnable {
     private static String err = prefix + "§6插件 §b%s §6处理 §d%s §6任务时发生异常!";
     private static String inject_error = prefix + "§6插件 §b%s §c注入能耗监控失败!";
     private static String plugin_is_null = "插件不得为NULL!";
+    private static String taskFieldName = "task";
+
+    static {
+        BukkitTask task = Bukkit.getServer().getScheduler().runTask(P.instance, new Runnable(){
+            @Override
+            public void run() {}
+        });
+        try {
+            Reflect.on(task).get("rTask");
+            taskFieldName = "rTask";
+        }catch (Throwable ex) {
+        }
+    }
+
     private Runnable originalTask;
     private Plugin plugin;
 
@@ -44,10 +59,12 @@ public class TaskInjector implements Runnable {
             for (BukkitTask pendingTask : pendingTasks) {
                 // 忽略异步任务
                 if (pendingTask.isSync() && pendingTask.getOwner().equals(plugin)) {
-                    Runnable originalTask = Reflect.on(pendingTask).get("task");
-                    if (originalTask instanceof TaskInjector) { return; }
+                    Runnable originalTask = Reflect.on(pendingTask).get(taskFieldName);
+                    if (originalTask instanceof TaskInjector) {
+                        return;
+                    }
                     TaskInjector taskInjector = new TaskInjector(originalTask, plugin);
-                    Reflect.on(pendingTask).set("task", taskInjector);
+                    Reflect.on(pendingTask).set(taskFieldName, taskInjector);
                 }
             }
         } catch (Throwable e) {
