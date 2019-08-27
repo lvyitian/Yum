@@ -24,13 +24,14 @@ public class PluginNetworkEvent extends Event implements Cancellable {
      * 插件联网事件
      *
      * @param plugin
-     *            插件
+     *         插件
      * @param url
-     *            地址
-     * @param isMainThread
-     *            是否为主线程
+     *         地址
+     * @param isPrimaryThread
+     *         是否为主线程
      */
     public PluginNetworkEvent(Plugin plugin, URI url, boolean isPrimaryThread) {
+        super(true);
         this.plugin = plugin;
         this.url = url;
         this.isPrimaryThread = isPrimaryThread;
@@ -74,7 +75,7 @@ public class PluginNetworkEvent extends Event implements Cancellable {
 
     /**
      * @param url
-     *            设置新的URL地址
+     *         设置新的URL地址
      */
     public void setUrl(URI url) {
         this.url = url;
