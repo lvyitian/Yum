@@ -32,9 +32,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.UnknownDependencyException;
 
 import com.google.common.base.Joiner;
-
+import pw.yumc.YumCore.bukkit.Log;
 import pw.yumc.YumCore.kit.FileKit;
 import pw.yumc.YumCore.kit.StrKit;
+import pw.yumc.YumCore.reflect.Reflect;
 
 /**
  * 插件管理类
@@ -58,7 +59,7 @@ public class PluginsManager {
      * 添加到忽略列表
      *
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean addIgnore(Collection<? extends String> name) {
@@ -69,7 +70,7 @@ public class PluginsManager {
      * 添加到忽略列表
      *
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean addIgnore(String name) {
@@ -80,9 +81,9 @@ public class PluginsManager {
      * 删除插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean deletePlugin(CommandSender sender, Plugin plugin) {
@@ -93,7 +94,7 @@ public class PluginsManager {
      * 删除插件
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean deletePlugin(Plugin plugin) {
@@ -104,7 +105,7 @@ public class PluginsManager {
      * 关闭插件
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      */
     public void disable(Plugin plugin) {
         if ((plugin != null) && (plugin.isEnabled())) {
@@ -127,7 +128,7 @@ public class PluginsManager {
      * 启用插件
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      */
     public void enable(Plugin plugin) {
         if ((plugin != null) && (!plugin.isEnabled())) {
@@ -150,21 +151,21 @@ public class PluginsManager {
      * 删除插件(包括数据)
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean fullDeletePlugin(CommandSender sender, Plugin plugin) {
         return unload(sender, plugin) && getPluginFile(plugin).delete()
-                && FileKit.deleteDir(sender, plugin.getDataFolder());
+               && FileKit.deleteDir(sender, plugin.getDataFolder());
     }
 
     /**
      * 获得格式化的插件名称
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 格式化的插件名称
      */
     public String getFormattedName(Plugin plugin) {
@@ -175,9 +176,9 @@ public class PluginsManager {
      * 获得格式化的插件名称(可带版本)
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @param includeVersions
-     *            - 是否包括版本
+     *         - 是否包括版本
      * @return 格式化的插件名称
      */
     public String getFormattedName(Plugin plugin, boolean includeVersions) {
@@ -193,7 +194,7 @@ public class PluginsManager {
      * 通过名称获得插件
      *
      * @param name
-     *            - 名称
+     *         - 名称
      * @return 插件
      */
     public Plugin getPluginByName(String name) {
@@ -203,8 +204,8 @@ public class PluginsManager {
     /**
      * 通过名称获得插件(处理带空格的插件)
      *
-     * @param name
-     *            - 名称
+     * @param args
+     *         - 名称
      * @return 插件
      */
     public Plugin getPluginByName(String[] args, int start) {
@@ -215,7 +216,7 @@ public class PluginsManager {
      * 获得插件绝对路径
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 插件的绝对路径
      */
     public File getPluginFile(Plugin plugin) {
@@ -245,7 +246,7 @@ public class PluginsManager {
      * 获得插件版本
      *
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 插件版本
      */
     public String getPluginVersion(String name) {
@@ -258,7 +259,7 @@ public class PluginsManager {
      * 获得插件命令
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 插件命令
      */
     public String getUsages(Plugin plugin) {
@@ -283,7 +284,7 @@ public class PluginsManager {
      * 判断插件是否在忽略列表
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否
      */
     public boolean isIgnored(Plugin plugin) {
@@ -294,7 +295,7 @@ public class PluginsManager {
      * 判断插件是否在忽略列表
      *
      * @param plugin
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否
      */
     public boolean isIgnored(String plugin) {
@@ -308,9 +309,9 @@ public class PluginsManager {
      * 载入插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param pluginFile
-     *            - 插件文件
+     *         - 插件文件
      * @return 是否成功
      */
     public boolean load(CommandSender sender, File pluginFile) {
@@ -324,7 +325,8 @@ public class PluginsManager {
                 sender.sendMessage("§c服务器或JAVA的版本低于插件: " + name + " 所需要的版本!!");
                 return false;
             } catch (InvalidPluginException e) {
-                if (e.getMessage().equalsIgnoreCase("Plugin already initialized!")) {
+                if ("Plugin already initialized!".equalsIgnoreCase(e.getMessage()) ||
+                    "java.lang.IllegalArgumentException: Plugin already initialized!".equals(e.getMessage())) {
                     sender.sendMessage("§4异常: §c" + e.getMessage());
                     sender.sendMessage("§4插件: §c" + name + " 已载入到服务器!");
                     sender.sendMessage("§4注意: §c当前插件无法在运行时重载 请重启服务器!");
@@ -360,9 +362,9 @@ public class PluginsManager {
      * 载入插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean load(CommandSender sender, String name) {
@@ -392,7 +394,7 @@ public class PluginsManager {
                             pluginFile = file;
                             break;
                         }
-                    } catch (InvalidDescriptionException e) {
+                    } catch (InvalidDescriptionException ignored) {
                     }
                 }
             }
@@ -408,7 +410,7 @@ public class PluginsManager {
      * 载入插件
      *
      * @param pluginFile
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean load(File pluginFile) {
@@ -419,7 +421,7 @@ public class PluginsManager {
      * 载入插件
      *
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean load(String name) {
@@ -430,9 +432,9 @@ public class PluginsManager {
      * 删除重载插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean reload(CommandSender sender, Plugin plugin) {
@@ -444,9 +446,9 @@ public class PluginsManager {
      * 删除重载插件
      *
      * @param sender
-     *            - 命令发送者
-     * @param main
-     *            - 插件
+     *         - 命令发送者
+     * @param name
+     *         - 插件
      * @return 是否成功
      */
     public boolean reload(CommandSender sender, String name) {
@@ -458,7 +460,7 @@ public class PluginsManager {
      * 重载插件
      *
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean reload(Plugin plugin) {
@@ -498,7 +500,7 @@ public class PluginsManager {
      * 从忽略列表移除
      *
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     public boolean removeIgnore(String name) {
@@ -509,9 +511,9 @@ public class PluginsManager {
      * 卸载插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param plugin
-     *            - 插件
+     *         - 插件
      * @return 是否成功
      */
     public boolean unload(CommandSender sender, Plugin plugin) {
@@ -522,9 +524,9 @@ public class PluginsManager {
      * 卸载插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param name
-     *            - 插件名称
+     *         - 插件名称
      * @return 是否成功
      */
     @SuppressWarnings("unchecked")
@@ -537,12 +539,12 @@ public class PluginsManager {
         List<Plugin> plugins = null;
         Map<String, Plugin> lookupNames = null;
         Map<String, Command> knownCommands = null;
-        // Map<Pattern, JavaPluginLoader> fileAssociations = null;
         if (pluginManager == null) {
             sender.sendMessage("§4异常: §c插件管理类反射获取失败!");
             return false;
         }
         try {
+            Class<? extends PluginManager> clazz = pluginManager.getClass();
             Field pluginsField = pluginManager.getClass().getDeclaredField("plugins");
             pluginsField.setAccessible(true);
             plugins = (List<Plugin>) pluginsField.get(pluginManager);
@@ -555,16 +557,10 @@ public class PluginsManager {
             commandMapField.setAccessible(true);
             commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
 
-            Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
-            knownCommandsField.setAccessible(true);
-            knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-
-            // Field fileAssociationsField = pluginManager.getClass().getDeclaredField("fileAssociations");
-            // fileAssociationsField.setAccessible(true);
-            // fileAssociations = (Map<Pattern, JavaPluginLoader>) fileAssociationsField.get(pluginManager);
-
+            knownCommands = Reflect.on(commandMap).field("knownCommands").get();
         } catch (Exception e) {
             sender.sendMessage("§4异常: §c" + e.getMessage() + " 插件 §b" + name + " §c卸载失败!");
+            Log.d(e);
             return false;
         }
         String pluginVersion = "";
@@ -582,7 +578,7 @@ public class PluginsManager {
                     sender.sendMessage("§6卸载: §a从插件查找列表删除 §b" + name + " §a的实例!");
                 }
 
-                for (Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<String, Command> entry = it.next();
                     if ((entry.getValue() instanceof PluginCommand)) {
                         PluginCommand command = (PluginCommand) entry.getValue();
@@ -592,33 +588,12 @@ public class PluginsManager {
                         }
                     }
                 }
-                // try {
-                // if (fileAssociations != null) {
-                // for (Entry<Pattern, JavaPluginLoader> entry : fileAssociations.entrySet()) {
-                // Matcher match = entry.getKey().matcher(getPluginFile(next).getName());
-                // if (match.find()) {
-                // PluginLoader pluginLoader = entry.getValue();
-                // if (pluginLoader instanceof YumPluginLoader) {
-                // pluginLoader = ((YumPluginLoader) pluginLoader).internal_loader;
-                // }
-                // Field loadersField = pluginLoader.getClass().getDeclaredField("loaders");
-                // loadersField.setAccessible(true);
-                // Map<String, URLClassLoader> loaders = (Map<String, URLClassLoader>) loadersField.get(pluginLoader);
-                // for (Entry<String, URLClassLoader> entry2 : loaders.entrySet()) {
-                // Reflect.on(entry2.getValue()).set("pluginInit", null).set("plugin", null);
-                // }
-                // sender.sendMessage("§6卸载: §a移除插件 §b" + name + " §a的类实例缓存!");
-                // }
-                // }
-                // }
-                // } catch (Exception e) {
-                // e.printStackTrace();
-                // }
+
                 sender.sendMessage("§6卸载: §a注销插件 §b" + name + " §a的所有命令!");
                 ClassLoader cl = next.getClass().getClassLoader();
                 try {
                     ((URLClassLoader) cl).close();
-                } catch (IOException ex) {
+                } catch (IOException ignored) {
                 }
                 System.gc();
             }
@@ -634,7 +609,7 @@ public class PluginsManager {
      * 卸载插件
      *
      * @param plugin
-     *            - 卸载插件
+     *         - 卸载插件
      * @return 是否成功
      */
     public boolean unload(Plugin plugin) {
@@ -655,9 +630,9 @@ public class PluginsManager {
      * 重载update文件夹的插件
      *
      * @param sender
-     *            - 命令发送者
+     *         - 命令发送者
      * @param directory
-     *            - 更新目录
+     *         - 更新目录
      * @return 是否成功
      */
     public boolean upgrade(CommandSender sender, File directory, Plugin plugin) {
@@ -707,7 +682,7 @@ public class PluginsManager {
                 } else {
                     if (oldplugin != null) {
                         dest = new File(Bukkit.getUpdateFolderFile(), File.separatorChar
-                                + getPluginFile(oldplugin).getName());
+                                                                      + getPluginFile(oldplugin).getName());
                     }
                     sender.sendMessage("§6升级: §a开始升级 §b" + name + " §a插件!");
                 }
