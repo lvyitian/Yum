@@ -18,7 +18,7 @@
     <properties>
         <update.description>§a补丁包 2.8.2 版本</update.description>
         <update.changes>
-            §619-08-28 §cfix: async event on primary thread
+            §619-08-28 §cfix: async event on primary thread;
             §619-08-26 §cfix: 修复不兼容 1.14.4 的问题;
             §619-02-23 §cfix: 修复不兼容 1.13 的问题;
         </update.changes>
