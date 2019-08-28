@@ -31,7 +31,7 @@ public class PluginNetworkEvent extends Event implements Cancellable {
      *         是否为主线程
      */
     public PluginNetworkEvent(Plugin plugin, URI url, boolean isPrimaryThread) {
-        super(true);
+        super(!isPrimaryThread);
         this.plugin = plugin;
         this.url = url;
         this.isPrimaryThread = isPrimaryThread;
